@@ -1,2 +1,2 @@
 # TheBoy
-GameBoy color emulator in c++ using the godotEngine , created for a case study
+GameBoy color emulator in c++  , created for a case study
