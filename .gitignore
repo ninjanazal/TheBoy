@@ -45,6 +45,7 @@ bld/
 [Ll]og/
 [Ll]ogs/
 [Bb]uild/
+[Ii]nclude/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -402,11 +403,6 @@ FodyWeavers.xsd
 
 ### VisualStudioCode ###
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
 
 # Local History for Visual Studio Code
 .history/

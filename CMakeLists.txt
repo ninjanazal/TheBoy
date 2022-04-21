@@ -2,6 +2,6 @@
 # project specific logic here.
 #
 cmake_minimum_required (VERSION 3.8)
+project (TheBoy LANGUAGES CXX)
 
-project ("TheBoy")
-add_executable (TheBoy "main.cpp" )
+add_subdirectory(src)
