@@ -1,1 +1,5 @@
-add_executable (${PROJECT_NAME} main.cpp)
+set( SOURCE ${SOURCE}
+	main.cpp
+)
+
+add_executable (${PROJECT_NAME} ${SOURCE})
