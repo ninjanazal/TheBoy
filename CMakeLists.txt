@@ -5,8 +5,6 @@ cmake_minimum_required (VERSION 3.8)
 project (TheBoy LANGUAGES CXX)
 
 set(SFML_DIR ${CMAKE_CURRENT_SOURCE_DIR}/out/lib/cmake/SFML/)
-message(${SFML_DIR})
-
 set(SFML_STATIC_LIBRARIES TRUE)
 find_package(SFML 2.5 COMPONENTS graphics REQUIRED)
 
