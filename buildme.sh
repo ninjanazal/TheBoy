@@ -83,8 +83,6 @@ cd ..
 if [ ! $# -lt 1 ]; then
 	if [ $1 = "run" ]; then
 		echo -e "[SCRIPT] Running compilation"
-		cd Build/src
-		./TheBoy.exe
-		cd ../..
+		./Build/src/TheBoy.exe
 	fi
 fi

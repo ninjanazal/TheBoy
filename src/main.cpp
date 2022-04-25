@@ -1,28 +1,15 @@
-﻿#include <iostream>
-#include <SFML/Graphics.hpp>
+﻿#include "Controllers/emulatorController.h"
 
 
-int main()
-{
-	std::cout << "Hello using CMake." << std::endl;
-	
-    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
+/**
+ * @brief Main function for the TheBoy project
+ * @return int
+ */
+int main(void) {
+	using namespace TheBoy;
 
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
+	EmulatorController *emulator = new EmulatorController(EmuType::GBColor);
+	emulator->Start(new sf::Vector2u(800, 800));
 
-    while (window.isOpen())
-    {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-
-        window.clear();
-        window.draw(shape);
-        window.display();
-    }
 	return 0;
 }
