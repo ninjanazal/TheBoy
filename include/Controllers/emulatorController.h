@@ -2,16 +2,14 @@
 #define EMULATORCONTROLLER_H
 
 #include <iostream>
-#include <memory>
 
 #include <SFML/Graphics.hpp>
-#include "globalTypes.h"
+#include <common.h>
 
 /**
  * @brief Core Project Namespace 
  */
 namespace TheBoy {
-
 	/**
 	 * @brief Base emulator controller class
 	 */
@@ -29,11 +27,11 @@ namespace TheBoy {
 		 */
 		EmuType emulationType;
 
-
 		/**
-		 * @brief Defined window size
+		 * @brief Holds the current emulator state values
 		 */
-		sf::Vector2u *winSize = new sf::Vector2u();
+		EmulatorState emu_state;
+
 
 	private:
 
@@ -56,9 +54,8 @@ namespace TheBoy {
 
 		/**
 		 * @brief Initialize the Emulator with a defined size
-		 * @param size Window size
 		 */
-		void Start(sf::Vector2u *size);
+		void Start();
 	};
 	
 } // namespace TheBoy

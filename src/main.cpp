@@ -1,4 +1,4 @@
-﻿#include "Controllers/emulatorController.h"
+﻿#include <Controllers/emulatorController.h>
 
 
 /**
@@ -9,7 +9,7 @@ int main(void) {
 	using namespace TheBoy;
 
 	EmulatorController *emulator = new EmulatorController(EmuType::GBColor);
-	emulator->Start(new sf::Vector2u(800, 800));
+	emulator->Start();
 
 	return 0;
 }

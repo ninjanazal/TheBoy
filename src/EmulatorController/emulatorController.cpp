@@ -1,4 +1,5 @@
-#include "Controllers/emulatorController.h"
+#include <Controllers/emulatorController.h>
+#include <SFML/Window.hpp>
 
 namespace TheBoy {
 	/**
@@ -15,11 +16,13 @@ namespace TheBoy {
 	 * @brief Initialize the Emulator with a defined size
 	 * @param size Window size
 	 */
-	void EmulatorController::Start(sf::Vector2u *size) {
-		winSize = size;
+	void EmulatorController::Start() {
+		window = new sf::RenderWindow(
+			sf::VideoMode(BASE_SCREEN[0], BASE_SCREEN[1]),
+			"TheBoy Emulator"
+		);
+		emu_state.reset();
 
-		window = new sf::RenderWindow(sf::VideoMode(winSize->x, winSize->y), "TheBoy Emulator");
-		//window->create(sf::VideoMode(winSize->x, winSize->y), "TheBoy Emulator");
 		this->_run();
 	}
 
@@ -28,7 +31,24 @@ namespace TheBoy {
 	 * @brief Emulator internal loop
 	 */
 	void EmulatorController::_run() {
-		while (window->isOpen()) {
+		std::cout << "Starting the emulator update loop" << std::endl;
+
+		while (emu_state.running) {
+			sf::Event event;
+
+			while (window->pollEvent(event)) {
+				switch (event.type) {
+				case sf::Event::Closed:
+					emu_state.running = false;
+					window->close();
+					break;
+				
+				default:
+					break;
+				}
+			}
+			
+
 			window->clear(sf::Color::Black);
 			window->display();
 		}
