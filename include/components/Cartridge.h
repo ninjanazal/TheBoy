@@ -1,16 +1,30 @@
 #ifndef CARTRIDGE_H
 #define CARTRIDGE_H
 
-#include <common.h>
+#include <collections.h>
 
 namespace TheBoy {
 
+	/**
+	 * @brief Defines the Cartridge state
+	 */
 	typedef struct {
-		bit8 entry[4];
-		bit8 logo[0x30];
-
-		char title[16];
-	};
+		bit8 entry[4];		// Entry Point 			(0x100 -> 0x0103)
+		bit8 logo[0x30]; 	// Nintendo Logo 		(0x0104 -> 0x0133)
+		char title[16];		// game Title 			(0x0134 -> 0x0143)
+		char manu_code[4]; 	// Manufacturer code 	(0x013F -> 0x0142)
+		bit8 cgb_flag; 		// CGB flag 			(0x0143)
+		bit8 lic_code; 		// New Licensse Code 	(0x0144 -> 0x0145)
+		bit8 sgb_flag; 		// SGB flag 			(0x0146)
+		bit8 cart_type;		// cartridge type		(0x0147)
+		bit8 rom_size;		// ROM size				(0x0148)
+		bit8 ram_size;		// RAM size				(0x0149)
+		bit8 dest_code;		// Destination Code		(0x014A)
+		bit8 old_lic_code;	// Old Licensee Code	(0x014B)
+		bit8 rom_version;	// ROM Version number	(0x014C)
+		bit8 h_checksum;	// header checksumn		(0x014D)
+		bit16 checksum;		// Global Checksum		(0x014E -> 0x014F)
+	} CartridgeState;
 	
 
 	/**
@@ -18,11 +32,51 @@ namespace TheBoy {
 	 */
 	class Cartridge	{
 	private:
+		/**
+		 * @brief Holds the cartridge path
+		 */
+		std::string path;
 
+		/**
+		 * @brief Holds the current rom Size (bytes)
+		 */
+		bit32 rom_size;
+
+
+		/**
+		 * @brief Pointer to the loaded rom byte data
+		 */
+		bit8 *rom_data;
+
+
+		/**
+		 * @brief Holds the current cartridge state
+		 */
+		CartridgeState *cart_state;
 
 	public:
-		Cartridge(/* args */);
+		/**
+		 * @brief Construct a new Cartridge object
+		 * @param path Path to the cartridge to be loaded
+		 */
+		Cartridge(std::string path);
+
+		/**
+		 * @brief Destroy the Cartridge object
+		 */
 		~Cartridge() = default;
+
+		/**
+		 * @brief Get the Cart Licensee Name object
+		 * @return char* Cartridge Licensee Name
+		 */
+		const char *getCartLicenseeName();
+
+		/**
+		 * @brief Get the Cart Type Name object
+		 * @return char* Cartridge Type name
+		 */
+		const char *getCartTypeName();
 	};
 	
 	

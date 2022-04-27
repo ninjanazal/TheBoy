@@ -18,7 +18,7 @@ namespace TheBoy {
 	 */
 	void EmulatorController::Start() {
 		window = new sf::RenderWindow(
-			sf::VideoMode(BASE_SCREEN[0], BASE_SCREEN[1]),
+			sf::VideoMode(900, 500),
 			"TheBoy Emulator"
 		);
 		emu_state.reset();
@@ -48,7 +48,6 @@ namespace TheBoy {
 				}
 			}
 			
-
 			window->clear(sf::Color::Black);
 			window->display();
 		}

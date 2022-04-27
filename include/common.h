@@ -1,6 +1,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <iostream>
+#include <map>
 #include <cstdint>
 
 namespace TheBoy{
@@ -31,6 +33,9 @@ namespace TheBoy{
 	typedef uint64_t bit64;
 
 
+	/**
+	 * @brief Defines teh Emulator state
+	 */
 	typedef struct {
 		/**
 		 * @brief Marks if the current emulator is paused
