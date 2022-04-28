@@ -38,7 +38,7 @@ namespace TheBoy {
 		std::string path;
 
 		/**
-		 * @brief Holds the current rom Size (bytes)
+		 * @brief Holds the current rom Size (kiBytes)
 		 */
 		bit32 rom_size;
 
@@ -46,7 +46,8 @@ namespace TheBoy {
 		/**
 		 * @brief Pointer to the loaded rom byte data
 		 */
-		bit8 *rom_data;
+		//bit8 rom_data;
+		std::shared_ptr<bit8> rom_data;
 
 
 		/**
@@ -61,10 +62,20 @@ namespace TheBoy {
 		 */
 		Cartridge(std::string path);
 
+
 		/**
 		 * @brief Destroy the Cartridge object
 		 */
 		~Cartridge() = default;
+
+
+		/**
+		 * @brief Tries to load the cartridge from the defined path
+		 * @return true If was able to load
+		 * @return false If failed to load
+		 */
+		bool loadCartridgeFromFile();
+
 
 		/**
 		 * @brief Get the Cart Licensee Name object
@@ -72,18 +83,26 @@ namespace TheBoy {
 		 */
 		const char *getCartLicenseeName();
 
+
 		/**
 		 * @brief Get the Cart Type Name object
 		 * @return char* Cartridge Type name
 		 */
 		const char *getCartTypeName();
+
+
+	private:
+		/**
+		 * @brief Prints the values from a loaded cartridge
+		 */
+		void printCartridgeValues();
+
+		/**
+		 * @brief Validates the 8bit checksum values on the $0134-014C header area
+		 * @return true Valid cartridge
+		 * @return false Invalid cartridge
+		 */
+		bool cartridgeCheckSum();
 	};
-	
-	
-
-	
 } // namespace TheBoy
-
-
-
 #endif

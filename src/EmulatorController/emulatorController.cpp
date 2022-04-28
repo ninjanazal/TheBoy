@@ -6,8 +6,7 @@ namespace TheBoy {
 	 * @brief Construct a new Emulator Controller:: Emulator Controller object
 	 * @param type Target emulation type
 	 */
-	EmulatorController::EmulatorController(EmuType type):
-		emulationType(type) { 
+	EmulatorController::EmulatorController(EmuType type): emulationType(type) { 
 			std::cout << "Emulator controller was created" << std::endl;
 		}
 

@@ -7,8 +7,7 @@
  */
 int main(void) {
 	using namespace TheBoy;
-
-	EmulatorController *emulator = new EmulatorController(EmuType::GBColor);
+	std::unique_ptr<EmulatorController> emulator(new EmulatorController(EmuType::GBColor));
 	emulator->Start();
 
 	return 0;

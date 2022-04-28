@@ -4,6 +4,7 @@
 #include <iostream>
 #include <map>
 #include <cstdint>
+#include <memory>
 
 namespace TheBoy{
 
