@@ -1,4 +1,4 @@
-#include <Controllers/emulatorController.h>
+#include "emulatorController.h"
 #include <SFML/Window.hpp>
 
 namespace TheBoy {
@@ -15,13 +15,14 @@ namespace TheBoy {
 	 * @brief Initialize the Emulator with a defined size
 	 * @param size Window size
 	 */
-	void EmulatorController::Start() {
+	void EmulatorController::Start(const char* rom_path) {
 		window = new sf::RenderWindow(
-			sf::VideoMode(900, 500),
-			"TheBoy Emulator"
+			sf::VideoMode(900, 500), "TheBoy Emulator"
 		);
-		emu_state.reset();
+		cart = std::make_shared<Cartridge>(Cartridge(rom_path));
+		cart->loadCartridgeFromFile();
 
+		emu_state.reset();
 		this->_run();
 	}
 

@@ -1,7 +1,7 @@
 #ifndef CARTRIDGE_H
 #define CARTRIDGE_H
 
-#include <collections.h>
+#include "collections.h"
 
 namespace TheBoy {
 
@@ -35,7 +35,7 @@ namespace TheBoy {
 		/**
 		 * @brief Holds the cartridge path
 		 */
-		std::string path;
+		const char* path;
 
 		/**
 		 * @brief Holds the current rom Size (kiBytes)
@@ -60,7 +60,7 @@ namespace TheBoy {
 		 * @brief Construct a new Cartridge object
 		 * @param path Path to the cartridge to be loaded
 		 */
-		Cartridge(std::string path);
+		Cartridge(const char* path);
 
 
 		/**
@@ -81,14 +81,14 @@ namespace TheBoy {
 		 * @brief Get the Cart Licensee Name object
 		 * @return char* Cartridge Licensee Name
 		 */
-		const char *getCartLicenseeName();
+		const char* getCartLicenseeName();
 
 
 		/**
 		 * @brief Get the Cart Type Name object
 		 * @return char* Cartridge Type name
 		 */
-		const char *getCartTypeName();
+		const char* getCartTypeName();
 
 
 	private:

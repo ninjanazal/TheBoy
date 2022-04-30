@@ -1,5 +1,6 @@
 #include <fstream>
-#include <components/Cartridge.h>
+#include <iomanip>
+#include "cartridge.h"
 
 
 namespace TheBoy {
@@ -14,7 +15,8 @@ namespace TheBoy {
 	 * @brief Construct a new Cartridge object
 	 * @param path Path to the cartridge to be loaded
 	 */
-	Cartridge::Cartridge(std::string path) :path(path) {
+	Cartridge::Cartridge(const char* path) {
+		this->path = path;
 		std::cout << "[CARTRIDGE] :: Created" << std::endl;
 	};
 
@@ -38,7 +40,7 @@ namespace TheBoy {
 		rom_size = loadStream.tellg();
 		loadStream.seekg(0, std::ios_base::beg);
 
-		char *temp_data(new char[rom_size] {});
+		char* temp_data(new char[rom_size] {});
 		
 		loadStream.read(temp_data, rom_size);
 		loadStream.close();
@@ -46,7 +48,7 @@ namespace TheBoy {
 		rom_data = std::make_shared<bit8>(*temp_data);
 		delete[] temp_data;
 
-		cart_state = (CartridgeState *)(rom_data.get() + 0x100);
+		cart_state = reinterpret_cast<CartridgeState*>(rom_data.get() + 0x100);
 		cart_state->title[15] = 0;
 		
 		printCartridgeValues();
@@ -76,7 +78,7 @@ namespace TheBoy {
 	 * @brief Get the Cart Type Name object
 	 * @return char* Cartridge Type name
 	 */
-	const char *Cartridge::getCartTypeName() {
+	const char* Cartridge::getCartTypeName() {
 		if(CARTRIDGE_TYPE.count(cart_state->cart_type) != 0){
 			return &*CARTRIDGE_TYPE.at(cart_state->cart_type).begin();
 		}
@@ -94,13 +96,13 @@ namespace TheBoy {
 	 * @brief Prints the values from a loaded cartridge
 	 */
 	void Cartridge::printCartridgeValues() {
-		std::cout << "[CARTRIDGE] :: Cartridge Information" << std::endl <<
-		("\t Title 		:	%s", cart_state->title) << std::endl <<
-		("\t Type 		:	%2.2X (%s)", cart_state->cart_type, getCartTypeName()) << std::endl <<
-		("\t ROM Size	:	%d KiB", 0x20 << cart_state->rom_size) << std::endl <<
-		("\t RAM Size	:	%2.2X", cart_state->ram_size) << std::endl <<
-		("\t Lice Code	:	%2.2X (%s)", cart_state->lic_code, getCartLicenseeName()) << std::endl <<
-		("\t ROM Vers	: 	%2.2X", cart_state->rom_version) << std::endl;
+		std::cout <<"[CARTRIDGE] :: Cartridge Information\n" << std::endl;
+		std::printf("\t Title 		:	%x\n", cart_state->title);
+		std::printf("\t Type 		:	%2.2X (%s)\n", cart_state->cart_type, getCartTypeName());
+		std::printf("\t ROM Size	:	%d KiB\n", 0x20 << cart_state->rom_size);
+		std::printf("\t RAM Size	:	%2.2X\n", cart_state->ram_size);
+		std::printf("\t Lice Code	:	%2.2X (%s)\n", cart_state->lic_code, getCartLicenseeName());
+		std::printf("\t ROM Vers	: 	%2.2X\n", cart_state->rom_version);
 	}
 
 
@@ -122,7 +124,8 @@ namespace TheBoy {
 			x = x - rom_data.get()[i] - 1;
 		}
 
-		std::cout << ("[CARTRIDGE] :: Checksum Result : %2.2X (%2.2X)", cart_state->checksum, (x & 0xFF));
+		std::printf("[CARTRIDGE] :: Checksum Result : %2.2X (%2.2X)\n", cart_state->checksum, (x & 0xFF));
+		fflush(stdout);
 		return (x & 0xFF);
 	}
 }

@@ -4,7 +4,8 @@
 #include <iostream>
 
 #include <SFML/Graphics.hpp>
-#include <common.h>
+#include "common.h"
+#include "Cartridge.h"
 
 /**
  * @brief Core Project Namespace 
@@ -19,7 +20,7 @@ namespace TheBoy {
 		/**
 		 * @brief Pointer to the inUse window
 		 */
-		sf::RenderWindow *window;
+		sf::RenderWindow* window;
 
 
 		/**
@@ -32,6 +33,11 @@ namespace TheBoy {
 		 */
 		EmulatorState emu_state;
 
+
+		/**
+		 * @brief Holds reference to the current cartriddge
+		 */
+		std::shared_ptr<Cartridge> cart;
 
 	private:
 
@@ -54,8 +60,9 @@ namespace TheBoy {
 
 		/**
 		 * @brief Initialize the Emulator with a defined size
+		 * @param rom_path Path to the target rom
 		 */
-		void Start();
+		void Start(const char* rom_path);
 	};
 	
 } // namespace TheBoy
