@@ -31,30 +31,6 @@ namespace TheBoy {
 	 * @brief Holds the cartridge logic information and definitions
 	 */
 	class Cartridge	{
-	private:
-		/**
-		 * @brief Holds the cartridge path
-		 */
-		const char* path;
-
-		/**
-		 * @brief Holds the current rom Size (kiBytes)
-		 */
-		bit32 rom_size;
-
-
-		/**
-		 * @brief Pointer to the loaded rom byte data
-		 */
-		//bit8 rom_data;
-		std::shared_ptr<bit8> rom_data;
-
-
-		/**
-		 * @brief Holds the current cartridge state
-		 */
-		CartridgeState *cart_state;
-
 	public:
 		/**
 		 * @brief Construct a new Cartridge object
@@ -66,7 +42,7 @@ namespace TheBoy {
 		/**
 		 * @brief Destroy the Cartridge object
 		 */
-		~Cartridge() = default;
+		~Cartridge();
 
 
 		/**
@@ -90,8 +66,31 @@ namespace TheBoy {
 		 */
 		const char* getCartTypeName();
 
-
 	private:
+		/**
+		 * @brief Holds the cartridge path
+		 */
+		const char* path;
+
+		/**
+		 * @brief Holds the current rom Size (kiBytes)
+		 */
+		bit32 rom_size;
+
+
+		/**
+		 * @brief Pointer to the loaded rom byte data
+		 */
+		//bit8 rom_data;
+		bit8* rom_data;
+
+
+		/**
+		 * @brief Holds the current cartridge state
+		 */
+		std::shared_ptr<CartridgeState> cart_state;
+
+
 		/**
 		 * @brief Prints the values from a loaded cartridge
 		 */
@@ -103,6 +102,11 @@ namespace TheBoy {
 		 * @return false Invalid cartridge
 		 */
 		bool cartridgeCheckSum();
+
+		/**
+		 * @brief Assigned the loaded data to the correct struct values
+		 */
+		void assignCartData();
 	};
 } // namespace TheBoy
 #endif

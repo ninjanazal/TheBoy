@@ -7,7 +7,7 @@ namespace TheBoy {
 	 * @param type Target emulation type
 	 */
 	EmulatorController::EmulatorController(EmuType type): emulationType(type) { 
-			std::cout << "Emulator controller was created" << std::endl;
+			std::cout << "[Emulator] ::: controller was created" << std::endl;
 		}
 
 
@@ -20,8 +20,12 @@ namespace TheBoy {
 			sf::VideoMode(900, 500), "TheBoy Emulator"
 		);
 		cart = std::make_shared<Cartridge>(Cartridge(rom_path));
-		cart->loadCartridgeFromFile();
-
+		if(!cart->loadCartridgeFromFile()){
+			std::cout << "[Emulator] ::: Fail to load cartridge!" << std::endl;
+			return;
+		}
+		
+		std::cout << "[Emulator] ::: Cartridge was loaded!" << std::endl;
 		emu_state.reset();
 		this->_run();
 	}

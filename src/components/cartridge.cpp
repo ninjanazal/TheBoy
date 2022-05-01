@@ -1,24 +1,26 @@
 #include <fstream>
 #include <iomanip>
+#include <cstring>
 #include "cartridge.h"
 
 
 namespace TheBoy {
-	/**
-	 * - - - - - - - - - - - - - - - - - - - -
-	 *                  PUBLIC
-	 * - - - - - - - - - - - - - - - - - - - -
-	 */
-
-
 	/**
 	 * @brief Construct a new Cartridge object
 	 * @param path Path to the cartridge to be loaded
 	 */
 	Cartridge::Cartridge(const char* path) {
 		this->path = path;
-		std::cout << "[CARTRIDGE] :: Created" << std::endl;
+		std::cout << "[CARTRIDGE] :: Created with path " << this->path << std::endl;
 	};
+
+	/**
+	 * @brief Destroy the Cartridge object
+	 */
+	Cartridge::~Cartridge(){
+		//delete path;
+		//delete rom_data;
+	}
 
 
 	/**
@@ -34,29 +36,26 @@ namespace TheBoy {
 				path << " )" << std::endl;
 			return false;
 		}
-
 		std::cout << "[CARTRIDGE] :: Valid cartridge path, reading ..." << std::endl;
 
 		rom_size = loadStream.tellg();
 		loadStream.seekg(0, std::ios_base::beg);
 
-		char* temp_data(new char[rom_size] {});
-		
+		char* temp_data(new char[rom_size + size_t(1)] {});
 		loadStream.read(temp_data, rom_size);
 		loadStream.close();
+		
+		temp_data[rom_size] = 0;
 
-		rom_data = std::make_shared<bit8>(*temp_data);
+		rom_data = new bit8[rom_size] {};
+		std::memcpy(rom_data, (temp_data + size_t(1) * 0x100), rom_size);
 		delete[] temp_data;
 
-		cart_state = reinterpret_cast<CartridgeState*>(rom_data.get() + 0x100);
-		cart_state->title[15] = 0;
-		
-		printCartridgeValues();
+		assignCartData();
 		bool checkSum = cartridgeCheckSum();
 
-		std::cout << (checkSum ?
-			 "Valid Cartridge checksum result!" : "Failed on Checksum confirmation") <<
-		std::endl;
+		std::cout << "[CARTRIDGE] :: " << (checkSum ?
+			 "Valid Cartridge checksum result!" : "Failed on Checksum confirmation") << std::endl;
 
 		return checkSum;
 	}
@@ -96,13 +95,14 @@ namespace TheBoy {
 	 * @brief Prints the values from a loaded cartridge
 	 */
 	void Cartridge::printCartridgeValues() {
-		std::cout <<"[CARTRIDGE] :: Cartridge Information\n" << std::endl;
-		std::printf("\t Title 		:	%x\n", cart_state->title);
+		std::cout <<"[CARTRIDGE] :: Cartridge Information" << std::endl;
+		std::printf("\t Title 		:	%s\n", cart_state->title);
 		std::printf("\t Type 		:	%2.2X (%s)\n", cart_state->cart_type, getCartTypeName());
 		std::printf("\t ROM Size	:	%d KiB\n", 0x20 << cart_state->rom_size);
 		std::printf("\t RAM Size	:	%2.2X\n", cart_state->ram_size);
 		std::printf("\t Lice Code	:	%2.2X (%s)\n", cart_state->lic_code, getCartLicenseeName());
 		std::printf("\t ROM Vers	: 	%2.2X\n", cart_state->rom_version);
+		fflush(stdout);
 	}
 
 
@@ -121,11 +121,25 @@ namespace TheBoy {
 
 		bit16 x = 0;
 		for (bit16 i = 0x0134; i <= 0x014C; i++){
-			x = x - rom_data.get()[i] - 1;
+			x = x - rom_data[i] - 1;
 		}
 
-		std::printf("[CARTRIDGE] :: Checksum Result : %2.2X (%2.2X)\n", cart_state->checksum, (x & 0xFF));
+		std::printf("[CARTRIDGE] :: Checksum Result : %2.2X (%X)\n", cart_state->checksum, (x & 0xFF));
 		fflush(stdout);
 		return (x & 0xFF);
+	}
+
+
+	/**
+	 * @brief Assigned the loaded data to the correct struct values
+	 */
+	void Cartridge::assignCartData(){
+		cart_state = std::make_shared<CartridgeState>();
+
+		std::memcpy(cart_state->entry, rom_data, size_t(0x4));
+		std::memcpy(cart_state->logo, rom_data + size_t(0x4), 0x30);
+		std::memcpy(cart_state->title, rom_data + size_t(0x34), 0x10);
+		std::memcpy(cart_state->manu_code, rom_data + size_t(0x3F), 0x4);
+		printCartridgeValues();
 	}
 }
