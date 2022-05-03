@@ -24,8 +24,9 @@ namespace TheBoy {
 			std::cout << "[Emulator] ::: Fail to load cartridge!" << std::endl;
 			return;
 		}
-		
 		std::cout << "[Emulator] ::: Cartridge was loaded!" << std::endl;
+
+
 		emu_state.reset();
 		this->_run();
 	}
@@ -35,7 +36,7 @@ namespace TheBoy {
 	 * @brief Emulator internal loop
 	 */
 	void EmulatorController::_run() {
-		std::cout << "Starting the emulator update loop" << std::endl;
+		std::cout << "[Emulator] ::: Starting the emulator update loop" << std::endl;
 
 		while (emu_state.running) {
 			sf::Event event;
