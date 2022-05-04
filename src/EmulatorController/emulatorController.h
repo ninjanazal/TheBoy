@@ -4,13 +4,34 @@
 #include <iostream>
 
 #include <SFML/Graphics.hpp>
-#include "common.h"
 #include "Cartridge.h"
+#include "addressbus.h"
 
 /**
  * @brief Core Project Namespace 
  */
 namespace TheBoy {
+	class AddressBus;
+
+	
+	/**
+	 * @brief Defines the Emulator components
+	 */
+	typedef struct {
+		/**
+		 * @brief Holds reference to the current cartriddge
+		 */
+		std::shared_ptr<Cartridge> cart;
+
+		/**
+		 * @brief Emulator Address bus object
+		 */
+		std::shared_ptr<AddressBus> bus;
+
+	} EmulatorComponents;
+	
+
+
 	/**
 	 * @brief Base emulator controller class
 	 */
@@ -33,11 +54,11 @@ namespace TheBoy {
 		 */
 		EmulatorState emu_state;
 
-
 		/**
-		 * @brief Holds reference to the current cartriddge
+		 * @brief Holds references for the Emulator controller components
 		 */
-		std::shared_ptr<Cartridge> cart;
+		EmulatorComponents comps;
+
 
 	private:
 
@@ -63,6 +84,12 @@ namespace TheBoy {
 		 * @param rom_path Path to the target rom
 		 */
 		void Start(const char* rom_path);
+
+		/**
+		 * @brief Get the Cartridge object
+		 * @return std::shared_ptr<Cartridge> Shared pointer to the inUse cartridge
+		 */
+		std::shared_ptr<Cartridge> getCartridge();
 	};
 	
 } // namespace TheBoy

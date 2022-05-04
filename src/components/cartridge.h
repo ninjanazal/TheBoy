@@ -75,6 +75,22 @@ namespace TheBoy {
 		 */
 		bool isNewTypeCartridge();
 
+
+		/**
+		 * @brief Reads data from the loaded cartridge
+		 * @param addr Cartridge address
+		 * @return bit8 Valeu on the defined address
+		 */
+		bit8 read(bit16 addr);
+
+
+		/**
+		 * @brief Writes data to the defined cartridge address
+		 * @param addr Target address
+		 * @param val Value to be written
+		 */
+		void write(bit16 addr, bit8 val);
+
 	private:
 		/**
 		 * @brief Holds the cartridge path

@@ -7,9 +7,10 @@
  */
 using namespace TheBoy;
 
-int main(void) {
+int main(int argc, char *argv[]) {
 	std::unique_ptr<EmulatorController> emulator(new EmulatorController(EmuType::GBColor));
-	emulator->Start(std::string("D:\\Projects\\TheBoy\\ROMS\\Tetris.gb").c_str());
+	//! Remove this hammered path
+	emulator->Start("D:\\Projects\\TheBoy\\ROMS\\Tetris.gb");
 
 	return 0;
 }

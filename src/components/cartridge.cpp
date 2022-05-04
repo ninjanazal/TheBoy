@@ -35,7 +35,7 @@ namespace TheBoy {
 		rom_size = loadStream.tellg();
 		loadStream.seekg(0, std::ios_base::beg);
 
-		char* temp_data(new char[rom_size + size_t(1)] {});
+		char* temp_data(new char[rom_size] {});
 		loadStream.read(temp_data, rom_size);
 		loadStream.close();
 		
@@ -44,7 +44,7 @@ namespace TheBoy {
 		memcpy(&cart_state->newCartType, temp_data + size_t(0x33), 1);
 
 		rom_data = new bit8[rom_size] {};
-		memcpy(rom_data, (temp_data + size_t(0x100)), rom_size);
+		memcpy(rom_data, temp_data, rom_size);
 		delete[] temp_data;
 
 		assignCartData();
@@ -95,6 +95,27 @@ namespace TheBoy {
 
 
 	/**
+	 * @brief Reads data from the loaded cartridge
+	 * @param addr Cartridge address
+	 * @return bit8 Valeu on the defined address
+	 */
+	bit8 Cartridge::read(bit16 addr) {
+		return rom_data[addr];
+	}
+
+
+	/**
+	 * @brief Writes data to the defined cartridge address
+	 * @param addr Target address
+	 * @param val Value to be written
+	 */
+	void Cartridge::write(bit16 addr, bit8 val) {
+		std::cout <<"[CARTRIDGE] :: Cartridge write not implemented!" << std::endl;
+		return;
+	}
+
+
+	/**
 	 * @brief Prints the values from a loaded cartridge
 	 */
 	void Cartridge::printCartridgeValues() {
@@ -137,22 +158,21 @@ namespace TheBoy {
 	 * @brief Assigned the loaded data to the correct struct values
 	 */
 	void Cartridge::assignCartData(){
-
-		memcpy(cart_state->entry, rom_data, size_t(0x4));
-		memcpy(cart_state->logo, rom_data + size_t(0x4), 48);
-		memcpy(cart_state->title, rom_data + size_t(0x34), 16);
-		memcpy(cart_state->manu_code, rom_data + size_t(0x3F), 4);
-		memcpy(&cart_state->cgb_flag, rom_data + size_t(0x43), 1);
-		memcpy(&cart_state->lic_code, rom_data + size_t(0x44), 2);
-		memcpy(&cart_state->sgb_flag, rom_data + size_t(0x46), 1);
-		memcpy(&cart_state->cart_type, rom_data + size_t(0x47), 1);
-		memcpy(&cart_state->rom_size, rom_data + size_t(0x48), 1);
-		memcpy(&cart_state->ram_size, rom_data + size_t(0x49), 1);
-		memcpy(&cart_state->dest_code, rom_data + size_t(0x4A), 1);
-		memcpy(&cart_state->old_lic_code, rom_data + size_t(0x4B), 1);
-		memcpy(&cart_state->rom_version, rom_data + size_t(0x4C), 1);
-		memcpy(&cart_state->h_checksum, rom_data + size_t(0x4D), 1);
-		memcpy(&cart_state->checksum, rom_data + size_t(0x4E), 2);
+		memcpy(cart_state->entry, rom_data + size_t(0x100), 4);
+		memcpy(cart_state->logo, rom_data + size_t(0x104), 48);
+		memcpy(cart_state->title, rom_data + size_t(0x134), 16);
+		memcpy(cart_state->manu_code, rom_data + size_t(0x13F), 4);
+		memcpy(&cart_state->cgb_flag, rom_data + size_t(0x143), 1);
+		memcpy(&cart_state->lic_code, rom_data + size_t(0x144), 2);
+		memcpy(&cart_state->sgb_flag, rom_data + size_t(0x146), 1);
+		memcpy(&cart_state->cart_type, rom_data + size_t(0x147), 1);
+		memcpy(&cart_state->rom_size, rom_data + size_t(0x148), 1);
+		memcpy(&cart_state->ram_size, rom_data + size_t(0x149), 1);
+		memcpy(&cart_state->dest_code, rom_data + size_t(0x14A), 1);
+		memcpy(&cart_state->old_lic_code, rom_data + size_t(0x14B), 1);
+		memcpy(&cart_state->rom_version, rom_data + size_t(0x14C), 1);
+		memcpy(&cart_state->h_checksum, rom_data + size_t(0x14D), 1);
+		memcpy(&cart_state->checksum, rom_data + size_t(0x14E), 2);
 
 		std::cout <<"[CARTRIDGE] :: Cartridge Headers has been mapped!" << std::endl;
 
