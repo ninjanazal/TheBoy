@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 #include "Cartridge.h"
 #include "addressbus.h"
+#include "cpu.h"
 
 /**
  * @brief Core Project Namespace 

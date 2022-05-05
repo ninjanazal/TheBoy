@@ -48,7 +48,7 @@ namespace TheBoy {
 		window = new sf::RenderWindow(
 			sf::VideoMode(900, 500), "TheBoy Emulator"
 		);
-
+		
 		comps.bus = std::make_shared<AddressBus>(AddressBus(*this));
 		std::cout << "[Emulator] ::: AddressBus Created!" << std::endl;
 

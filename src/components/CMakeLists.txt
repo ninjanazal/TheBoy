@@ -5,6 +5,7 @@ set( SOURCE
 	${SOURCE}
 	${CMAKE_CURRENT_SOURCE_DIR}/cartridge.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/addressbus.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/cpu.cpp
 	
 	PARENT_SCOPE
 )
