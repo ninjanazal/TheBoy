@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "emulatorController.h"
+#include "instruction.h"
 
 namespace TheBoy {
 	class EmulatorController;
@@ -62,6 +63,17 @@ As shown above, most registers can be accessed either as one 16-bit register,
 	 * instruction that has affected flags
 	 */
 	bit8 regFlags;
+
+
+	/**
+	 * @brief Marks if the current cpu has been halted, its in idle mode
+	 */
+	bool cpuHLT;
+
+	/**
+	 * @brief Pointer to the current target instruction 
+	 */
+	Instruc *currInstruct;
 	
 	};
 }
