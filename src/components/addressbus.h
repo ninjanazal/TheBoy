@@ -32,7 +32,7 @@ namespace TheBoy {
 		/**
 		 * @brief Construct a new Address Bus object
 		 */
-		AddressBus(const EmulatorController& ctrl);
+		AddressBus(EmulatorController* ctrl);
 
 
 		/**
@@ -58,7 +58,7 @@ namespace TheBoy {
 		/**
 		 * @brief Pointer to the emulator controller
 		 */
-		std::shared_ptr<EmulatorController> emuCtrl;
+		EmulatorController* emuCtrl;
 
 
 	};

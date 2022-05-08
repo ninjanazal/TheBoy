@@ -82,6 +82,14 @@ namespace TheBoy{
 		GBColor
 	};
 
+	/**
+	 * @brief Invert the order of a bit16 value, swith high 8bit to the lower
+	 * @param val Value to ve reversed
+	 * @return bit16 Reversed value
+	 */
+	static bit16 reverse16(const bit16 val){
+		return ( (val & 0xFF00) >> 8 | (val & 0x00FF) << 8);
+	}
 
 }
 

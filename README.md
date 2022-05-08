@@ -2,7 +2,8 @@
 GameBoy color emulator in c++  , created for a case study
 
 ### Usefull links
-- gddev [web-site](https://www.gbdev.io/)
+- [gddev](https://www.gbdev.io/) (Game Boy Development community)
+- [Gameboy CPU (LR35902) instruction set](https://www.pastraiser.com/cpu/gameboy/gameboy_opcodes.html)
 ---
 
 # Dependencies
@@ -64,6 +65,11 @@ Use this script to gather all the information needed, compile e execute;
 
 - [x] Cartridge header map
 	- [x] Cartridge memory layout 
+- [x] Address Bus implementation
+	- [x] Bus functions read/write
+- [ ] Cpu Implementation
+	- [ ] OPCode translation (9 / 256)
+	- [ ] Instruction implementation (doing)
 
 
 ---

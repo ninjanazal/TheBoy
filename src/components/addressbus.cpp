@@ -4,10 +4,10 @@ namespace TheBoy {
 	/**
 	 * @brief Construct a new Address Bus object
 	 */
-	AddressBus::AddressBus(const EmulatorController& ctrl) {
-		emuCtrl = std::make_shared<EmulatorController>(ctrl);
+	AddressBus::AddressBus(EmulatorController* ctrl): emuCtrl(ctrl) {
 		std::cout << "[ADDRESSBUS] ::: AddressBus has been created" << std::endl;
 	}
+
 
 
 	/**

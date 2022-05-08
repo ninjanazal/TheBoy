@@ -1,7 +1,9 @@
 #ifndef INSTRUCTION_H
 #define INSTRUCTION_H
+#include "common.h"
 
 namespace TheBoy {
+	
 	/*
 	OPCODES exemple
 	-------------
@@ -23,11 +25,14 @@ namespace TheBoy {
 	 * This is the first element of an instruction
 	 */
 	typedef enum {
+		INST_NONE,
 		INST_NOP,
 		INST_LD,
 		INST_DEC,
 		INST_JP,
-		INST_DI
+		INST_DI,
+		INST_INC,
+		INST_XOR
 	} InstructType;
 
 
@@ -61,9 +66,10 @@ namespace TheBoy {
 	typedef enum {
 		OPMODE_NONE,
 		OPMODE_R,
+		OPMODE_V16,
 		OPMODE_R_V16,
 		OPMODE_R_V8,
-		OPMODE_V16
+		OPMODE_AR_R
 	} OperationMode;
 
 
@@ -90,6 +96,15 @@ namespace TheBoy {
 		RegisterType regTypeR;
 		ConditionType conType;
 	} Instruc;
+
+
+	/**
+	 * @brief Get the By Opcode object
+	 * @param opCd Opcode value for the instructions
+	 * @return Instruc* Pointer to Defined instruction value
+	 */
+	Instruc* getByOpcode(bit8 opCd);
+
 } // namespace TheBoy
 
 

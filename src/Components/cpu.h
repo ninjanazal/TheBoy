@@ -3,7 +3,9 @@
 
 #include "common.h"
 #include "emulatorController.h"
-#include "instruction.h"
+#include "addressbus.h"
+#include "instruc_funcs.h"
+
 
 namespace TheBoy {
 	class EmulatorController;
@@ -20,6 +22,15 @@ namespace TheBoy {
 
 As shown above, most registers can be accessed either as one 16-bit register,
  or as two separate 8-bit registers.
+
+	[Flags]
+	----------------------------------
+	7	z	Zero flag
+	6	n	Subtraction flag (BCD)
+	5	h	Half Carry flag (BCD)
+	4	c	Carry flag
+	----------------------------------
+
 */
 	typedef struct {
 		bit8 A;
@@ -30,20 +41,27 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		bit8 E;
 		bit8 H;
 		bit8 L;
-		bit8 S;
 		bit16 SP;
 		bit16 PC;
-	} Registres;
+
+		/**
+		 * @brief Resets the registers values
+		 */
+		void reset(){
+			A = F = B = C = D = E = H = L = 0x0;
+			SP = PC = 0x0; 
+		}
+	} Registers;
 
 	/**
 	 * @brief Holds the Cpu definitions
 	 */
 	class Cpu {
-		public:
+	public:
 		/**
 		 * @brief Construct a new Cpu object
 		 */
-		Cpu();
+		Cpu(EmulatorController* ctrl);
 
 
 		/**
@@ -51,18 +69,78 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		 */
 		~Cpu() = default;
 
+		/**
+		 * @brief Defines the cpu Program counter start value
+		 * @param entry Defined program count value
+		 */
+		void setPCEntry(bit16 entry);
+
+		/**
+		 * @brief Defines the cpu iteration
+		 */
+		void step();
+
+		/**
+		 * @brief Get the Register Value object
+		 * @param regType Defined register to get
+		 * @return bit16 Data on the setted register
+		 */
+		bit16 getRegisterValue(RegisterType regType);
+
+
+		/**
+		 * @brief Gets the current Z flag value
+		 * @return bit8 Current z value
+		 */
+		bit8 getZFlag();
+
+
+		/**
+		 * @brief Gets the current C flag value
+		 * @return bit8 Current C value
+		 */
+		bit8 getCFlag();
+
+
+		/**
+		 * @brief Get the Curr Instruct object
+		 * @return Instruc* Pointer to the current instruction
+		 */
+		Instruc* getCurrInstruct();
+
+
+		/**
+		 * @brief Updates the cpu program counter to the current fetched data
+		 */
+		void updatePCtoFetched();
+
+		/**
+		 * @brief Requests the emulator controller to emulate a defined cycle value
+		 * @param cycles Cycle value
+		 */
+		void requestCycles(const int& cycles);
+
 	private:
+
+	/**
+	 * @brief Pointer to the emulator controller
+	 */
+	EmulatorController* emuCtrl;
+
 
 	/**
 	 * @brief Shared pointer to the registers values
 	 */
-	std::shared_ptr<Registres> regs;
+	std::shared_ptr<Registers> regs;
 
 	/**
-	 * @brief Contains information about the result of the most recent
-	 * instruction that has affected flags
+	 * @brief Defined and declared instruction memory map
 	 */
-	bit8 regFlags;
+	struct InternMem {
+		bit16 fetchData;
+		bit16 memDest;
+		bool destIsMem;
+	} intMem;
 
 
 	/**
@@ -70,11 +148,41 @@ As shown above, most registers can be accessed either as one 16-bit register,
 	 */
 	bool cpuHLT;
 
+
+	/**
+	 * @brief Marks the current opcode instruction
+	 */
+	bit8 currOpcode;
+
+
 	/**
 	 * @brief Pointer to the current target instruction 
 	 */
 	Instruc *currInstruct;
-	
+
+
+	/**
+	 * @brief Resets the current cpu state
+	 */
+	void reset();
+
+
+	/**
+	 * @brief Defined fetch instuction from memory
+	 */
+	void fetch_inst();
+
+
+	/**
+	 * @brief Defines fetch data for the loaded instruction
+	 */
+	void fetch_data();
+
+
+	/**
+	 * @brief Defines the execution process for the instruction with the data
+	 */
+	void executeInst();
 	};
 }
 

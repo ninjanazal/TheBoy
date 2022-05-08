@@ -5,7 +5,6 @@
 
 #include <SFML/Graphics.hpp>
 #include "Cartridge.h"
-#include "addressbus.h"
 #include "cpu.h"
 
 /**
@@ -13,6 +12,7 @@
  */
 namespace TheBoy {
 	class AddressBus;
+	class Cpu;
 
 	
 	/**
@@ -28,6 +28,11 @@ namespace TheBoy {
 		 * @brief Emulator Address bus object
 		 */
 		std::shared_ptr<AddressBus> bus;
+
+		/**
+		 * @brief Emulator cpu object
+		 */
+		std::shared_ptr<Cpu> cpu;
 
 	} EmulatorComponents;
 	
@@ -68,6 +73,11 @@ namespace TheBoy {
 		 */
 		void _run();
 
+		/**
+		 * @brief Internal event manager function
+		 */
+		void manageEvents();
+
 	public:
 		/**
 		 * @brief Construct a new Emulator Controller object
@@ -87,10 +97,30 @@ namespace TheBoy {
 		void Start(const char* rom_path);
 
 		/**
+		 * @brief Stops the emulation execution with a defined message
+		 * @param msg Stop message
+		 */
+		void forceEmuStop(const char* msg);
+
+		/**
+		 * @brief Emulates a defined number of cpu cycles
+		 * @param cycles 
+		 */
+		void emulCycles(const int& cycles);
+	
+
+		/**
 		 * @brief Get the Cartridge object
 		 * @return std::shared_ptr<Cartridge> Shared pointer to the inUse cartridge
 		 */
 		std::shared_ptr<Cartridge> getCartridge();
+
+
+		/**
+		 * @brief Get the Bus object
+		 * @return std::shared_ptr<AddressBus> Shared pointer to the inUse AddressBus
+		 */
+		std::shared_ptr<AddressBus> getBus();
 	};
 	
 } // namespace TheBoy

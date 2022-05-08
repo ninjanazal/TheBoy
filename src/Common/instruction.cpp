@@ -6,11 +6,11 @@ namespace TheBoy {
 	 * @brief Defined instruction set for the LR35902 (GameBoy CPU)
 	 *  
 	 */
-	const Instruc instrucSet[0x100] = {
+	static Instruc instrucSet[0x100] = {
 		[0x00] = {INST_NOP, OPMODE_NONE},
-		[0x01] = {INST_LD,  },
-		[0x02] = { },
-		[0x03] = { },
+		[0x01] = {INST_LD, OPMODE_R_V16, REG_BC},
+		[0x02] = {INST_LD, OPMODE_AR_R, REG_BC, REG_A},
+		[0x03] = {INST_INC, OPMODE_R, REG_BC},
 		[0x04] = { },
 		[0x05] = {INST_DEC, OPMODE_R, REG_B},
 		[0x06] = { },
@@ -21,7 +21,7 @@ namespace TheBoy {
 		[0x0B] = { },
 		[0x0C] = { },
 		[0x0D] = { },
-		[0x0E] = { INST_LD, OPMODE_R_V8, REG_C },
+		[0x0E] = {INST_LD, OPMODE_R_V8, REG_C},
 		[0x0F] = { },
 		[0x10] = { },
 		[0x11] = { },
@@ -182,7 +182,7 @@ namespace TheBoy {
 		[0xAC] = { },
 		[0xAD] = { },
 		[0xAE] = { },
-		[0xAF] = { },
+		[0xAF] = {INST_XOR, OPMODE_R, REG_A},
 		[0xB0] = { },
 		[0xB1] = { },
 		[0xB2] = { },
@@ -265,5 +265,14 @@ namespace TheBoy {
 		[0xFF] = { }
 
 	};
+
+	/**
+	 * @brief Get the By Opcode object
+	 * @param opCd Opcode value for the instructions
+	 * @return Instruc* Pointer to Defined instruction value
+	 */
+	Instruc* getByOpcode(bit8 opCd){
+		return &instrucSet[opCd];
+	}
 	
 } // namespace TheBoy
