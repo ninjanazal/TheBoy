@@ -76,3 +76,6 @@ Use this script to gather all the information needed, compile e execute;
 ### ScreenShots
 ``` Cartridge header out ```
 ![Cartridge Header](prtSc/CartridgeHeaderMapPNG.PNG)
+
+``` OpCode Execution (JP) ```
+![Cartridge Header](prtSc/JumpInstructionCpuExecution.PNG)
