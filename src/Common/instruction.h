@@ -31,8 +31,9 @@ namespace TheBoy {
 		INST_DEC,
 		INST_JP,
 		INST_DI,
+		INST_EI,
 		INST_INC,
-		INST_XOR
+		INST_XOR,
 	} InstructType;
 
 

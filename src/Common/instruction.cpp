@@ -255,7 +255,7 @@ namespace TheBoy {
 		[0xF5] = { },
 		[0xF6] = { },
 		[0xF7] = { },
-		[0xF8] = { },
+		[0xF8] = {INST_EI, OPMODE_NONE},
 		[0xF9] = { },
 		[0xFA] = { },
 		[0xFB] = { },

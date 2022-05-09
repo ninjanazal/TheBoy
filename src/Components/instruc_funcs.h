@@ -11,7 +11,12 @@ namespace TheBoy {
 	/**
 	 * @brief Gets the bit n state from value
 	 */
-	#define GETBIT(from, n) (from & (1 << n)) >> n
+	#define GETBIT(from, n) (from >> n) & 1
+
+	/**
+	 * @brief Sets a defined bit value
+	 */
+	#define SETBIT(to, n, val) (to = (to & ~(1 << n)) | (val << n));
 
 		/**
 		 * @brief Definition to the instruction function, this holds a pointer to a function

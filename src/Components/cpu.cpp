@@ -37,12 +37,7 @@ namespace TheBoy {
 	 */
 	void Cpu::step(){
 		if(!cpuHLT){
-
 			fetch_inst();
-
-			printf("[CPU] ::: ->  OPCODE: %2.2X | PC: %2.2X\n", currOpcode, regs->PC);
-			fflush(stdout);
-
 			fetch_data();
 			executeInst();
 		}
@@ -77,6 +72,31 @@ namespace TheBoy {
 		}
 	}
 
+		/**
+	 * @brief Get the Registers pointer
+	 * @return const Registers* Pointer to the registers
+	 */
+	Registers* Cpu::getRegisters() {
+		return regs.get();
+	}
+
+
+	/**
+	 * @brief Get the Interrupt value
+	 * @return true/False Current interrupt state
+	 */
+	bool Cpu::getInterrupt() {
+		return interruptState;
+	}
+
+	/**
+	 * @brief Set the Interrupt State value
+	 * @param iState New interrupt state value
+	 */
+	void Cpu::setInterruptState(bool iState) {
+		interruptState = iState;
+	}
+
 
 	/**
 	 * @brief Gets the current Z flag value
@@ -106,6 +126,15 @@ namespace TheBoy {
 
 
 	/**
+	 * @brief Get the Fetched Data value
+	 * @return bit16 Fetched data value
+	 */
+	bit16 Cpu::getFetchedData(){
+		return intMem.fetchData;
+	}
+
+
+	/**
 	 * @brief Updates the cpu program counter to the current fetched data
 	 */
 	void Cpu::updatePCtoFetched() {
@@ -126,12 +155,18 @@ namespace TheBoy {
 	 * @brief Defined fetch instuction from memory
 	 */
 	void Cpu::fetch_inst() {
-		currOpcode = emuCtrl->getBus()->abRead(regs->PC++);
+		currOpcode = emuCtrl->getBus()->abRead(regs->PC);
 		currInstruct = TheBoy::getByOpcode(currOpcode);
+		
 		if(currInstruct == nullptr){
 			printf("[CPU] ::: Opcode %2.2X failed to load\n", currOpcode);
 			fflush(stdout);
 		}
+
+		printf("[CPU] ::: ->  OPCODE: %2.2X | PC: %2.2X\n", currOpcode, regs->PC);
+		fflush(stdout);
+
+		regs->PC++;
 	}
 
 	/**
@@ -171,7 +206,7 @@ namespace TheBoy {
 			break;
 		}
 
-		default:
+		default:			// If none, this is a unknow operation mode
 			char* m(new char[128] {});
 			sprintf(m, "[CPU] ::: Unknown Operation mode on the instruction [OPCODE: %2.2X]\n", currOpcode);
 			emuCtrl->forceEmuStop(m);
@@ -190,6 +225,7 @@ namespace TheBoy {
 			sprintf(m, "[CPU] ::: Unknown execution function for [OPCODE: %2.2X]\n", currOpcode);
 			emuCtrl->forceEmuStop(m);
 			delete[] m;
+			return;
 		}
 		exe(this);
 	}

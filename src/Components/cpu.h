@@ -89,6 +89,26 @@ As shown above, most registers can be accessed either as one 16-bit register,
 
 
 		/**
+		 * @brief Get the Registers pointer
+		 * @return const Registers* Pointer to the registers
+		 */
+		Registers* getRegisters();
+
+		/**
+		 * @brief Get the Interrupt value
+		 * @return true/False Current interrupt state
+		 */
+		bool getInterrupt();
+
+
+		/**
+		 * @brief Set the Interrupt State value
+		 * @param iState New interrupt state value
+		 */
+		void setInterruptState(bool iState);
+
+
+		/**
 		 * @brief Gets the current Z flag value
 		 * @return bit8 Current z value
 		 */
@@ -102,12 +122,20 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		bit8 getCFlag();
 
 
+		void setFlags(bit8 z, bit8 n, bit8, h, bit8 c);
+
+
 		/**
 		 * @brief Get the Curr Instruct object
 		 * @return Instruc* Pointer to the current instruction
 		 */
 		Instruc* getCurrInstruct();
 
+		/**
+		 * @brief Get the Fetched Data value
+		 * @return bit16 Fetched data value
+		 */
+		bit16 getFetchedData();
 
 		/**
 		 * @brief Updates the cpu program counter to the current fetched data
@@ -147,6 +175,11 @@ As shown above, most registers can be accessed either as one 16-bit register,
 	 * @brief Marks if the current cpu has been halted, its in idle mode
 	 */
 	bool cpuHLT;
+
+	/**
+	 * @brief Marks if the Cpu is currently suspended by an interrupt handler
+	 */
+	bool interruptState;
 
 
 	/**

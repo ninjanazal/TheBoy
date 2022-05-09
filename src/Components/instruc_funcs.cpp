@@ -33,6 +33,33 @@ namespace TheBoy{
 		}
 
 
+
+		/**
+		 * @brief On a Instruction DI resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instDI(Cpu* cpu) {
+			cpu->setInterruptState(false);
+		}
+
+		/**
+		 * @brief On a Instruction DI resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instEI(Cpu* cpu) {
+			cpu->setInterruptState(true);
+		}
+
+
+		/**
+		 * @brief On a Instruction XOR resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instXOR(Cpu* cpu) {
+			cpu->getRegisters()->A ^= cpu->getFetchedData() & 0xFF;
+		}
+
+
 		/**
 		 * @brief Evaluates a flag condition check
 		 * @param cpu Pointer to the target Cpu object
@@ -62,9 +89,10 @@ namespace TheBoy{
 			[INST_LD] = nullptr,
 			[INST_DEC] = nullptr,
 			[INST_JP] = instJP,
-			[INST_DI] = nullptr,
+			[INST_DI] = instDI,
+			[INST_EI] = instEI,
 			[INST_INC] = nullptr,
-			[INST_XOR] = nullptr
+			[INST_XOR] = instXOR
 		};
 		
 
