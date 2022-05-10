@@ -48,7 +48,8 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		 * @brief Resets the registers values
 		 */
 		void reset(){
-			A = F = B = C = D = E = H = L = 0x0;
+			A = 0x01;
+			F = B = C = D = E = H = L = 0x0;
 			SP = PC = 0x0; 
 		}
 	} Registers;
@@ -89,10 +90,12 @@ As shown above, most registers can be accessed either as one 16-bit register,
 
 
 		/**
-		 * @brief Get the Registers pointer
-		 * @return const Registers* Pointer to the registers
+		 * @brief Set the Register Value
+		 * @param type Registor type to be set
+		 * @param value Value to be set
 		 */
-		Registers* getRegisters();
+		void setRegisterValue(RegisterType regType, bit16 value);
+
 
 		/**
 		 * @brief Get the Interrupt value
@@ -122,7 +125,14 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		bit8 getCFlag();
 
 
-		void setFlags(bit8 z, bit8 n, bit8, h, bit8 c);
+		/**
+		 * @brief Set the Flags values
+		 * @param z Zero flag
+		 * @param n Subtraction flag (null flag)
+		 * @param h Half Carry flag
+		 * @param c Carry flag
+		 */
+		void setFlags(bit8 z, bit8 n, bit8 h, bit8 c);
 
 
 		/**

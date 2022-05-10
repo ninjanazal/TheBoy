@@ -72,12 +72,33 @@ namespace TheBoy {
 		}
 	}
 
-		/**
-	 * @brief Get the Registers pointer
-	 * @return const Registers* Pointer to the registers
+
+	/**
+	 * @brief Set the Register Value
+	 * @param type Registor type to be set
+	 * @param value Value to be set
 	 */
-	Registers* Cpu::getRegisters() {
-		return regs.get();
+	void Cpu::setRegisterValue(RegisterType regType, bit16 value){
+		switch (regType) {
+		case REG_A: regs->A = value & 0xFF;
+		case REG_F: regs->F = value & 0xFF;
+		case REG_B: regs->B = value & 0xFF;
+		case REG_C: regs->C = value & 0xFF;
+		case REG_D: regs->D = value & 0xFF;
+		case REG_E: regs->E = value & 0xFF;
+		case REG_H: regs->H = value & 0xFF;
+		case REG_L: regs->L = value & 0xFF;
+		
+		case REG_SP: regs->SP = value;
+		case REG_PC: regs->PC = value;
+
+		case REG_AF: *((bit16 *)&regs->A) = TheBoy::reverse16(value);
+		case REG_BC: *((bit16 *)&regs->B) = TheBoy::reverse16(value);
+		case REG_DE: *((bit16 *)&regs->D) = TheBoy::reverse16(value);
+		case REG_HL: *((bit16 *)&regs->H) = TheBoy::reverse16(value);
+	
+		default: return;
+		}
 	}
 
 
@@ -113,6 +134,24 @@ namespace TheBoy {
 	 */
 	bit8 Cpu::getCFlag() {
 		return (GETBIT(regs->F, 4));
+	}
+
+
+
+	/**
+	 * @brief Set the Flags values
+	 * @param z Zero flag
+	 * @param n Subtraction flag (null flag)
+	 * @param h Half Carry flag
+	 * @param c Carry flag
+	 */
+	void Cpu::setFlags(bit8 z, bit8 n, bit8 h, bit8 c){
+		using namespace CpuFuncs;
+		if(z != -1) { SETBIT(regs->F, 7, z); }
+		SETBIT(regs->F, 6, n);
+		SETBIT(regs->F, 5, h);
+		SETBIT(regs->F, 4, c);
+
 	}
 
 
@@ -180,8 +219,14 @@ namespace TheBoy {
 		case OPMODE_NONE: 	// No memory operation needed			
 			break;
 
+
 		case OPMODE_R:		// Memory operation only over a register
 			intMem.fetchData = getRegisterValue(currInstruct->regTypeL);
+			break;
+
+
+		case OPMODE_R_R:	// Memory operation on two registers
+			intMem.fetchData = getRegisterValue(currInstruct->regTypeR);
 			break;
 
 
@@ -192,6 +237,7 @@ namespace TheBoy {
 			regs->PC++;
 			break;
 
+		case OPMODE_R_V16:	// Memory operation on a register and 16biy value
 		case OPMODE_V16: {	// Memory operation on a 16bit value
 			bit16 low = emuCtrl->getBus()->abRead(regs->PC);
 			emuCtrl->emulCycles(1);
@@ -200,11 +246,136 @@ namespace TheBoy {
 			bit16 high = emuCtrl->getBus()->abRead(regs->PC);
 			emuCtrl->emulCycles(1);
 
-
 			intMem.fetchData = low | (high << 8);
 			regs->PC++;
 			break;
 		}
+
+		case OPMODE_V8:		// Memory operation on 8bit value
+			intMem.fetchData = emuCtrl->getBus()->abRead(regs->PC);
+			emuCtrl->emulCycles(1);
+			regs->PC++;
+			break;
+		
+
+		case OPMODE_AR_R:	// Memory operation on registor adress and registor
+			intMem.fetchData = getRegisterValue(currInstruct->regTypeR);
+			intMem.memDest = getRegisterValue(currInstruct->regTypeL);
+			intMem.destIsMem = true;
+
+			/*
+			For register C
+Load to the address specified by the 8-bit C register, data from the 8-bit A register. The full 16-bit absolute
+address is obtained by setting the most significant byte to 0xFF and the least significant byte to the value of C,
+so the possible range is 0xFF00-0xFFFF.
+			*/
+			if(currInstruct->regTypeL == REG_C){
+				intMem.memDest |= 0xFF00;
+			}
+			break;
+
+
+		case OPMODE_R_AR: {	// Memory operation on a registor and a  memory registor address
+			bit16 address = getRegisterValue(currInstruct->regTypeR); 
+
+			/*
+			For register C
+Load to the address specified by the 8-bit C register, data from the 8-bit A register. The full 16-bit absolute
+address is obtained by setting the most significant byte to 0xFF and the least significant byte to the value of C,
+so the possible range is 0xFF00-0xFFFF.
+			*/
+			if(currInstruct->regTypeL == REG_C){
+				address |= 0xFF;
+			}
+			intMem.fetchData = emuCtrl->getBus()->abRead(address);
+			emuCtrl->emulCycles(1);
+			break;
+		}
+
+		case OPMODE_R_HLI:	// memory operation on a registor and the HL register, incrementing
+			intMem.fetchData = emuCtrl->getBus()->abRead(currInstruct->regTypeL);
+			emuCtrl->emulCycles(1);
+			setRegisterValue(REG_HL, getRegisterValue(REG_HL) + 0x01);
+			break;
+
+
+		case OPMODE_R_HLD:	// Memory operation on registor and the HL register, decrementing
+			intMem.fetchData = emuCtrl->getBus()->abRead(currInstruct->regTypeL);
+			emuCtrl->emulCycles(1);
+			setRegisterValue(REG_HL, getRegisterValue(REG_HL) - 0x01);
+			break;
+
+
+		case OPMODE_HLI_R:	// Memory operation on HL register from register, incrementing
+			intMem.fetchData = emuCtrl->getBus()->abRead(currInstruct->regTypeR);
+			intMem.memDest = emuCtrl->getBus()->abRead(currInstruct->regTypeL);
+			intMem.destIsMem = true;
+			setRegisterValue(REG_HL, getRegisterValue(REG_HL) + 0x01);
+			break;
+
+
+		case OPMODE_HLD_R:	// Memory operation on HL register from register, decrementing
+			intMem.fetchData = emuCtrl->getBus()->abRead(currInstruct->regTypeR);
+			intMem.memDest = emuCtrl->getBus()->abRead(currInstruct->regTypeL);
+			intMem.destIsMem = true;
+			setRegisterValue(REG_HL, getRegisterValue(REG_HL) - 0x01);
+			break;
+
+
+		case OPMODE_R_A8: 	// Memory operation on registor from 8bit memory address
+			intMem.fetchData = emuCtrl->getBus()->abRead(regs->PC);
+			emuCtrl->emulCycles(1);
+			regs->PC++;
+			break;
+
+		case OPMODE_A8_R:	// Memory operation on 8bit address to registor
+			intMem.memDest = emuCtrl->getBus()->abRead(regs->PC) | 0xFF00; // 8bit address value
+			intMem.destIsMem = true;
+			emuCtrl->emulCycles(1);
+			regs->PC++;
+			break;
+
+
+		case OPMODE_HL_SPR:	// Memory operation on SP and Hl registers
+			intMem.fetchData = emuCtrl->getBus()->abRead(regs->PC);
+			emuCtrl->emulCycles(1);
+			regs->PC++;
+			break;
+
+
+		case OPMODE_A16_R:{	// Memory operation on registor to 16bit address
+			bit16 low = emuCtrl->getBus()->abRead(regs->PC);
+			emuCtrl->emulCycles(1);
+			regs->PC++;
+			
+			bit16 high = emuCtrl->getBus()->abRead(regs->PC);
+			emuCtrl->emulCycles(1);
+
+			intMem.memDest = low | (high << 8);~
+			regs->PC++;
+
+			intMem.destIsMem = true;
+			intMem.fetchData = emuCtrl->getBus()->abRead(currInstruct->regTypeR);
+			emuCtrl->emulCycles(1);
+			break;
+		}
+
+		case OPMODE_AR_V8:	// Memory operation on 8bit value to registor address
+			intMem.fetchData = emuCtrl->getBus()->abRead(regs->PC);
+			emuCtrl->emulCycles(1);
+			regs->PC++;
+			intMem.memDest = getRegisterValue(currInstruct->regTypeL);
+			intMem.destIsMem = true;
+			break;
+
+		case OPMODE_AR:		// Memory operation on registor address
+			intMem.memDest = getRegisterValue(currInstruct->regTypeL);
+			intMem.destIsMem = true;
+			intMem.fetchData = emuCtrl->getBus()->abRead(intMem.memDest);
+			emuCtrl->emulCycles(1);
+			break;
+		
+
 
 		default:			// If none, this is a unknow operation mode
 			char* m(new char[128] {});
@@ -220,7 +391,7 @@ namespace TheBoy {
 	 */
 	void Cpu::executeInst() {
 		CpuFuncs::INST_FUNC exe = CpuFuncs::getInstructProcess(currInstruct->insType);
-		if(!exe){
+		if(!exe || currInstruct->insType == INST_NONE){
 			char* m(new char[128] {});
 			sprintf(m, "[CPU] ::: Unknown execution function for [OPCODE: %2.2X]\n", currOpcode);
 			emuCtrl->forceEmuStop(m);

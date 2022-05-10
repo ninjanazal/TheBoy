@@ -33,7 +33,6 @@ namespace TheBoy{
 		}
 
 
-
 		/**
 		 * @brief On a Instruction DI resolver
 		 * @param cpu Requester cpu pointer
@@ -41,6 +40,7 @@ namespace TheBoy{
 		static void instDI(Cpu* cpu) {
 			cpu->setInterruptState(false);
 		}
+
 
 		/**
 		 * @brief On a Instruction DI resolver
@@ -56,7 +56,11 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instXOR(Cpu* cpu) {
-			cpu->getRegisters()->A ^= cpu->getFetchedData() & 0xFF;
+			cpu->setRegisterValue( 
+				REG_A,
+				cpu->getRegisterValue(REG_A) ^ (cpu->getFetchedData() & 0xFF)
+			);
+			cpu->setFlags(cpu->getRegisterValue(REG_A), 0, 0, 0);
 		}
 
 

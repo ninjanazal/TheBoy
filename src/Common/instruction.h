@@ -68,9 +68,22 @@ namespace TheBoy {
 		OPMODE_NONE,
 		OPMODE_R,
 		OPMODE_V16,
+		OPMODE_V8,
 		OPMODE_R_V16,
 		OPMODE_R_V8,
-		OPMODE_AR_R
+		OPMODE_R_R,
+		OPMODE_AR_R,
+		OPMODE_R_AR,
+		OPMODE_R_HLI,	// HLI operation over HL Register and increment
+		OPMODE_R_HLD,	// HLD operation over HL Register and decrement
+		OPMODE_HLI_R,	// HLI operation over register and increment
+		OPMODE_HLD_R,	// HLD operation over register and decrement
+		OPMODE_R_A8,
+		OPMODE_A8_R,
+		OPMODE_HL_SPR,	// Unique operation {F8}, loads the stack pointer to hl and increment by r8
+		OPMODE_A16_R,
+		OPMODE_AR_V8,
+		OPMODE_AR
 	} OperationMode;
 
 
