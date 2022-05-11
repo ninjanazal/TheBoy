@@ -80,22 +80,22 @@ namespace TheBoy {
 	 */
 	void Cpu::setRegisterValue(RegisterType regType, bit16 value){
 		switch (regType) {
-		case REG_A: regs->A = value & 0xFF;
-		case REG_F: regs->F = value & 0xFF;
-		case REG_B: regs->B = value & 0xFF;
-		case REG_C: regs->C = value & 0xFF;
-		case REG_D: regs->D = value & 0xFF;
-		case REG_E: regs->E = value & 0xFF;
-		case REG_H: regs->H = value & 0xFF;
-		case REG_L: regs->L = value & 0xFF;
+		case REG_A: regs->A = value & 0xFF;	return;
+		case REG_F: regs->F = value & 0xFF; return;
+		case REG_B: regs->B = value & 0xFF; return;
+		case REG_C: regs->C = value & 0xFF; return;
+		case REG_D: regs->D = value & 0xFF; return;
+		case REG_E: regs->E = value & 0xFF; return;
+		case REG_H: regs->H = value & 0xFF; return;
+		case REG_L: regs->L = value & 0xFF; return;
 		
-		case REG_SP: regs->SP = value;
-		case REG_PC: regs->PC = value;
+		case REG_SP: regs->SP = value; return;
+		case REG_PC: regs->PC = value; return;
 
-		case REG_AF: *((bit16 *)&regs->A) = TheBoy::reverse16(value);
-		case REG_BC: *((bit16 *)&regs->B) = TheBoy::reverse16(value);
-		case REG_DE: *((bit16 *)&regs->D) = TheBoy::reverse16(value);
-		case REG_HL: *((bit16 *)&regs->H) = TheBoy::reverse16(value);
+		case REG_AF: *((bit16 *)&regs->A) = TheBoy::reverse16(value); return;
+		case REG_BC: *((bit16 *)&regs->B) = TheBoy::reverse16(value); return;
+		case REG_DE: *((bit16 *)&regs->D) = TheBoy::reverse16(value); return;
+		case REG_HL: *((bit16 *)&regs->H) = TheBoy::reverse16(value); return;
 	
 		default: return;
 		}
@@ -174,6 +174,23 @@ namespace TheBoy {
 
 
 	/**
+	 * @brief Gets if the internal memory marks that fetched is memoryLoc
+	 * @return true/false Is memory location
+	 */
+	bool Cpu::getDestenyIsMem(){
+		return intMem.destIsMem;
+	}
+
+	/**
+	 * @brief Get the Memory Dest internal memory value
+	 * @return bit16 Memory destination
+	 */
+	bit16 Cpu::getMemoryDest(){
+		return intMem.memDest;
+	}
+
+
+	/**
 	 * @brief Updates the cpu program counter to the current fetched data
 	 */
 	void Cpu::updatePCtoFetched() {
@@ -187,6 +204,16 @@ namespace TheBoy {
 	 */
 	void Cpu::requestCycles(const int& cycles) {
 		emuCtrl->emulCycles(cycles);
+	}
+
+
+	/**
+	 * @brief Writes to a defined address
+	 * @param addr Target address to be written
+	 * @param val Value to be setted on the address 
+	 */
+	void Cpu::requestBusWrite(bit16 addr, bit8 val){
+		emuCtrl->getBus()->abWrite(addr, val);
 	}
 
 

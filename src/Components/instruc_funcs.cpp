@@ -65,6 +65,27 @@ namespace TheBoy{
 
 
 		/**
+		 * @brief On a Instruction XOR resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instLD(Cpu* cpu){
+			if(cpu->getDestenyIsMem()){
+				// Form loads where the target is a memory location ex {0x02}
+				// if is a 16bit value
+				if(cpu->getCurrInstruct()->regTypeL >= RegisterType::REG_AF){
+					cpu->requestCycles(1);
+				}
+				else{
+					// for 8bit writes
+					cpu->requestBusWrite(cpu->getMemoryDest(), cpu->getFetchedData());
+				}
+
+			}
+			cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, cpu->getFetchedData());
+		}
+
+
+		/**
 		 * @brief Evaluates a flag condition check
 		 * @param cpu Pointer to the target Cpu object
 		 * @return true If the condition passes
@@ -90,7 +111,7 @@ namespace TheBoy{
 		static INST_FUNC instructResolvers[] = {
 			[INST_NONE] = instNone,
 			[INST_NOP] = instNOP,
-			[INST_LD] = nullptr,
+			[INST_LD] = instLD,
 			[INST_DEC] = nullptr,
 			[INST_JP] = instJP,
 			[INST_DI] = instDI,

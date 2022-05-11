@@ -147,6 +147,21 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		 */
 		bit16 getFetchedData();
 
+
+		/**
+		 * @brief Gets if the internal memory marks that fetched is memoryLoc
+		 * @return true/false Is memory location
+		 */
+		bool getDestenyIsMem();
+
+
+		/**
+		 * @brief Get the Memory Dest internal memory value
+		 * @return bit16 Memory destination
+		 */
+		bit16 getMemoryDest();
+
+
 		/**
 		 * @brief Updates the cpu program counter to the current fetched data
 		 */
@@ -157,6 +172,14 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		 * @param cycles Cycle value
 		 */
 		void requestCycles(const int& cycles);
+
+
+		/**
+		 * @brief Writes to a defined address
+		 * @param addr Target address to be written
+		 * @param val Value to be setted on the address 
+		 */
+		void requestBusWrite(bit16 addr, bit8 val);
 
 	private:
 
