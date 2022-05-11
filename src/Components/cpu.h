@@ -175,11 +175,19 @@ As shown above, most registers can be accessed either as one 16-bit register,
 
 
 		/**
-		 * @brief Writes to a defined address
+		 * @brief Requests Writes to a defined address
 		 * @param addr Target address to be written
 		 * @param val Value to be setted on the address 
 		 */
 		void requestBusWrite(bit16 addr, bit8 val);
+
+
+		/**
+		 * @brief Requests Writes to a defined address
+		 * @param addr Target address to be written
+		 * @param val 16bit Value to be setted on the address 
+		 */
+		void requestBusWrite16(bit16 addr, bit16 val);
 
 	private:
 

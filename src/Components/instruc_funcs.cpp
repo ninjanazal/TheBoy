@@ -79,7 +79,25 @@ namespace TheBoy{
 					// for 8bit writes
 					cpu->requestBusWrite(cpu->getMemoryDest(), cpu->getFetchedData());
 				}
+				return;
+			}
 
+			// For the Unique operation {F8}, loads the stack pointer to hl and increment by r8 
+			if(cpu->getCurrInstruct()->opMode == OPMODE_HL_SPR){
+				// Since this operation has the H & C flag set to flip on demand
+				// Evaluates the Half Carry flag status, if adding the 
+				bit8 hFlag = (cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeR) & 0xF) +
+						(cpu->getFetchedData() & 0xF) >= 0x10;
+				// Evaluates the carry flag status
+				bit8 cFlag = (cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeR) & 0xFF) +
+						(cpu->getFetchedData() & 0xFF) >=0x100;
+
+				cpu->setFlags(0, 0, hFlag, cFlag);
+				// Defines the HL Registor to the value of the StackPointer Reg + the 8bit fetched data
+				cpu->setRegisterValue(
+					cpu->getCurrInstruct()->regTypeL,
+					cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeR) + (bit8)cpu->getFetchedData()
+				);
 			}
 			cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, cpu->getFetchedData());
 		}

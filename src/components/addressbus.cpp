@@ -23,6 +23,19 @@ namespace TheBoy {
 		return 0x00;
 	}
 
+	
+	/**
+	 * @brief Reads the 16bit value from the defined address 
+	 * @param addr Read address value
+	 * @return bit16 Value on the defined address
+	 */
+	bit16 AddressBus::abRead16(bit16 addr){
+		bit16 l = abRead(addr);
+		bit16 h = abRead(addr + 0x1);
+
+		return l | (h << 8);
+	}
+
 
 	/**
 	 * @brief Writes to a defined address
@@ -30,8 +43,21 @@ namespace TheBoy {
 	 * @param val Value to be setted on the address 
 	 */
 	void AddressBus::abWrite(bit16 addr, bit8 val){
-		return;
-		//if(addr<0x8000){ }
+		// Rom values
+		if(addr<0x8000){
+			emuCtrl->getCartridge()->write(addr, val);
+		 }
+	}
+
+
+	/**
+	 * @brief Writes to the defined address a 16bit value
+	 * @param addr Target address to be written
+	 * @param val Value to be setted on the address
+	 */
+	void AddressBus::abWrite16(bit16 addr, bit16 val){
+		emuCtrl->getCartridge()->write(addr + 1, (val >> 8) & 0xFF);
+		emuCtrl->getCartridge()->write(addr, val & 0xFF);
 	}
 
 }

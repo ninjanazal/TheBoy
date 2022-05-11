@@ -13,7 +13,7 @@ namespace TheBoy {
 		[0x03] = {INST_INC, OPMODE_R, REG_BC},
 		[0x04] = { },
 		[0x05] = {INST_DEC, OPMODE_R, REG_B},
-		[0x06] = { },
+		[0x06] = {INST_LD, OPMODE_R_V8, REG_B},
 		[0x07] = { },
 		[0x08] = { },
 		[0x09] = { },

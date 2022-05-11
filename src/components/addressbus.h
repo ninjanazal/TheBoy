@@ -47,12 +47,28 @@ namespace TheBoy {
 		 */
 		bit8 abRead(bit16 addr);
 
+
+		/**
+		 * @brief Reads the 16bit value from the defined address 
+		 * @param addr Read address value
+		 * @return bit16 Value on the defined address
+		 */
+		bit16 abRead16(bit16 addr);
+
 		/**
 		 * @brief Writes to a defined address
 		 * @param addr Target address to be written
 		 * @param val Value to be setted on the address 
 		 */
 		void abWrite(bit16 addr, bit8 val);
+
+
+		/**
+		 * @brief Writes to the defined address a 16bit value
+		 * @param addr Target address to be written
+		 * @param val Value to be setted on the address
+		 */
+		void abWrite16(bit16 addr, bit16 val);
 	
 	private:
 		/**
