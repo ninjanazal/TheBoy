@@ -34,6 +34,7 @@ namespace TheBoy {
 		INST_EI,
 		INST_INC,
 		INST_XOR,
+		INST_HALT
 	} InstructType;
 
 
@@ -79,6 +80,7 @@ namespace TheBoy {
 		OPMODE_HLI_R,	// HLI operation over register and increment
 		OPMODE_HLD_R,	// HLD operation over register and decrement
 		OPMODE_R_A8,
+		OPMODE_R_A16,
 		OPMODE_A8_R,
 		OPMODE_HL_SPR,	// Unique operation {F8}, loads the stack pointer to hl and increment by r8
 		OPMODE_A16_R,

@@ -135,7 +135,8 @@ namespace TheBoy{
 			[INST_DI] = instDI,
 			[INST_EI] = instEI,
 			[INST_INC] = nullptr,
-			[INST_XOR] = instXOR
+			[INST_XOR] = instXOR,
+			[INST_HALT] = nullptr
 		};
 		
 

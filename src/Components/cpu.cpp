@@ -355,6 +355,23 @@ so the possible range is 0xFF00-0xFFFF.
 			regs->PC++;
 			break;
 
+
+		case OPMODE_R_A16: {	// Memory operation on registor from 16bit memory address
+			bit16 low = emuCtrl->getBus()->abRead(regs->PC);
+			emuCtrl->emulCycles(1);
+			regs->PC++;
+
+			bit16 high = emuCtrl->getBus()->abRead(regs->PC);
+			emuCtrl->emulCycles(1);
+			regs->PC++;
+
+			bit16 addr = low | (high >> 8);
+			intMem.fetchData = emuCtrl->getBus()->abRead(addr);
+			emuCtrl->emulCycles(1);
+			break;
+		}
+		
+
 		case OPMODE_A8_R:	// Memory operation on 8bit address to registor
 			intMem.memDest = emuCtrl->getBus()->abRead(regs->PC) | 0xFF00; // 8bit address value
 			intMem.destIsMem = true;
