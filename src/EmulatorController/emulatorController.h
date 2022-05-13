@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 #include "Cartridge.h"
 #include "cpu.h"
+#include "ram.h"
 
 /**
  * @brief Core Project Namespace 
@@ -13,6 +14,7 @@
 namespace TheBoy {
 	class AddressBus;
 	class Cpu;
+	class Ram;
 
 	
 	/**
@@ -33,6 +35,11 @@ namespace TheBoy {
 		 * @brief Emulator cpu object
 		 */
 		std::shared_ptr<Cpu> cpu;
+
+		/**
+		 * @brief Emulator Ram object
+		 */
+		std::shared_ptr<Ram> ram;
 
 	} EmulatorComponents;
 	
@@ -121,6 +128,13 @@ namespace TheBoy {
 		 * @return std::shared_ptr<AddressBus> Shared pointer to the inUse AddressBus
 		 */
 		std::shared_ptr<AddressBus> getBus();
+
+
+		/**
+		 * @brief Get the Ram object
+		 * @return std::shared_ptr<Ram> Shared pointer to the inUse Ram
+		 */
+		std::shared_ptr<Ram> getRam();
 	};
 	
 } // namespace TheBoy

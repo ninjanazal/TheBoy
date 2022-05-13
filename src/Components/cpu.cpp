@@ -1,4 +1,5 @@
 #include "cpu.h"
+#include "emulatorController.h"
 
 namespace TheBoy {
 	/**

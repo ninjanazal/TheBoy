@@ -2,7 +2,6 @@
 #define CPU_H
 
 #include "common.h"
-#include "emulatorController.h"
 #include "addressbus.h"
 #include "instruc_funcs.h"
 

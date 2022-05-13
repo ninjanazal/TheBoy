@@ -59,6 +59,8 @@ namespace TheBoy {
 		);
 		
 		comps.bus = std::make_shared<AddressBus>(AddressBus(this));
+		comps.ram = std::make_shared<Ram>(Ram(this));
+
 		comps.cpu = std::make_shared<Cpu>(Cpu(this));
 		comps.cpu->setPCEntry(0x100);
 
@@ -116,6 +118,17 @@ namespace TheBoy {
 			std::cout << "[Emulator] ::: Get Bus on a null shared!" << std::endl;
 		}
 		return comps.bus;
+	}
+
+	/**
+	 * @brief Get the Ram object
+	 * @return std::shared_ptr<Ram> Shared pointer to the inUse Ram
+	 */
+	std::shared_ptr<Ram> EmulatorController::getRam() {
+		if(!comps.ram) {
+			std::cout << "[Emulator] ::: Get Ram on a null shared!" << std::endl;
+		}
+		return comps.ram;
 	}
 }
 

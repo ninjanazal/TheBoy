@@ -5,9 +5,9 @@ set( SOURCE
 	${SOURCE}
 	${CMAKE_CURRENT_SOURCE_DIR}/cartridge.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/addressbus.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/ram.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/cpu.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/instruc_funcs.cpp
-
 	
 	PARENT_SCOPE
 )
