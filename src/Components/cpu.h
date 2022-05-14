@@ -49,7 +49,8 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		void reset(){
 			A = 0x01;
 			F = B = C = D = E = H = L = 0x0;
-			SP = PC = 0x0; 
+			PC = 0x0;
+			SP = 0xDFFF;
 		}
 	} Registers;
 
@@ -188,6 +189,52 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		 */
 		void requestBusWrite16(bit16 addr, bit16 val);
 
+
+		/**
+		 * @brief Request Read to a defined addres
+		 * @param addr Target read address
+		 * @return bit8 Readed value
+		 */
+		bit8 requestBusRead(bit16 addr);
+
+		/**
+		 * @brief Get the Cpu IE Register value
+		 * @return bit8 Current IE register value
+		 */
+		bit8 getCpuIERegister();
+
+		/**
+		 * @brief Set the Cpu IE Register value
+		 * @param val New Ie register value
+		 */
+		void setCpuIERegister(bit8 val);
+
+
+		/**
+		 * @brief Push a 8bit data to the next stack pointer location, decrement the sp val
+		 * @param data Data to be pushed
+		 */
+		void push(bit8 data);
+
+		/**
+		 * @brief Push a 16bit data to the next stack pointer location, decrement the sp val
+		 * @param data Data to be pushed
+		 */
+		void push16(bit16 data);
+
+		/**
+		 * @brief Pop a 8bit data from the current stack pointer location, increment sp val
+		 * @return bit8 Current stack pointer data location
+		 */
+		bit8 pop();
+
+
+		/**
+		 * @brief Pop a 16bit data from the current stack pointer location, increment sp val
+		 * @return bit8 Current stack pointer data location
+		 */
+		bit16 pop16();
+
 	private:
 
 	/**
@@ -220,6 +267,12 @@ As shown above, most registers can be accessed either as one 16-bit register,
 	 * @brief Marks if the Cpu is currently suspended by an interrupt handler
 	 */
 	bool interruptState;
+
+
+	/**
+	 * @brief Cpu Interrupt Enable register (0xFFFF) on memory
+	 */
+	bit8 interruptEnable;
 
 
 	/**

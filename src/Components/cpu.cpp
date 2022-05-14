@@ -41,6 +41,12 @@ namespace TheBoy {
 			fetch_inst();
 			fetch_data();
 			executeInst();
+
+			printf(
+				"[CPU] ::: Regs State { A: %2.2X F: %2.2X BC: %2.2X %2.2X DE: %2.2X %2.2X HL: %2.2X %2.2X SP: %4.4X PC %4.4X }\n",
+				regs->A, regs->F, regs->B, regs->C, regs->D, regs->E, regs->H, regs->L, regs->SP, regs->PC
+			);
+			fflush(stdout);
 		}
 	}
 
@@ -97,8 +103,6 @@ namespace TheBoy {
 		case REG_BC: *((bit16 *)&regs->B) = TheBoy::reverse16(value); return;
 		case REG_DE: *((bit16 *)&regs->D) = TheBoy::reverse16(value); return;
 		case REG_HL: *((bit16 *)&regs->H) = TheBoy::reverse16(value); return;
-	
-		default: return;
 		}
 	}
 
@@ -215,6 +219,89 @@ namespace TheBoy {
 	 */
 	void Cpu::requestBusWrite(bit16 addr, bit8 val){
 		emuCtrl->getBus()->abWrite(addr, val);
+	}
+
+
+	/**
+	 * @brief Requests Writes to a defined address
+	 * @param addr Target address to be written
+	 * @param val 16bit Value to be setted on the address 
+	 */
+	void Cpu::requestBusWrite16(bit16 addr, bit16 val) {
+		emuCtrl->getBus()->abWrite16(addr, val);
+	}
+
+
+	/**
+	 * @brief Request Read to a defined addres
+	 * @param addr Target read address
+	 * @return bit8 Readed value
+	 */
+	bit8 Cpu::requestBusRead(bit16 addr) {
+		return emuCtrl->getBus()->abRead(addr);
+	}
+
+
+	/**
+	 * @brief Get the Cpu IE Register value
+	 * @return bit8 Current IE register value
+	 */
+	bit8 Cpu::getCpuIERegister(){
+		return interruptEnable;
+	}
+
+	/**
+	 * @brief Set the Cpu IE Register value
+	 * @param val New Ie register value
+	 */
+	void Cpu::setCpuIERegister(bit8 val) {
+		interruptEnable = val;
+	}
+
+
+
+	/**
+	 * @brief Push a 8bit data to the next stack pointer location, decrement the sp val
+	 * @param data Data to be pushed
+	 */
+	void Cpu::push(bit8 data){
+		regs->SP--;
+		emuCtrl->getBus()->abWrite(regs->SP, data);
+	}
+
+	/**
+	 * @brief Push a 16bit data to the next stack pointer location, decrement the sp val
+	 * @param data Data to be pushed
+	 */
+	void Cpu::push16(bit16 data) {
+		// To push a 16bit value, use 2 sets of 8bit
+		/*
+			EX: (01010111) >> 8 = (00000101) & 1111 = 0101 low
+			(01010111) & 1111 = 0111 high
+		*/
+		push((data >> 8) & 0xFF);
+		push(data & 0xFF);
+	}
+
+	/**
+	 * @brief Pop a 8bit data from the current stack pointer location, increment sp val
+	 * @return bit8 Current stack pointer data location
+	 */
+	bit8 Cpu::pop() {
+		// Gets the current data from the bus on the current Stack pointer addres, and increment
+		return emuCtrl->getBus()->abRead(regs->SP++);
+	}
+
+
+	/**
+	 * @brief Pop a 16bit data from the current stack pointer location, increment sp val
+	 * @return bit8 Current stack pointer data location
+	 */
+	bit16 Cpu::pop16() {
+		bit8 l = pop();
+		bit8 h = pop();
+
+		return l | (h << 8);
 	}
 
 

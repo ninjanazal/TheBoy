@@ -34,7 +34,10 @@ namespace TheBoy {
 		INST_EI,
 		INST_INC,
 		INST_XOR,
-		INST_HALT
+		INST_HALT,
+		INST_LDH,	// Load to high RAM
+		INST_POP,	// Pop/push instructions are only for 16bit values
+		INST_PUSH
 	} InstructType;
 
 

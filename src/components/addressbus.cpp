@@ -34,7 +34,7 @@ namespace TheBoy {
 		}
 		// Work RAM 4kiB and switchable banks (4kiB)
 		else if(addr < 0xE000) {
-			// TODO Add Working RAM
+			return emuCtrl->getRam()->wRead(addr);
 		}
 		// Echo RAM, Nintendo says use of this area is prohibited
 		else if(addr < 0xFE00) {
@@ -54,16 +54,16 @@ namespace TheBoy {
 		// I/O Registers
 		else if(addr < 0xFF80) {
 			// TODO
+			std::cout << "[ADDRESSBUS] ::: Reading to I/O Registers" << std::endl;
 			return 0x00;
 		}
 		// Interrupt Enable register
 		else if(addr == 0xFFFF ) {
-			// TODO
-			return 0x00;
+			return emuCtrl->getCpu()->getCpuIERegister();
 		}
-
-		// TODO FF80 -> FFFE High RAM
-		return 0x00;
+		// FF80 -> FFFE High RAM
+		return emuCtrl->getRam()->hRead(addr);
+		
 	}
 
 	
@@ -107,7 +107,7 @@ namespace TheBoy {
 		}
 		// Work RAM 4kiB and switchable banks (4kiB)
 		else if(addr < 0xE000) {
-			// TODO
+			emuCtrl->getRam()->wWrite(addr, val);
 		}
 		// Echo RAM, Nintendo says use of this area is prohibited
 		else if(addr < 0xFE00) {
@@ -124,12 +124,15 @@ namespace TheBoy {
 		// I/O Registers
 		else if(addr < 0xFF80) {
 			// TODO
+			std::cout << "[ADDRESSBUS] ::: Reading to I/O Registers" << std::endl;
 		}
 		// Interrupt Enable register
 		else if(addr == 0xFFFF ) {
+			emuCtrl->getCpu()->setCpuIERegister(val);
 		}
+		// High RAM (HRAM)
 		else {
-			// TODO FF80 -> FFFE High RAM
+			emuCtrl->getRam()->hWrite(addr, val);
 		}
 	}
 

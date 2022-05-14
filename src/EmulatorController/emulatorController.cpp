@@ -16,7 +16,6 @@ namespace TheBoy {
 			window->clear(sf::Color::Black);
 			window->display();
 		}
-		
 	}
 
 
@@ -54,17 +53,17 @@ namespace TheBoy {
 	 * @param size Window size
 	 */
 	void EmulatorController::Start(const char* rom_path) {
-		window = new sf::RenderWindow(
+		window = std::make_shared<sf::RenderWindow>(
 			sf::VideoMode(900, 500), "TheBoy Emulator"
 		);
 		
-		comps.bus = std::make_shared<AddressBus>(AddressBus(this));
-		comps.ram = std::make_shared<Ram>(Ram(this));
+		comps.bus = std::make_shared<AddressBus>(this);
+		comps.ram = std::make_shared<Ram>(this);
 
-		comps.cpu = std::make_shared<Cpu>(Cpu(this));
+		comps.cpu = std::make_shared<Cpu>(this);
 		comps.cpu->setPCEntry(0x100);
 
-		comps.cart = std::make_shared<Cartridge>(Cartridge(rom_path));
+		comps.cart = std::make_shared<Cartridge>(rom_path);
 		if(!comps.cart->loadCartridgeFromFile()){
 			std::cout << "[Emulator] ::: Fail to load cartridge!" << std::endl;
 			return;
@@ -130,5 +129,15 @@ namespace TheBoy {
 		}
 		return comps.ram;
 	}
-}
 
+	/**
+	 * @brief Get the Cpu object
+	 * @return std::shared_ptr<Ram> Shared pointer to the inUse Cpu
+	 */
+	std::shared_ptr<Cpu> EmulatorController::getCpu() {
+		if(!comps.cpu) {
+			std::cout << "[Emulator] ::: Get Cpu on a null shared!" << std::endl;
+		}
+		return comps.cpu;
+	}
+}

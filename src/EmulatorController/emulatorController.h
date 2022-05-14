@@ -54,7 +54,7 @@ namespace TheBoy {
 		/**
 		 * @brief Pointer to the inUse window
 		 */
-		sf::RenderWindow* window;
+		std::shared_ptr<sf::RenderWindow> window;
 
 
 		/**
@@ -135,6 +135,13 @@ namespace TheBoy {
 		 * @return std::shared_ptr<Ram> Shared pointer to the inUse Ram
 		 */
 		std::shared_ptr<Ram> getRam();
+
+
+		/**
+		 * @brief Get the Cpu object
+		 * @return std::shared_ptr<Cpu> Shared pointer to the inUse Cpu
+		 */
+		std::shared_ptr<Cpu> getCpu();
 	};
 	
 } // namespace TheBoy

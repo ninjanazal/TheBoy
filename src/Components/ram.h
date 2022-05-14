@@ -69,10 +69,7 @@ namespace TheBoy {
 		 * @brief Pointer to the emulator controller
 		 */
 		EmulatorController* emuCtrl;
-	
 	};
-	
-	
 } // namespace TheBoy
 
 
