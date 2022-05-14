@@ -111,16 +111,16 @@ namespace TheBoy {
 	 * @brief Get the Interrupt value
 	 * @return true/False Current interrupt state
 	 */
-	bool Cpu::getInterrupt() {
-		return interruptState;
+	bool Cpu::getMasterInterrupt() {
+		return interruptMasterState;
 	}
 
 	/**
 	 * @brief Set the Interrupt State value
 	 * @param iState New interrupt state value
 	 */
-	void Cpu::setInterruptState(bool iState) {
-		interruptState = iState;
+	void Cpu::setInterruptMasterState(bool iState) {
+		interruptMasterState = iState;
 	}
 
 

@@ -37,7 +37,12 @@ namespace TheBoy {
 		INST_HALT,
 		INST_LDH,	// Load to high RAM
 		INST_POP,	// Pop/push instructions are only for 16bit values
-		INST_PUSH
+		INST_PUSH,
+		INST_CALL,
+		INST_RET, 	// Upon returning from CALL
+		INST_RETI,	// Upon returning from interrupt
+		INST_JR,	// Jump Relative
+		INST_RST	// Unconditional function call to the absolute fixed address defined by the opcode
 	} InstructType;
 
 
@@ -114,6 +119,7 @@ namespace TheBoy {
 		RegisterType regTypeL;
 		RegisterType regTypeR;
 		ConditionType conType;
+		bit8 param_val;
 	} Instruc;
 
 

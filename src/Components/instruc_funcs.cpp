@@ -26,10 +26,63 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instJP(Cpu* cpu){
-			if(validateCondition(cpu)){
-				cpu->updatePCtoFetched();
+			jumpToAddress(cpu, cpu->getFetchedData(), false);
+		}
+
+		/**
+		 * @brief On a Instruction JR resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instJR(Cpu* cpu){
+			// Jump relative can be a increment/decrement for the current Value, and the bit8 definition is unsigned
+			// casting to char
+			// fetchdata holds a 2Byte value, and only 1B should be used
+			char relative = (char)(cpu->getFetchedData() & 0xFF);
+			bit16 addr = cpu->getRegisterValue(REG_PC) + relative;
+			jumpToAddress(cpu, addr, false);
+		}
+
+
+		/**
+		 * @brief On a Instruction CALL resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instCALL(Cpu* cpu){
+			jumpToAddress(cpu, cpu->getFetchedData(), true);
+		}
+
+
+		/**
+		 * @brief On a Instruction RET resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instRET(Cpu* cpu){
+			// check if is a return with conditions
+			if (cpu->getCurrInstruct()->conType != CONDTYPE_NONE) {
 				cpu->requestCycles(1);
 			}
+
+			if(validateCondition(cpu)){
+				bit16 lo = cpu->pop();
+				cpu->requestCycles(1);
+
+				bit16 hi = cpu->pop();
+				cpu->requestCycles(1);
+
+				cpu->setRegisterValue(REG_PC, lo | (hi << 8));
+				cpu->requestCycles(1);
+			}
+		}
+
+		/**
+		 * @brief On a Instruction RETI resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instRETI(Cpu* cpu){
+			// Reactivate the master interrupt flag
+			cpu->setInterruptMasterState(true);
+			// Same as the default RET
+			instRET(cpu);
 		}
 
 
@@ -38,7 +91,7 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instDI(Cpu* cpu) {
-			cpu->setInterruptState(false);
+			cpu->setInterruptMasterState(false);
 		}
 
 
@@ -47,7 +100,7 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instEI(Cpu* cpu) {
-			cpu->setInterruptState(true);
+			cpu->setInterruptMasterState(true);
 		}
 
 
@@ -176,6 +229,14 @@ namespace TheBoy{
 
 
 		/**
+		 * @brief On a Instruction PUSH resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instRST(Cpu* cpu) {
+			jumpToAddress(cpu, cpu->getCurrInstruct()->param_val, true);
+		}
+
+		/**
 		 * @brief Evaluates a flag condition check
 		 * @param cpu Pointer to the target Cpu object
 		 * @return true If the condition passes
@@ -195,6 +256,26 @@ namespace TheBoy{
 			return false;
 		}
 
+
+		/**
+		 * @brief Generic Jump instruction, this can be used on the JP instruction and the Call isntruction
+		 * Since this is the same as JP but updates the Program Counter register
+		 * @param cpu Pointer to the target Cpu object
+		 * @param addre Address to be setted on the program Counter register
+		 * @param pushPC Marks if should push the PC Registed to the stack pointer
+		 */
+		void jumpToAddress(Cpu* cpu, bit16 addr, bool pushPC) {
+			if(validateCondition(cpu)){
+				if(pushPC) {
+					// 2 cycles for a bit16 push
+					cpu->requestCycles(2);
+					cpu->push16(cpu->getRegisterValue(REG_PC));
+				}
+				cpu->setRegisterValue(REG_PC, addr);
+				cpu->requestCycles(1);
+			}
+		}
+
 		/**
 		 * @brief Defines Instruction type to the resolvers
 		 */
@@ -211,7 +292,12 @@ namespace TheBoy{
 			[INST_HALT] = nullptr,
 			[INST_LDH] = instLDH,
 			[INST_POP] = instPOP,
-			[INST_PUSH] = instPUSH
+			[INST_PUSH] = instPUSH,
+			[INST_CALL] = instCALL,
+			[INST_RET] = instRET,
+			[INST_RETI] = instRETI,
+			[INST_JR] = instJR,
+			[INST_RST] = instRST
 		};
 		
 

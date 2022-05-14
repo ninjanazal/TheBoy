@@ -101,14 +101,14 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		 * @brief Get the Interrupt value
 		 * @return true/False Current interrupt state
 		 */
-		bool getInterrupt();
+		bool getMasterInterrupt();
 
 
 		/**
 		 * @brief Set the Interrupt State value
 		 * @param iState New interrupt state value
 		 */
-		void setInterruptState(bool iState);
+		void setInterruptMasterState(bool iState);
 
 
 		/**
@@ -166,6 +166,7 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		 * @brief Updates the cpu program counter to the current fetched data
 		 */
 		void updatePCtoFetched();
+
 
 		/**
 		 * @brief Requests the emulator controller to emulate a defined cycle value
@@ -266,7 +267,7 @@ As shown above, most registers can be accessed either as one 16-bit register,
 	/**
 	 * @brief Marks if the Cpu is currently suspended by an interrupt handler
 	 */
-	bool interruptState;
+	bool interruptMasterState;
 
 
 	/**
