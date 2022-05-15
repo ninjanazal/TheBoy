@@ -126,6 +126,13 @@ As shown above, most registers can be accessed either as one 16-bit register,
 
 
 		/**
+		 * @brief Get the Current OP Code value
+		 * @return bit8 Current OP Code value
+		 */
+		bit8 getCurrentOPCode();
+
+
+		/**
 		 * @brief Set the Flags values
 		 * @param z Zero flag
 		 * @param n Subtraction flag (null flag)

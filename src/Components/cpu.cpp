@@ -142,6 +142,14 @@ namespace TheBoy {
 	}
 
 
+	/**
+	 * @brief Get the Current OP Code value
+	 * @return bit8 Current OP Code value
+	 */
+	bit8 Cpu::getCurrentOPCode() {
+		return currOpcode;
+	}
+
 
 	/**
 	 * @brief Set the Flags values

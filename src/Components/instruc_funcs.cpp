@@ -105,6 +105,75 @@ namespace TheBoy{
 
 
 		/**
+		 * @brief On a Instruction INC resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instINC(Cpu* cpu) {
+			bit16 val = cpu->getFetchedData() + 0x1;
+
+			// For 16bit registors
+			if(cpu->getCurrInstruct()->regTypeL >= RegisterType::REG_AF) {
+				cpu->requestCycles(1);
+			}
+
+			// For the specific INC (HL) Operation {34}
+			if(cpu->getCurrInstruct()->regTypeL == REG_HL &&
+					cpu->getCurrInstruct()->opMode == OPMODE_AR){
+				val = cpu->getRegisterValue(REG_HL) + 0x1;
+				// Write the incremented value, write uses 8bit
+				// Preventing overflow
+				cpu->requestBusWrite(REG_HL, val & 0xFF);
+			}
+			else {
+				cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, val);
+				// Redefine for check 
+				val = cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL);
+			}
+
+			// Only INC opCode instructions with a 0x03 termination dont update any flags
+			// EX {03, 13, 23 & 33}
+			if((cpu->getCurrentOPCode() & 0x03) != 0x03) {
+				// Flags check Z 0 H -
+				cpu->setFlags(val == 0, 0, (val & 0xF) >= 16, -1);
+			} 
+		}
+
+		/**
+		 * @brief On a Instruction DEC resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instDEC(Cpu* cpu) {
+			bit16 val = cpu->getFetchedData() - 0x1;
+
+			// For 16bit registors
+			if(cpu->getCurrInstruct()->regTypeL >= RegisterType::REG_AF) {
+				cpu->requestCycles(1);
+			}
+
+			// For the specific INC (HL) Operation {34}
+			if(cpu->getCurrInstruct()->regTypeL == REG_HL &&
+					cpu->getCurrInstruct()->opMode == OPMODE_AR){
+				val = cpu->getRegisterValue(REG_HL) - 0x1;
+				// Write the incremented value, write uses 8bit
+				// Preventing overflow
+				cpu->requestBusWrite(REG_HL, val & 0xFF);
+			}
+			else {
+				cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, val);
+				// Redefine for check 
+				val = cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL);
+			}
+
+			// Only INC opCode instructions with a 0x0B termination dont update any flags
+			// EX {0B, 1B, 2B & 3B}
+			if((cpu->getCurrentOPCode() & 0x0B) != 0x0B) {
+				// Flags check Z 0 H -
+				cpu->setFlags(val == 0, 1, (val & 0x0F) >= 16, -1);
+			} 
+		}
+
+
+		/**
 		 * @brief On a Instruction XOR resolver
 		 * @param cpu Requester cpu pointer
 		 */
@@ -283,11 +352,11 @@ namespace TheBoy{
 			[INST_NONE] = instNone,
 			[INST_NOP] = instNOP,
 			[INST_LD] = instLD,
-			[INST_DEC] = nullptr,
+			[INST_DEC] = instDEC,
 			[INST_JP] = instJP,
 			[INST_DI] = instDI,
 			[INST_EI] = instEI,
-			[INST_INC] = nullptr,
+			[INST_INC] = instINC,
 			[INST_XOR] = instXOR,
 			[INST_HALT] = nullptr,
 			[INST_LDH] = instLDH,

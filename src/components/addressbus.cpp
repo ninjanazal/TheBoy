@@ -16,8 +16,8 @@ namespace TheBoy {
 	 * @return bit8 Value on the defined address
 	 */
 	bit8 AddressBus::abRead(bit16 addr) {
-		printf("[ADDRESSBUS] ::: Reading from addr: %2.2X\n", addr);
-		fflush(stdout);
+		//printf("[ADDRESSBUS] ::: Reading from addr: %2.2X\n", addr);
+		//fflush(stdout);
 
 		// From cartridge, fixed bank and switchable via mapper
 		if(addr < 0x8000) {
@@ -73,8 +73,8 @@ namespace TheBoy {
 	 * @return bit16 Value on the defined address
 	 */
 	bit16 AddressBus::abRead16(bit16 addr){
-		printf("[ADDRESSBUS] ::: Reading from addr: %2.2X -> %2.2X\n", addr, addr + 0x1);
-		fflush(stdout);
+		//printf("[ADDRESSBUS] ::: Reading from addr: %2.2X -> %2.2X\n", addr, addr + 0x1);
+		//fflush(stdout);
 
 		bit16 l = abRead(addr);
 		bit16 h = abRead(addr + 0x1);
@@ -90,8 +90,8 @@ namespace TheBoy {
 	 */
 	void AddressBus::abWrite(bit16 addr, bit8 val){
 		// Rom values
-		printf("[ADDRESSBUS] ::: Writing to addr: %2.2X\n", addr);
-		fflush(stdout);
+		//printf("[ADDRESSBUS] ::: Writing to addr: %2.2X\n", addr);
+		//fflush(stdout);
 
 		// From cartridge, fixed bank and switchable via mapper
 		if(addr < 0x8000){
@@ -143,8 +143,8 @@ namespace TheBoy {
 	 * @param val Value to be setted on the address
 	 */
 	void AddressBus::abWrite16(bit16 addr, bit16 val){
-		printf("[ADDRESSBUS] ::: Writing 16bits to addr: %2.2X\n", addr);
-		fflush(stdout);
+		//printf("[ADDRESSBUS] ::: Writing 16bits to addr: %2.2X\n", addr);
+		//fflush(stdout);
 
 		emuCtrl->getCartridge()->write(addr + 1, (val >> 8) & 0xFF);
 		emuCtrl->getCartridge()->write(addr, val & 0xFF);
