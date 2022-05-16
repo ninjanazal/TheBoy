@@ -306,6 +306,56 @@ namespace TheBoy{
 		}
 
 		/**
+		 * @brief On a Instruction ADD resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instADD(Cpu* cpu) {
+			bit16 val = cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) + cpu->getFetchedData();
+
+			// For 16bit add Instruction
+			if(cpu->getCurrInstruct()->regTypeL >= RegisterType::REG_AF){
+				cpu->requestCycles(1);
+			}
+
+			// For the spetial ADD instruction opCode {E8} where a value is added to the Stack pointer
+			if(cpu->getCurrInstruct()->regTypeL == REG_SP) {
+				// add a value to the SP for the current Value, and the bit8 definition is unsigned
+				// casting to char, can be a negative value
+				val = cpu->getRegisterValue(REG_SP) + (char)(cpu->getFetchedData());
+			}
+
+			// Using 16bit value on val
+			// Flags for a 8bit value
+			int z = (val & 0xFF) == 0;
+			int h = (cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) & 0xF) + (cpu->getFetchedData() & 0xF) >= 0x10;
+			// For overflow sanity check, casting to int
+			int c = (int)(cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) & 0xFF) + (int)(cpu->getFetchedData() & 0xFF) >= 0x100;
+
+			// Flags For 16bit values OPCODES {09, 19, 29 & 39}
+			if(cpu->getCurrInstruct()->regTypeL >= RegisterType::REG_AF) {
+				z = -1;
+				h = (cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) & 0xFFF) + (cpu->getFetchedData() & 0xFFF) >= 0x1000; 
+
+				// Using 32bit value to check 16bit overflow
+				bit32 cVal = ((bit32)cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL)) + ((bit32)(cpu->getFetchedData()));
+				c = cVal >= 0x10000;
+			}
+
+			// for the OPCode {E8}
+			if(cpu->getCurrInstruct()->regTypeL == REG_SP) {
+				z = 0;
+				h = (cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) & 0xF) + (cpu->getFetchedData() & 0xF) >= 0x10;
+
+				// For overflow sanity check, casting to int
+				c = (int)(cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) & 0xFF) + (int)(cpu->getFetchedData() & 0xFF) >= 0x100;
+			}
+
+			cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, val);
+			cpu->setFlags(z, 0, h, c);
+
+		}
+
+		/**
 		 * @brief Evaluates a flag condition check
 		 * @param cpu Pointer to the target Cpu object
 		 * @return true If the condition passes
@@ -366,7 +416,8 @@ namespace TheBoy{
 			[INST_RET] = instRET,
 			[INST_RETI] = instRETI,
 			[INST_JR] = instJR,
-			[INST_RST] = instRST
+			[INST_RST] = instRST,
+			[INST_ADD] = instADD
 		};
 		
 
