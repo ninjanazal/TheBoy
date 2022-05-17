@@ -355,6 +355,70 @@ namespace TheBoy{
 
 		}
 
+
+		/**
+		 * @brief On a Instruction ADC resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instADC(Cpu* cpu) {
+			// Add to the A registor the fetch data and the carry flag
+			// and operation for a 8bit value
+			cpu->setRegisterValue(
+				REG_A,
+				(cpu->getFetchedData() + cpu->getRegisterValue(REG_A) + GETBIT(cpu->getRegisterValue(REG_F), 4)) & 0xFF
+			);
+
+			cpu->setFlags(
+				cpu->getRegisterValue(REG_A) == 0, 0,
+				(cpu->getFetchedData() & 0xF) + (cpu->getRegisterValue(REG_A) & 0xF) + GETBIT(cpu->getRegisterValue(REG_F), 4) > 0xF,
+				cpu->getFetchedData() + cpu->getRegisterValue(REG_A) + GETBIT(cpu->getRegisterValue(REG_F), 4) > 0xFF
+			);
+		}
+
+
+
+		/**
+		 * @brief On a Instruction SUB resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instSUB(Cpu* cpu) {
+			bit16 value = cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) - cpu->getFetchedData();
+
+			cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, value);
+			// Since values can be negative, cast to int
+			cpu->setFlags(
+				value == 0, 1,
+				((int)cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) & 0xF) - ((int)cpu->getFetchedData() & 0xF) < 0,
+				((int)cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL)) - ((int)cpu->getFetchedData()) < 0
+			);
+		}
+
+		/**
+		 * @brief On a Instruction SBC resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instSBC(Cpu* cpu) {
+			bit8 value = cpu->getFetchedData() + GETBIT(cpu->getRegisterValue(REG_F), 4);
+			
+			cpu->setRegisterValue(
+				cpu->getCurrInstruct()->regTypeL,
+				cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) - value
+			);
+
+			// Since values can be negative, cast to int
+			cpu->setFlags(
+				// Z flag, n flag should be set to 1
+				cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) - value == 0, 1,
+				// Half Carry flag
+				((int)cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) & 0xF) -
+						((int)cpu->getFetchedData() & 0xF) - ((int)GETBIT(cpu->getRegisterValue(REG_F), 4)) < 0,
+				// carry flag
+				((int)cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL)) -
+						((int)cpu->getFetchedData()) - ((int)GETBIT(cpu->getRegisterValue(REG_F), 4))  < 0
+			);
+		}
+
+
 		/**
 		 * @brief Evaluates a flag condition check
 		 * @param cpu Pointer to the target Cpu object
@@ -395,6 +459,7 @@ namespace TheBoy{
 			}
 		}
 
+
 		/**
 		 * @brief Defines Instruction type to the resolvers
 		 */
@@ -417,7 +482,10 @@ namespace TheBoy{
 			[INST_RETI] = instRETI,
 			[INST_JR] = instJR,
 			[INST_RST] = instRST,
-			[INST_ADD] = instADD
+			[INST_ADD] = instADD,
+			[INST_ADC] = instADC,
+			[INST_SUB] = instSUB,
+			[INST_SBC] = instSBC
 		};
 		
 

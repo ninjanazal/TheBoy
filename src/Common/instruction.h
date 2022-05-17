@@ -43,7 +43,10 @@ namespace TheBoy {
 		INST_RETI,	// Upon returning from interrupt
 		INST_JR,	// Jump Relative
 		INST_RST,	// Unconditional function call to the absolute fixed address defined by the opcode
-		INST_ADD
+		INST_ADD,
+		INST_ADC, 	// Add with carry instruction
+		INST_SUB,
+		INST_SBC	// Subtract with carry instruction
 	} InstructType;
 
 
