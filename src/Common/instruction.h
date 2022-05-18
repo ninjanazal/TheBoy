@@ -33,7 +33,6 @@ namespace TheBoy {
 		INST_DI,
 		INST_EI,
 		INST_INC,
-		INST_XOR,
 		INST_HALT,
 		INST_LDH,	// Load to high RAM
 		INST_POP,	// Pop/push instructions are only for 16bit values
@@ -46,7 +45,11 @@ namespace TheBoy {
 		INST_ADD,
 		INST_ADC, 	// Add with carry instruction
 		INST_SUB,
-		INST_SBC	// Subtract with carry instruction
+		INST_SBC,	// Subtract with carry instruction
+		INST_AND,	// Logic Operations instructions
+		INST_XOR,
+		INST_OR,
+		INST_CP
 	} InstructType;
 
 

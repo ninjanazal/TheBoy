@@ -177,19 +177,6 @@ namespace TheBoy{
 		 * @brief On a Instruction XOR resolver
 		 * @param cpu Requester cpu pointer
 		 */
-		static void instXOR(Cpu* cpu) {
-			cpu->setRegisterValue( 
-				REG_A,
-				cpu->getRegisterValue(REG_A) ^ (cpu->getFetchedData() & 0xFF)
-			);
-			cpu->setFlags(cpu->getRegisterValue(REG_A), 0, 0, 0);
-		}
-
-
-		/**
-		 * @brief On a Instruction XOR resolver
-		 * @param cpu Requester cpu pointer
-		 */
 		static void instLD(Cpu* cpu){
 			if(cpu->getDestenyIsMem()){
 				// Form loads where the target is a memory location ex {0x02}
@@ -420,6 +407,65 @@ namespace TheBoy{
 
 
 		/**
+		 * @brief On a Instruction AND resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instAND(Cpu* cpu) {
+			cpu->setRegisterValue( REG_A,
+				cpu->getRegisterValue(REG_A) & cpu->getFetchedData()
+			);
+
+			cpu->setFlags( cpu->getRegisterValue(REG_A) == 0,
+				0, 1, 0
+			);
+		}
+
+
+		/**
+		 * @brief On a Instruction XOR resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instXOR(Cpu* cpu) {
+			cpu->setRegisterValue(REG_A,
+				cpu->getRegisterValue(REG_A) ^ cpu->getFetchedData()
+			);
+
+			cpu->setFlags( cpu->getRegisterValue(REG_A) == 0,
+				0, 0, 0
+			);
+		}
+
+
+		/**
+		 * @brief On a Instruction OR resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instOR(Cpu* cpu) {
+			cpu->setRegisterValue( REG_A,
+				cpu->getRegisterValue(REG_A) | cpu->getFetchedData()
+			);
+
+			cpu->setFlags( cpu->getRegisterValue(REG_A) == 0,
+				0, 0, 0
+			);
+		}
+
+
+		/**
+		 * @brief On a Instruction CP resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instCP(Cpu* cpu) {
+			// compare A- REG (Since this can be signed or result on a negative val)
+			int val = (int)cpu->getRegisterValue(REG_A) - (int)cpu->getFetchedData();
+			cpu->setFlags( val == 0, 1,
+				((int)cpu->getRegisterValue(REG_A) & 0xF) - ((int)cpu->getFetchedData() & 0xF) < 0,
+				val < 0
+			);
+		}
+
+
+		/**
 		 * @brief Evaluates a flag condition check
 		 * @param cpu Pointer to the target Cpu object
 		 * @return true If the condition passes
@@ -472,7 +518,6 @@ namespace TheBoy{
 			[INST_DI] = instDI,
 			[INST_EI] = instEI,
 			[INST_INC] = instINC,
-			[INST_XOR] = instXOR,
 			[INST_HALT] = nullptr,
 			[INST_LDH] = instLDH,
 			[INST_POP] = instPOP,
@@ -485,7 +530,11 @@ namespace TheBoy{
 			[INST_ADD] = instADD,
 			[INST_ADC] = instADC,
 			[INST_SUB] = instSUB,
-			[INST_SBC] = instSBC
+			[INST_SBC] = instSBC,
+			[INST_AND] = instAND,
+			[INST_XOR] = instXOR,
+			[INST_OR] = instOR,
+			[INST_CP] = instCP
 		};
 		
 
