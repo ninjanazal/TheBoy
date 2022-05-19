@@ -466,6 +466,25 @@ namespace TheBoy{
 
 
 		/**
+		 * @brief On a Instruction PREFIX CB resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instPRECB(Cpu* cpu) {
+			bit8 OPPrf = cpu->getFetchedData();
+			/*
+				For Decoding this prefix CB table, EX.:
+				{00}  || RLC B   ||
+					  || Z 0 0 C ||
+				RLC -> pInst_type
+				B -> REGs
+				For the registor from x0 to x6 == B to (HL)
+								from x7 to xF == B to (HL)
+				Soo the firsts 3 bits can indicate the registor type
+			*/
+		}
+
+
+		/**
 		 * @brief Evaluates a flag condition check
 		 * @param cpu Pointer to the target Cpu object
 		 * @return true If the condition passes
@@ -534,7 +553,8 @@ namespace TheBoy{
 			[INST_AND] = instAND,
 			[INST_XOR] = instXOR,
 			[INST_OR] = instOR,
-			[INST_CP] = instCP
+			[INST_CP] = instCP,
+			[INST_PRECB] = instPRECB
 		};
 		
 
@@ -546,5 +566,8 @@ namespace TheBoy{
 		INST_FUNC getInstructProcess(InstructType type){
 			return instructResolvers[type];
 		}
+
+
+
 	} // namespace CpuFuncs
 } // namespace TheBoy

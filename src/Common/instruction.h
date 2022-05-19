@@ -49,7 +49,8 @@ namespace TheBoy {
 		INST_AND,	// Logic Operations instructions
 		INST_XOR,
 		INST_OR,
-		INST_CP
+		INST_CP,
+		INST_PRECB
 	} InstructType;
 
 
