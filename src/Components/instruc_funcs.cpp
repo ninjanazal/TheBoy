@@ -465,6 +465,16 @@ namespace TheBoy{
 		}
 
 
+
+		/**
+		 * @brief Helper array for parsing the registor type on Prefix CP operations
+		 */
+		const RegisterType helperPCB[] = {
+			REG_B, REG_C, REG_D, REG_E, REG_H, REG_L, REG_HL, REG_A
+			
+		};
+
+
 		/**
 		 * @brief On a Instruction PREFIX CB resolver
 		 * @param cpu Requester cpu pointer
@@ -481,6 +491,54 @@ namespace TheBoy{
 								from x7 to xF == B to (HL)
 				Soo the firsts 3 bits can indicate the registor type
 			*/
+
+			RegisterType rType = REG_NONE;
+			if(OPPrf & 0b111 <= 0b111){
+				rType = helperPCB[OPPrf & 0b111];
+			}
+
+			/*
+				For decoding the bit value (if used) and the operation, EX.:
+				{A5}  || RES 4,L ||
+					  || - - - - ||
+				RES -> pInst_type
+				4 -> Bit value
+				L -> REGs
+				Looking for this OP binary value ob 1010 0101
+								1 0 1 0  0 1 0 1
+			                    |_| >    |___|-> Can be used as above, the registor
+								 |	|____|
+								 |	   |
+								 |	   |____> Makes the current bit beeing use, since they go
+								 |		 		From 0 to 7
+								 |
+								 ^
+						Makes the current operation
+			 */
+
+			bit8 PBit = (OPPrf >> 3) & 0b111;
+			bit8 POperation  = (OPPrf >> 6) & 0b11;
+
+			cpu->requestCycles(1);
+
+			// For the operations with the HL Registed
+			if(rType == REG_HL){
+				cpu->requestCycles(2);
+			}
+
+			// For the BIT, RES and SET operations, OPCode 0xX~ (X >= 4) -> POperations 01 and bigger
+			switch (POperation) {
+			case 0b01:
+				// BIT OPERATION
+				break;
+			case 0b10:
+				// RES OPERATION
+				break;
+
+			case 0b11:
+				// SET OPERATION
+				break;
+			}
 		}
 
 
@@ -523,6 +581,7 @@ namespace TheBoy{
 				cpu->requestCycles(1);
 			}
 		}
+
 
 
 		/**
