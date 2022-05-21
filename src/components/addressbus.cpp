@@ -54,7 +54,7 @@ namespace TheBoy {
 		// I/O Registers
 		else if(addr < 0xFF80) {
 			// TODO
-			std::cout << "[ADDRESSBUS] ::: Reading to I/O Registers" << std::endl;
+			std::cout << "[ADDRESSBUS] ::: Reading from I/O Registers" << std::endl;
 			return 0x00;
 		}
 		// Interrupt Enable register
@@ -124,7 +124,7 @@ namespace TheBoy {
 		// I/O Registers
 		else if(addr < 0xFF80) {
 			// TODO
-			std::cout << "[ADDRESSBUS] ::: Reading to I/O Registers" << std::endl;
+			std::cout << "[ADDRESSBUS] ::: Writting to I/O Registers" << std::endl;
 		}
 		// Interrupt Enable register
 		else if(addr == 0xFFFF ) {
