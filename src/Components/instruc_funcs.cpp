@@ -138,6 +138,17 @@ namespace TheBoy{
 			} 
 		}
 
+
+		/**
+		 * @brief On a Instruction HALT resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instHALT(Cpu* cpu) {
+			std::cout << "[INSTRESOLVER] ::: HALT operation not defined!" << std::endl;
+		}
+
+
+
 		/**
 		 * @brief On a Instruction DEC resolver
 		 * @param cpu Requester cpu pointer
@@ -654,6 +665,126 @@ namespace TheBoy{
 
 
 		/**
+		 * @brief On a Instruction RLCA resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instRLCA(Cpu* cpu) {
+			bit8 res = (cpu->getRegisterValue(REG_A) << 1) & 0xFF;
+			res |= cpu->getRegisterValue(REG_A) >> 7;
+
+			cpu->setFlags(0, 0, 0, cpu->getRegisterValue(REG_A) >> 7);
+			cpu->setRegisterValue(REG_A, res);
+		}
+
+
+		/**
+		 * @brief On a Instruction RRCA resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instRRCA(Cpu* cpu) {
+			bit8 res = (cpu->getRegisterValue(REG_A) >> 1) & 0xFF;
+			res |= (cpu->getRegisterValue(REG_A) & 0b1) << 7;
+			
+			cpu->setFlags(0, 0, 0, (cpu->getRegisterValue(REG_A) & 0b1));
+			cpu->setRegisterValue(REG_A, res);
+		}
+
+
+		/**
+		 * @brief On a Instruction RLA resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instRLA(Cpu* cpu) {
+			bit8 res = (cpu->getRegisterValue(REG_A) << 1) & 0xFF;
+			res |= GETBIT(cpu->getRegisterValue(REG_F), 4);
+
+			cpu->setFlags(0, 0, 0, cpu->getRegisterValue(REG_A) >> 7);
+			cpu->setRegisterValue(REG_A, res);
+		}
+
+
+		/**
+		 * @brief On a Instruction RRA resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instRRA(Cpu* cpu) {
+			bit8 res = (cpu->getRegisterValue(REG_A) >> 1) & 0xFF;
+			res |= GETBIT(cpu->getRegisterValue(REG_F), 4) << 7;
+
+			cpu->setFlags(0, 0, 0, cpu->getRegisterValue(REG_A) & 0b1);
+			cpu->setRegisterValue(REG_A, res);
+		}
+
+
+		/**
+		 * @brief On a Instruction STOP resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instSTOP(Cpu* cpu) {
+			std::cout << "[INSTRESOLVER] ::: STOP operation not defined!" << std::endl;
+		}
+
+
+		/**
+		 * @brief On a Instruction DAA resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instDAA(Cpu* cpu) {
+			/*
+				The DAA instruction adjusts the results of a binary addition or subtraction 
+				(as stored in the accumulator and flags) to retroactively turn it into a BCD addition or subtraction.
+				It does so by adding or subtracting 6 from the result's upper nybble, lower nybble, or both.
+				In order to work it has to know whether the last operation was an addition or a subtraction (the n flag),
+				and whether a carry and/or a half-carry occurred (the c and h flags).
+				Incidentally, the DAA instruction is the only thing that the n and h flags are normally ever used by,
+				unless a program pushes the flags onto the stack and pops them into another register to explicitly inspect them.
+			*/
+			bit8 val = cpu->getRegisterValue(REG_A);
+			bit8 cFlag = 0;
+
+			if(!GETBIT(cpu->getRegisterValue(REG_F), 6)){
+				if(GETBIT(cpu->getRegisterValue(REG_F), 4) || cpu->getRegisterValue(REG_A) > 0x99) {
+					val += 0x60;
+					cFlag = 0b1;
+				}
+				if(GETBIT(cpu->getRegisterValue(REG_F), 5) || cpu->getRegisterValue(REG_A) & 0xF > 0x9) {
+					val += 0x6;
+				}
+			} else {
+				if(GETBIT(cpu->getRegisterValue(REG_F), 4)) { val -= 0x60; }
+				if(GETBIT(cpu->getRegisterValue(REG_F), 5)) { val -= 0x6; }
+			}
+
+			cpu->setRegisterValue(REG_A, val);
+			cpu->setFlags(val == 0, -1, 0, cFlag);
+		}
+
+
+		/**
+		 * @brief On a Instruction CPL resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instCPL(Cpu* cpu) {
+		}
+
+
+		/**
+		 * @brief On a Instruction SCF resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instSCF(Cpu* cpu) {
+		}
+
+
+		/**
+		 * @brief On a Instruction CFF resolver
+		 * @param cpu Requester cpu pointer
+		 */
+		static void instCFF(Cpu* cpu) {
+		}
+
+
+		/**
 		 * @brief Evaluates a flag condition check
 		 * @param cpu Pointer to the target Cpu object
 		 * @return true If the condition passes
@@ -707,7 +838,7 @@ namespace TheBoy{
 			[INST_DI] = instDI,
 			[INST_EI] = instEI,
 			[INST_INC] = instINC,
-			[INST_HALT] = nullptr,
+			[INST_HALT] = instHALT,
 			[INST_LDH] = instLDH,
 			[INST_POP] = instPOP,
 			[INST_PUSH] = instPUSH,
@@ -724,7 +855,12 @@ namespace TheBoy{
 			[INST_XOR] = instXOR,
 			[INST_OR] = instOR,
 			[INST_CP] = instCP,
-			[INST_PRECB] = instPRECB
+			[INST_PRECB] = instPRECB,
+			[INST_RLCA] = instRLCA,
+			[INST_RRCA] = instRRCA,
+			[INST_RLA] = instRLA,
+			[INST_RRA] = instRRA,
+			[INST_STOP] = instSTOP
 		};
 		
 

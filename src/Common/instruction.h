@@ -33,7 +33,7 @@ namespace TheBoy {
 		INST_DI,
 		INST_EI,
 		INST_INC,
-		INST_HALT,
+		INST_HALT,	// Halt until interrupt occurs (low power)
 		INST_LDH,	// Load to high RAM
 		INST_POP,	// Pop/push instructions are only for 16bit values
 		INST_PUSH,
@@ -50,7 +50,16 @@ namespace TheBoy {
 		INST_XOR,
 		INST_OR,
 		INST_CP,
-		INST_PRECB
+		INST_PRECB,
+		INST_RLCA,	// Rotate Left Accumulator with carry flag
+		INST_RRCA,	// Rotate Right Accumulator with carry flag
+		INST_RLA,	// Rotate A left through carry
+		INST_RRA,	// Rotate A right through carry
+		INST_STOP,	// Low power standby mode (VERY low power)
+		INST_DAA,	// Decimal adjust A
+		INST_CPL,	// A = A xor FF
+		INST_SCF,	// cy=1
+		INST_CCF	// cy=cy xor 1
 	} InstructType;
 
 
