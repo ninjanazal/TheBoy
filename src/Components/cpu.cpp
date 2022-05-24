@@ -125,6 +125,14 @@ namespace TheBoy {
 
 
 	/**
+	 * @brief Sets the enablingIntMaster to enable the interrup master
+	 */
+	void Cpu::enablingIME() {
+		enablingIntMaster = true;
+	}
+
+
+	/**
 	 * @brief Gets the current Z flag value
 	 * @return bit8 Current z value
 	 */
@@ -310,6 +318,24 @@ namespace TheBoy {
 		bit8 h = pop();
 
 		return l | (h << 8);
+	}
+
+
+	/**
+	 * @brief Set the Halted Value
+	 * @param value New halted value
+	 */
+	void Cpu::setHaltedValue(bool value) {
+		cpuHLT = value;
+	}
+
+
+	/**
+	 * @brief Get the Halted State value
+	 * @return true/false Current halted value
+	 */
+	bool Cpu::getHaltedState() {
+		return cpuHLT;
 	}
 
 

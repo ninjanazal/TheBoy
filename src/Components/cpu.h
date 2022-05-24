@@ -112,6 +112,12 @@ As shown above, most registers can be accessed either as one 16-bit register,
 
 
 		/**
+		 * @brief Sets the enablingIntMaster to enable the interrup master
+		 */
+		void enablingIME();
+
+
+		/**
 		 * @brief Gets the current Z flag value
 		 * @return bit8 Current z value
 		 */
@@ -243,6 +249,20 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		 */
 		bit16 pop16();
 
+
+		/**
+		 * @brief Set the Halted Value
+		 * @param value New halted value
+		 */
+		void setHaltedValue(bool value);
+
+
+		/**
+		 * @brief Get the Halted State value
+		 * @return true/false Current halted value
+		 */
+		bool getHaltedState();
+
 	private:
 
 	/**
@@ -275,6 +295,12 @@ As shown above, most registers can be accessed either as one 16-bit register,
 	 * @brief Marks if the Cpu is currently suspended by an interrupt handler
 	 */
 	bool interruptMasterState;
+
+
+	/**
+	 * @brief Marks the enabling the interrupt master state, used to managing the cpu cycles
+	 */
+	bool enablingIntMaster;
 
 
 	/**

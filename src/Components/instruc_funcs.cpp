@@ -100,7 +100,7 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instEI(Cpu* cpu) {
-			cpu->setInterruptMasterState(true);
+			cpu->enablingIME();
 		}
 
 
@@ -144,7 +144,7 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instHALT(Cpu* cpu) {
-			std::cout << "[INSTRESOLVER] ::: HALT operation not defined!" << std::endl;
+			cpu->setHaltedValue(true);
 		}
 
 
@@ -765,6 +765,9 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instCPL(Cpu* cpu) {
+			// Bit inversion
+			cpu->setRegisterValue(REG_A, ~cpu->getRegisterValue(REG_A));
+			cpu->setFlags(-1, 1, 1, -1);
 		}
 
 
@@ -773,6 +776,7 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instSCF(Cpu* cpu) {
+			cpu->setFlags(-1, 0, 0, 1);
 		}
 
 
@@ -780,7 +784,8 @@ namespace TheBoy{
 		 * @brief On a Instruction CFF resolver
 		 * @param cpu Requester cpu pointer
 		 */
-		static void instCFF(Cpu* cpu) {
+		static void instCCF(Cpu* cpu) {
+			cpu->setFlags(-1, 0, 0, GETBIT(cpu->getRegisterValue(REG_F), 4) ^ 0x1);
 		}
 
 
@@ -860,7 +865,11 @@ namespace TheBoy{
 			[INST_RRCA] = instRRCA,
 			[INST_RLA] = instRLA,
 			[INST_RRA] = instRRA,
-			[INST_STOP] = instSTOP
+			[INST_STOP] = instSTOP,
+			[INST_DAA] = instDAA,
+			[INST_CPL] = instCPL,
+			[INST_SCF] = instSCF,
+			[INST_CCF] = instCCF
 		};
 		
 
