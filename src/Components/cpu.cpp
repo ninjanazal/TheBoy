@@ -48,6 +48,21 @@ namespace TheBoy {
 			);
 			fflush(stdout);
 		}
+		else {
+			// During an halted state
+
+			requestCycles(1);
+
+			if(interruptFlags) {
+				cpuHLT = false;
+			}
+
+		}
+
+		if(interruptMasterState) {
+			// TODO Handle interrupt
+			enablingIntMaster = true;
+		}
 	}
 
 
@@ -336,6 +351,24 @@ namespace TheBoy {
 	 */
 	bool Cpu::getHaltedState() {
 		return cpuHLT;
+	}
+
+
+	/**
+	 * @brief Get the Interr Flags Vvalue
+	 * @return bit8 Flags value
+	 */
+	bit8 Cpu::getInterrFlags() {
+		return interruptFlags;
+	}
+
+
+	/**
+	 * @brief Set the Interr Flags value
+	 * @param flags New Flags value
+	 */
+	void Cpu::setInterrFlags(bit8 flags) {
+		interruptFlags = flags;
 	}
 
 

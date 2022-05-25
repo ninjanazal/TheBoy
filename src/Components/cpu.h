@@ -263,6 +263,20 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		 */
 		bool getHaltedState();
 
+
+		/**
+		 * @brief Get the Interr Flags Vvalue
+		 * @return bit8 Flags value
+		 */
+		bit8 getInterrFlags();
+
+
+		/**
+		 * @brief Set the Interr Flags value
+		 * @param flags New Flags value
+		 */
+		void setInterrFlags(bit8 flags);
+
 	private:
 
 	/**
@@ -298,7 +312,7 @@ As shown above, most registers can be accessed either as one 16-bit register,
 
 
 	/**
-	 * @brief Marks the enabling the interrupt master state, used to managing the cpu cycles
+	 * @brief Marks the enabling the interrupt master state (IME), used to managing the cpu cycles
 	 */
 	bool enablingIntMaster;
 
@@ -307,6 +321,12 @@ As shown above, most registers can be accessed either as one 16-bit register,
 	 * @brief Cpu Interrupt Enable register (0xFFFF) on memory
 	 */
 	bit8 interruptEnable;
+
+
+	/**
+	 * @brief Marks the current interrupt Setted Flags
+	 */
+	bit8 interruptFlags;
 
 
 	/**

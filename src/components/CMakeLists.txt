@@ -8,6 +8,7 @@ set( SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/ram.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/cpu.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/instruc_funcs.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/interrupt.cpp
 	
 	PARENT_SCOPE
 )
