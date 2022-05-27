@@ -44,8 +44,8 @@ namespace TheBoy {
 	 * @param type Target emulation type
 	 */
 	EmulatorController::EmulatorController(EmuType type): emulationType(type) { 
-			std::cout << "[Emulator] ::: controller was created" << std::endl;
-		}
+		std::cout << "[Emulator] ::: controller was created" << std::endl;
+	}
 
 
 	/**

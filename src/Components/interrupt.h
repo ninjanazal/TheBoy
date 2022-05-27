@@ -2,6 +2,7 @@
 #define INTERRUPT_H
 
 #include "cpu.h"
+#include "tuple"
 
 namespace TheBoy {
 	class Cpu;

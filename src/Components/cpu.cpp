@@ -1,5 +1,6 @@
 #include "cpu.h"
 #include "emulatorController.h"
+#include "interrupt.h"
 
 namespace TheBoy {
 	/**
@@ -60,7 +61,7 @@ namespace TheBoy {
 		}
 
 		if(interruptMasterState) {
-			// TODO Handle interrupt
+			InterruptFuncs::handle_interrupt(this);
 			enablingIntMaster = true;
 		}
 	}
