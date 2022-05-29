@@ -22,7 +22,7 @@ add_subdirectory(Common)
 add_subdirectory(Components)
 add_subdirectory(EmulatorController)
 
-message(${SOURCE})
+# message(${SOURCE})
 # - - - - - - - - - -
 # Create executable with the defined source
 # - - - - - - - - - -

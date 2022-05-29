@@ -10,7 +10,7 @@ using namespace TheBoy;
 int main(int argc, char *argv[]) {
 
 	std::shared_ptr<EmulatorController> emulator;
-	emulator = std::make_shared<EmulatorController>(EmuType::GBColor);
+	emulator = std::make_shared<EmulatorController>();
 
 	//! Remove this hammered path
 	emulator->Start("D:\\Projects\\TheBoy\\ROMS\\Tetris.gb");

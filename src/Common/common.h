@@ -19,6 +19,22 @@ namespace TheBoy{
 	 */
 	#define BASE_SCREEN (int[]){160, 144}
 
+	/**
+	 * @brief Gets the bit n state from value
+	 */
+	#define GETBIT(from, n) (from >> n) & 1
+
+	/**
+	 * @brief Sets a defined bit value
+	 */
+	#define SETBIT(to, n, val) (to = (to & ~(1 << n)) | (val << n));
+
+
+	/**
+	 * @brief Checks if a value is between a min and max value
+	 */
+	#define BETWEEN(val, min, max) ((val >= min) && (val <= max))
+
 
 	// - - - - - - - - - - - - - - - - - - - -
 	//               TypeDefs               //
@@ -73,14 +89,6 @@ namespace TheBoy{
 	//             Enumerations             //
 	// - - - - - - - - - - - - - - - - - - - -
 
-
-	/**
-	 * @brief Enumeration holding the availabe Emulator types
-	 */
-	enum EmuType {
-		//TODO GBBase,
-		GBColor
-	};
 
 	/**
 	 * @brief Invert the order of a bit16 value, swith high 8bit to the lower

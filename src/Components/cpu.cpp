@@ -1,6 +1,5 @@
 #include "cpu.h"
 #include "emulatorController.h"
-#include "interrupt.h"
 
 namespace TheBoy {
 	/**
@@ -17,22 +16,29 @@ namespace TheBoy {
 	 * @brief Resets the current cpu state
 	 */
 	void Cpu::reset() {
-		regs->reset();
+		*((bit16*)&regs->A) = 0xB001;
+		*((bit16*)&regs->B) = 0x1300;
+		*((bit16*)&regs->D) = 0xD800;
+		*((bit16*)&regs->H) = 0x4D01;
+
+		regs->PC = 0x100;
+		regs->SP = 0xFFFE;
+
 		cpuHLT = false;
+
+		interruptEnable = 0x0;
+		interruptFlags = 0x0;
+		interruptMasterState = false;
+		enablingIntMaster = false;
+
 		currInstruct = nullptr;
 		currOpcode = 0x0;
 
+		emuCtrl->getTimer()->setRegisterDIV(0xABCC);
+
 		std::cout << "[CPU] ::: Reseted" << std::endl;
-
 	}
 
-	/**
-	 * @brief Defines the cpu Program counter start value
-	 * @param entry Defined program count value
-	 */
-	void Cpu::setPCEntry(bit16 entry){
-		regs->PC = entry;
-	}
 
 	/**
 	 * @brief Defines the cpu iteration
@@ -370,6 +376,15 @@ namespace TheBoy {
 	 */
 	void Cpu::setInterrFlags(bit8 flags) {
 		interruptFlags = flags;
+	}
+
+
+	/**
+	 * @brief Requests a interrupt by type on the current Cpu
+	 * @param iType Iterrupt type
+	 */
+	void Cpu::requestInterrupt(InterruptFuncs::InterruptType iType){
+		interruptFlags |= iType;
 	}
 
 

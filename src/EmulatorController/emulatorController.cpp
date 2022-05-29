@@ -9,41 +9,19 @@ namespace TheBoy {
 		std::cout << "[Emulator] ::: Starting the emulator update loop" << std::endl;
 
 		while (emu_state.running) {
-			manageEvents();
+			comps.view->ManageEvents();
 
 			comps.cpu->step();
 			
-			window->clear(sf::Color::Black);
-			window->display();
+			comps.view->Draw();
 		}
 	}
-
-
-	/**
-	 * @brief Internal event manager function
-	 */
-	void EmulatorController::manageEvents() {
-		sf::Event event;
-
-		while (window->pollEvent(event)) {
-			switch (event.type) {
-			case sf::Event::Closed:
-				emu_state.running = false;
-				window->close();
-				break;
-			
-			default:
-				break;
-			}
-		}
-	}
-
 
 	/**
 	 * @brief Construct a new Emulator Controller:: Emulator Controller object
 	 * @param type Target emulation type
 	 */
-	EmulatorController::EmulatorController(EmuType type): emulationType(type) { 
+	EmulatorController::EmulatorController() { 
 		std::cout << "[Emulator] ::: controller was created" << std::endl;
 	}
 
@@ -53,15 +31,14 @@ namespace TheBoy {
 	 * @param size Window size
 	 */
 	void EmulatorController::Start(const char* rom_path) {
-		window = std::make_shared<sf::RenderWindow>(
-			sf::VideoMode(900, 500), "TheBoy Emulator"
-		);
-		
+		comps.view = std::make_shared<EmulView>(this);
 		comps.bus = std::make_shared<AddressBus>(this);
 		comps.ram = std::make_shared<Ram>(this);
+		comps.io = std::make_shared<IO>(this);
+		comps.timer = std::make_shared<Timer>(this);
 
+		emu_state.reset();
 		comps.cpu = std::make_shared<Cpu>(this);
-		comps.cpu->setPCEntry(0x100);
 
 		comps.cart = std::make_shared<Cartridge>(rom_path);
 		if(!comps.cart->loadCartridgeFromFile()){
@@ -72,7 +49,6 @@ namespace TheBoy {
 		std::cout << "[Emulator] ::: Cartridge was loaded!" << std::endl;
 
 
-		emu_state.reset();
 		this->_run();
 	}
 
@@ -93,7 +69,11 @@ namespace TheBoy {
 	 * @param cycles 
 	 */
 	void EmulatorController::emulCycles(const int& cycles) {
-		// TODO : Implementation
+		int rCylces = cycles * 4;
+		for (int i = 0; i < rCylces; i++) {
+			emu_state.ticks++;
+			comps.timer->tick();
+		}
 	}
 
 
@@ -139,5 +119,28 @@ namespace TheBoy {
 			std::cout << "[Emulator] ::: Get Cpu on a null shared!" << std::endl;
 		}
 		return comps.cpu;
+	}
+
+	
+	/**
+	 * @brief Gets the IO object
+	 * @return std::shared_ptr<IO> Shared pointer to the inUse IO
+	 */
+	std::shared_ptr<IO> EmulatorController::getIO() {
+		if(!comps.io) {
+			std::cout << "[Emulator] ::: Get IO on a null shared!" << std::endl;
+		}
+		return comps.io;
+	}
+
+	/**
+ 	* @brief Get the Timer object
+	* @return std::shared_ptr<Timer> Shared pointer to the inUse Timer
+	*/
+	std::shared_ptr<Timer> EmulatorController::getTimer() {
+		if(!comps.timer) {
+			std::cout << "[Emulator] ::: Get Timer on a null shared!" << std::endl;
+		}
+		return comps.timer;
 	}
 }

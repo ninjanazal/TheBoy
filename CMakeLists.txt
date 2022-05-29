@@ -10,6 +10,6 @@ project (TheBoy LANGUAGES CXX)
 set(SFML_DIR ${CMAKE_CURRENT_SOURCE_DIR}/out/lib/cmake/SFML/)
 set(SFML_STATIC_LIBRARIES TRUE)
 
-find_package(SFML 2.5 COMPONENTS graphics REQUIRED)
+find_package(SFML 2.5 COMPONENTS graphics system window audio REQUIRED)
 
 add_subdirectory(src)

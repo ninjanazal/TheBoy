@@ -9,6 +9,8 @@ set( SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/cpu.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/instruc_funcs.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/interrupt.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/io.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/timer.cpp
 	
 	PARENT_SCOPE
 )

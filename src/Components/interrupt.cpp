@@ -1,4 +1,5 @@
 #include "interrupt.h"
+#include "cpu.h"
 
 namespace TheBoy {
 	namespace InterruptFuncs {

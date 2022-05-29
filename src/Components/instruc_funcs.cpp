@@ -1,4 +1,5 @@
 #include "instruc_funcs.h"
+#include "cpu.h"
 
 namespace TheBoy{
 	namespace CpuFuncs {

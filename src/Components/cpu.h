@@ -2,12 +2,14 @@
 #define CPU_H
 
 #include "common.h"
+#include "interrupt.h"
 #include "addressbus.h"
 #include "instruc_funcs.h"
 
 
 namespace TheBoy {
 	class EmulatorController;
+
 /*
 	16-bit	Hi	Lo	Name/Function
 	----------------------------------
@@ -42,16 +44,6 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		bit8 L;
 		bit16 SP;
 		bit16 PC;
-
-		/**
-		 * @brief Resets the registers values
-		 */
-		void reset(){
-			A = 0x01;
-			F = B = C = D = E = H = L = 0x0;
-			PC = 0x0;
-			SP = 0xDFFF;
-		}
 	} Registers;
 
 	/**
@@ -69,12 +61,6 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		 * @brief Destroy the Cpu object
 		 */
 		~Cpu() = default;
-
-		/**
-		 * @brief Defines the cpu Program counter start value
-		 * @param entry Defined program count value
-		 */
-		void setPCEntry(bit16 entry);
 
 		/**
 		 * @brief Defines the cpu iteration
@@ -276,6 +262,12 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		 * @param flags New Flags value
 		 */
 		void setInterrFlags(bit8 flags);
+
+		/**
+		 * @brief Requests a interrupt by type on the current Cpu
+		 * @param iType Iterrupt type
+		 */
+		void requestInterrupt(InterruptFuncs::InterruptType iType);
 
 	private:
 

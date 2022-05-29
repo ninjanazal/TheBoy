@@ -7,6 +7,10 @@
 #include "Cartridge.h"
 #include "cpu.h"
 #include "ram.h"
+#include "io.h"
+#include "timer.h"
+
+#include "emulView.h"
 
 /**
  * @brief Core Project Namespace 
@@ -15,6 +19,9 @@ namespace TheBoy {
 	class AddressBus;
 	class Cpu;
 	class Ram;
+	class IO;
+	class Timer;
+	class EmulView;
 
 	
 	/**
@@ -41,6 +48,22 @@ namespace TheBoy {
 		 */
 		std::shared_ptr<Ram> ram;
 
+		/**
+		 * @brief Emulator IO object
+		 */
+		std::shared_ptr<IO> io;
+
+
+		/**
+		 * @brief Emulator Timer object
+		 */
+		std::shared_ptr<Timer> timer;
+
+		/**
+		 * @brief Current emulator controller view
+		 */
+		std::shared_ptr<EmulView> view;
+
 	} EmulatorComponents;
 	
 
@@ -51,16 +74,6 @@ namespace TheBoy {
 	class EmulatorController {
 	private:
 	
-		/**
-		 * @brief Pointer to the inUse window
-		 */
-		std::shared_ptr<sf::RenderWindow> window;
-
-
-		/**
-		 * @brief Holds the inUse emulation type
-		 */
-		EmuType emulationType;
 
 		/**
 		 * @brief Holds the current emulator state values
@@ -83,14 +96,13 @@ namespace TheBoy {
 		/**
 		 * @brief Internal event manager function
 		 */
-		void manageEvents();
+		//void manageEvents();
 
 	public:
 		/**
 		 * @brief Construct a new Emulator Controller object
-		 * @param type Target emulation type
 		 */
-		EmulatorController(EmuType type);
+		EmulatorController();
 
 		/**
 		 * @brief Destroy the Emulator Controller object
@@ -142,6 +154,19 @@ namespace TheBoy {
 		 * @return std::shared_ptr<Cpu> Shared pointer to the inUse Cpu
 		 */
 		std::shared_ptr<Cpu> getCpu();
+
+		/**
+		 * @brief Gets the IO object
+		 * @return std::shared_ptr<IO> Shared pointer to the inUse IO
+		 */
+		std::shared_ptr<IO> getIO();
+
+
+		/**
+		 * @brief Get the Timer object
+		 * @return std::shared_ptr<Timer> Shared pointer to the inUse Timer
+		 */
+		std::shared_ptr<Timer> getTimer();
 	};
 	
 } // namespace TheBoy
