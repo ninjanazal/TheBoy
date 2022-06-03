@@ -167,6 +167,13 @@ namespace TheBoy {
 		 * @return std::shared_ptr<Timer> Shared pointer to the inUse Timer
 		 */
 		std::shared_ptr<Timer> getTimer();
+
+
+		/**
+		 * @brief Get the Timer object
+		 * @return std::shared_ptr<Timer> Shared pointer to the inUse Timer
+		 */
+		std::shared_ptr<EmulView> getView();
 	};
 	
 } // namespace TheBoy

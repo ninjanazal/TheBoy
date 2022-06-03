@@ -4,6 +4,7 @@
 #include "collections.h"
 
 namespace TheBoy {
+	class EmulatorController;
 
 	/**
 	 * @brief Defines the Cartridge state
@@ -36,8 +37,9 @@ namespace TheBoy {
 		/**
 		 * @brief Construct a new Cartridge object
 		 * @param path Path to the cartridge to be loaded
+		 * @param ctrl Target emulator controller reference
 		 */
-		Cartridge(const char* path);
+		Cartridge(EmulatorController* ctrl, const char* path);
 
 
 		/**
@@ -92,6 +94,12 @@ namespace TheBoy {
 		void write(bit16 addr, bit8 val);
 
 	private:
+		/**
+		 * @brief Pointer to the target emulator controller
+		 */
+		///
+		EmulatorController* emulCtrl;
+
 		/**
 		 * @brief Holds the cartridge path
 		 */

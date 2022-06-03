@@ -19,10 +19,12 @@ namespace TheBoy{
 	 */
 	#define BASE_SCREEN (int[]){160, 144}
 
+
 	/**
 	 * @brief Gets the bit n state from value
 	 */
 	#define GETBIT(from, n) (from >> n) & 1
+
 
 	/**
 	 * @brief Sets a defined bit value
@@ -82,12 +84,6 @@ namespace TheBoy{
 		};
 
 	} EmulatorState;
-
-
-
-	// - - - - - - - - - - - - - - - - - - - -
-	//             Enumerations             //
-	// - - - - - - - - - - - - - - - - - - - -
 
 
 	/**

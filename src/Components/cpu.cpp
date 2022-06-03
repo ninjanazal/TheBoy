@@ -49,11 +49,7 @@ namespace TheBoy {
 			fetch_data();
 			executeInst();
 
-			printf(
-				"[CPU] ::: Regs State { A: %2.2X F: %2.2X BC: %2.2X %2.2X DE: %2.2X %2.2X HL: %2.2X %2.2X SP: %4.4X PC %4.4X }\n",
-				regs->A, regs->F, regs->B, regs->C, regs->D, regs->E, regs->H, regs->L, regs->SP, regs->PC
-			);
-			fflush(stdout);
+			emuCtrl->getView()->setRegistorsVals(regs.get());
 		}
 		else {
 			// During an halted state
@@ -395,13 +391,21 @@ namespace TheBoy {
 		currOpcode = emuCtrl->getBus()->abRead(regs->PC);
 		currInstruct = TheBoy::getByOpcode(currOpcode);
 		
-		if(currInstruct == nullptr){
-			printf("[CPU] ::: Opcode %2.2X failed to load\n", currOpcode);
-			fflush(stdout);
-		}
+		char* bfr(new char[64] {});
 
-		printf("[CPU] ::: ->  OPCODE: %2.2X | PC: %2.2X\n", currOpcode, regs->PC);
-		fflush(stdout);
+		if(currInstruct == nullptr){
+			sprintf(bfr, 
+				"-> Opcode %2.2X failed to load\n", currOpcode
+			);
+		}
+		
+		sprintf(bfr,
+			"-> OPCODE: %2.2X | PC: %2.2X\n", currOpcode, regs->PC
+		);
+
+		emuCtrl->getView()->setCurrOperation(bfr);
+		delete[] bfr;
+
 
 		regs->PC++;
 	}

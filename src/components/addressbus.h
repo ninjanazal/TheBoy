@@ -2,7 +2,6 @@
 #define ADDRESSBUS_H
 
 #include "common.h"
-#include "emulatorController.h"
 
 namespace TheBoy {
 	class EmulatorController;

@@ -32,6 +32,7 @@ namespace TheBoy {
 	 */
 	void EmulatorController::Start(const char* rom_path) {
 		comps.view = std::make_shared<EmulView>(this);
+
 		comps.bus = std::make_shared<AddressBus>(this);
 		comps.ram = std::make_shared<Ram>(this);
 		comps.io = std::make_shared<IO>(this);
@@ -40,14 +41,13 @@ namespace TheBoy {
 		emu_state.reset();
 		comps.cpu = std::make_shared<Cpu>(this);
 
-		comps.cart = std::make_shared<Cartridge>(rom_path);
+		comps.cart = std::make_shared<Cartridge>(this, rom_path);
 		if(!comps.cart->loadCartridgeFromFile()){
 			std::cout << "[Emulator] ::: Fail to load cartridge!" << std::endl;
 			return;
 		}
 
 		std::cout << "[Emulator] ::: Cartridge was loaded!" << std::endl;
-
 
 		this->_run();
 	}
@@ -142,5 +142,17 @@ namespace TheBoy {
 			std::cout << "[Emulator] ::: Get Timer on a null shared!" << std::endl;
 		}
 		return comps.timer;
+	}
+
+
+	/**
+ 	* @brief Get the Timer object
+	* @return std::shared_ptr<Timer> Shared pointer to the inUse Timer
+	*/
+	std::shared_ptr<EmulView> EmulatorController::getView() {
+		if(!comps.timer) {
+			std::cout << "[Emulator] ::: Get View on a null shared!" << std::endl;
+		}
+		return comps.view;
 	}
 }

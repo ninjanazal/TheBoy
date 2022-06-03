@@ -3,6 +3,7 @@
 #include <cstring>
 
 #include "cartridge.h"
+#include "emulatorController.h"
 
 
 namespace TheBoy {
@@ -10,7 +11,7 @@ namespace TheBoy {
 	 * @brief Construct a new Cartridge object
 	 * @param path Path to the cartridge to be loaded
 	 */
-	Cartridge::Cartridge(const char* path) {
+	Cartridge::Cartridge(EmulatorController* ctrl, const char* path) : emulCtrl(ctrl) {
 		this->path = path;
 		cart_state = std::make_shared<CartridgeState>();
 		std::cout << "[CARTRIDGE] :: Created with path " << this->path << std::endl;
@@ -119,14 +120,20 @@ namespace TheBoy {
 	 * @brief Prints the values from a loaded cartridge
 	 */
 	void Cartridge::printCartridgeValues() {
-		std::cout <<"[CARTRIDGE] :: Cartridge Information" << std::endl;
-		printf("- Title 	: %s\n", cart_state->title);
-		printf("- Type 		: %2.2X (%s)\n", cart_state->cart_type, getCartTypeName());
-		printf("- ROM Size	: %d KiB\n", 0x20 << cart_state->rom_size);
-		printf("- RAM Size	: %2.2X\n", cart_state->ram_size);
-		printf("- Lice Code	: %2.2X (%s)\n", cart_state->lic_code, getCartLicenseeName());
-		printf("- ROM Vers	: %2.2X\n", cart_state->rom_version);
-		fflush(stdout);
+		char* msgBuffer(new char[256] {});
+		sprintf(msgBuffer, 
+			"-> Title     : %s\n"
+			"-> Type      : %2.2X (%s)\n"
+			"-> ROM Size  : %d KiB\n"
+			"-> RAM Size  : %2.2X\n"
+			"-> Lice Code : %2.2X (%s)\n"
+			"-> ROM Vers  : %2.2X", cart_state->title, cart_state->cart_type, getCartTypeName(),
+			0x20 << cart_state->rom_size, cart_state->ram_size, cart_state->lic_code, getCartLicenseeName()
+		);
+
+
+		emulCtrl->getView()->setCartInfo(msgBuffer);
+		delete[] msgBuffer;
 	}
 
 
@@ -148,8 +155,12 @@ namespace TheBoy {
 			x = x - rom_data[i] - 1;
 		}
 
-		std::printf("[CARTRIDGE] :: Checksum Result : %2.2X (%X)\n", cart_state->checksum, (x & 0xFF));
-		fflush(stdout);
+		char* msgBuf(new char[64] {});
+		sprintf(msgBuf, "[CARTRIDGE] :: Checksum Result : %2.2X (%X)\n", cart_state->checksum, (x & 0xFF));
+		
+		emulCtrl->getView()->setCartChecksum(msgBuf);
+		delete[] msgBuf;
+
 		return (x & 0xFF);
 	}
 

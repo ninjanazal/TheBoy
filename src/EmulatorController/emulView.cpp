@@ -1,4 +1,5 @@
 #include "emulView.h"
+#include "emulatorController.h"
 
 namespace TheBoy {
 
@@ -8,12 +9,17 @@ namespace TheBoy {
 	 */
 	EmulView::EmulView(EmulatorController* ctrl) : emulCtrl(ctrl) {
 		window = std::make_shared<sf::RenderWindow>(
-			sf::VideoMode(900, 500), "TheBoy Emulator"
+			sf::VideoMode(900, 500), "TheBoy Emulator",
+			sf::Style::Titlebar | sf::Style::Titlebar | sf::Style::Close
 		);
 
 		mainLoad();
+		wText[0]->setString("|TheBoy - Game boy Emulator\n - - - - - - - - - - -\n");
+		wText[1]->setString("|:: Cartrige Information");
+
 		std::cout << "[VIEW] :: Window created! " << std::endl;
 	}
+
 
 	/**
 	 * @brief Manages the window events
@@ -40,11 +46,64 @@ namespace TheBoy {
 	 */
 	void EmulView::Draw(){
 		window->clear(sf::Color::Black);
+		positionTextElms();
+
 		for (int i = 0; i < (sizeof(wText)/sizeof(wText[0])); i++) {
 			window->draw(*wText[i].get());
 		}
+		window->draw(*tGRam.get());
+		
+
 		window->display();
 	}
+
+
+	/**
+	 * @brief Set the Cart Informations on screen
+	 * @param inf information String
+	 */
+	void EmulView::setCartInfo(const char* inf) {
+		wText[2]->setString(inf);
+	}
+
+
+	/**
+	 * @brief Set the Cart Checksum value on screen
+	 * @param inf Checksum result string
+	 */
+	void EmulView::setCartChecksum(const char* inf) {
+		wText[3]->setString(inf);
+	}
+
+
+	/**
+	 * @brief Set the Registors Vals on screen
+	 * @param regs Target CPU registors
+	*/
+	void EmulView::setRegistorsVals(const Registers* regs){
+		char* msgBuffer(new char[256] {});
+		sprintf(msgBuffer, 
+				"|:: Registors state\n" 
+				"A: %2.2X F: %2.2X\n" 
+				"BC: %2.2X %2.2X DE: %2.2X %2.2X HL: %2.2X %2.2X\n" 
+				"SP: %4.4X PC %4.4X",
+				regs->A, regs->F,
+				regs->B, regs->C, regs->D, regs->E, regs->H, regs->L,
+				regs->SP, regs->PC
+		);
+		wText[4]->setString(msgBuffer);
+		delete[] msgBuffer;
+	}
+
+
+	/**
+	 * @brief Set the Curr Operation information on screen
+	 * @param inf Current operation info
+	 */
+	void EmulView::setCurrOperation(const char* inf) {
+		wText[5]->setString(inf);
+	}
+
 
 
 	/**
@@ -53,25 +112,39 @@ namespace TheBoy {
 	void EmulView::mainLoad() {
 		winSize = window->getSize();
 
+		tView = std::make_shared<sf::Texture>();
+		tGRam = std::make_shared<sf::Texture>();
+
 		wIcon = std::make_shared<sf::Image>();
 		wFont = std::make_shared<sf::Font>();
 		
-		if(!wIcon->loadFromFile("assets\\icons\\MaBoy_EmuIcon.png")){
+		if(!wIcon->loadFromFile("assets\\icons\\MaBoy_EmuIcon_32.png")){
+			std::cout << "[VIEW] :: Failed to load window icon! " << std::endl;
+		}
+		window->setIcon(32, 32, wIcon->getPixelsPtr());
+
+		if(!wFont->loadFromFile("assets\\fonts\\JetBrainsMono-Regular.ttf")){
 			std::cout << "[VIEW] :: Failed to load window icon! " << std::endl;
 		}
 
-		if(!wFont->loadFromFile("assets\fonts\\JetBrainsMono-Regular.ttf")){
-			std::cout << "[VIEW] :: Failed to load window icon! " << std::endl;
-		}
-
-		window->setIcon(254, 254, wIcon->getPixelsPtr());
-
-		// init all the window Texts
 		for (int i = 0; i < (sizeof(wText)/sizeof(wText[0])); i++) {
 			wText[i] = std::make_shared<sf::Text>();
+			wText[i]->setFont(*wFont.get());
+			wText[i]->setCharacterSize(12);
+			wText[i]->setString(" - ");
 		}
-		
 	}
 
 
+	/**
+	 * @brief Updates the text elements positions
+	 */
+	void EmulView::positionTextElms(){
+		for(int i = 0; i < (sizeof(wText)/sizeof(wText[0])); i++){
+			wText[i]->setPosition(
+				winSize.x * 0.65f,
+				(i == 0) ? 0.0f : wText[i - 1]->getGlobalBounds().top + wText[i - 1]->getGlobalBounds().height
+			);
+		}
+	}
 } // namespace TheBoy

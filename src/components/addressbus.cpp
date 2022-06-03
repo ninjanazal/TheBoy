@@ -1,4 +1,5 @@
 #include "addressbus.h"
+#include "emulatorController.h"
 
 namespace TheBoy {
 	/**
