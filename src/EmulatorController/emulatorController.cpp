@@ -35,6 +35,8 @@ namespace TheBoy {
 
 		comps.bus = std::make_shared<AddressBus>(this);
 		comps.ram = std::make_shared<Ram>(this);
+		comps.ppu = std::make_shared<Ppu>(this);
+
 		comps.io = std::make_shared<IO>(this);
 		comps.timer = std::make_shared<Timer>(this);
 
@@ -109,6 +111,19 @@ namespace TheBoy {
 		}
 		return comps.ram;
 	}
+
+
+	/**
+	 * @brief Get the Ppu object
+	 * @return std::shared_ptr<Ppu> Shared pointer to the inUse Ppu
+	 */
+	std::shared_ptr<Ppu> EmulatorController::getPpu() {
+		if(!comps.ppu) {
+			std::cout << "[Emulator] ::: Get Ppu on a null shared!" << std::endl;
+		}
+		return comps.ppu;
+	}
+
 
 	/**
 	 * @brief Get the Cpu object

@@ -10,7 +10,6 @@ namespace TheBoy {
 	}
 
 
-
 	/**
 	 * @brief Reads the value from the defined address
 	 * @param addr Read address value

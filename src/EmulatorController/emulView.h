@@ -15,10 +15,12 @@ namespace TheBoy {
 		 */
 		EmulView(EmulatorController* ctrl);
 
+
 		/**
 		 * @brief Destroy the Emul View object
 		 */
-		~EmulView() = default;
+		~EmulView();
+
 
 		/**
 		 * @brief Manages the window events
@@ -94,7 +96,20 @@ namespace TheBoy {
 		/**
 		 * @brief Array with the debug text elements
 		 */
-		std::shared_ptr<sf::Text> wText[8];
+		std::shared_ptr<sf::Text> wText[6];
+
+
+
+		/**
+		 * @brief Buffer holding the current 
+		 */
+		sf::Uint8* viewPixels;
+
+
+		/**
+		 * @brief Buffer holding the current vRam values
+		 */
+		sf::Uint8* vramPixels;
 
 
 		/**
@@ -109,7 +124,18 @@ namespace TheBoy {
 		std::shared_ptr<sf::Texture> tView;
 
 
+		/**
+		 * @brief Current graphic vRam sprite representation
+		 */
+		std::shared_ptr<sf::Sprite> sGRam;
+
+
+		/**
+		 * @brief Current visual output sprite
+		 */
+		std::shared_ptr<sf::Sprite> sView;
 	#pragma endregion
+
 
 		/**
 		 * @brief Loads all the needed objects to memory

@@ -17,7 +17,7 @@ namespace TheBoy{
 	/**
 	 * @brief Defines the GameBoy ScreenSize
 	 */
-	#define BASE_SCREEN (int[]){160, 144}
+	#define BASE_SCREEN (unsigned int[]){160, 144}
 
 
 	/**

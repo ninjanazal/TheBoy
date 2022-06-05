@@ -22,6 +22,15 @@ namespace TheBoy {
 
 
 	/**
+	 * 
+	 * @brief Destroy the Emul View object
+	 */
+	EmulView::~EmulView() {
+		delete[] viewPixels;
+	}
+
+
+	/**
 	 * @brief Manages the window events
 	 */
 	void EmulView::ManageEvents() {
@@ -51,8 +60,8 @@ namespace TheBoy {
 		for (int i = 0; i < (sizeof(wText)/sizeof(wText[0])); i++) {
 			window->draw(*wText[i].get());
 		}
-		window->draw(*tGRam.get());
-		
+		window->draw(*sGRam.get());
+		window->draw(*sView.get());
 
 		window->display();
 	}
@@ -112,8 +121,18 @@ namespace TheBoy {
 	void EmulView::mainLoad() {
 		winSize = window->getSize();
 
-		tView = std::make_shared<sf::Texture>();
 		tGRam = std::make_shared<sf::Texture>();
+		sGRam = std::make_shared<sf::Sprite>(*tGRam.get());
+
+
+		viewPixels = new sf::Uint8[BASE_SCREEN[0] * BASE_SCREEN[1] * 4] {};
+
+		tView = std::make_shared<sf::Texture>();
+		tView->create(BASE_SCREEN[0], BASE_SCREEN[1]);
+		tView->update(viewPixels);
+		
+		sView = std::make_shared<sf::Sprite>(*tView.get());		
+
 
 		wIcon = std::make_shared<sf::Image>();
 		wFont = std::make_shared<sf::Font>();

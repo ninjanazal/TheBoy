@@ -7,6 +7,7 @@
 #include "Cartridge.h"
 #include "cpu.h"
 #include "ram.h"
+#include "ppu.h"
 #include "io.h"
 #include "timer.h"
 
@@ -19,6 +20,7 @@ namespace TheBoy {
 	class AddressBus;
 	class Cpu;
 	class Ram;
+	class Ppu;
 	class IO;
 	class Timer;
 	class EmulView;
@@ -47,6 +49,12 @@ namespace TheBoy {
 		 * @brief Emulator Ram object
 		 */
 		std::shared_ptr<Ram> ram;
+
+		/**
+		 * @brief Emulator Ppu object
+		 */
+		std::shared_ptr<Ppu> ppu;
+
 
 		/**
 		 * @brief Emulator IO object
@@ -147,6 +155,13 @@ namespace TheBoy {
 		 * @return std::shared_ptr<Ram> Shared pointer to the inUse Ram
 		 */
 		std::shared_ptr<Ram> getRam();
+
+
+		/**
+		 * @brief Get the Ppu object
+		 * @return std::shared_ptr<Ppu> Shared pointer to the inUse Ppu
+		 */
+		std::shared_ptr<Ppu> getPpu();
 
 
 		/**
