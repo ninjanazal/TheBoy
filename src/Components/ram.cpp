@@ -23,11 +23,11 @@ namespace TheBoy {
 	bit8 Ram::wRead(bit16 addr) {
 		// Since this memory block start at $C000
 		addr -= 0xC000;
-		printf("[RAM] ::: Reading Work RAM at  %.4X\n!", (addr + 0xC000));
+		printf("[RAM] ::: Reading Work RAM at  %.4X!\n", (addr + 0xC000));
 		fflush(stdout);
 
-		if((sizeof(workRam)/sizeof(*workRam)) <= addr){
-			printf("[RAM] ::: Invalid work RAM Read at %05X\n!", (addr + 0xC000));
+		if(addr >= 0x2000){
+			printf("[RAM] ::: Invalid work RAM Read at %05X!", (addr + 0xC000));
 			fflush(stdout);
 			return 0x0;
 		}
@@ -43,14 +43,8 @@ namespace TheBoy {
 	void Ram::wWrite(bit16 addr, bit8 val) {
 		// Since this memory block start at $C000
 		addr -= 0xC000;
-		printf("[RAM] ::: Writing Work RAM at  %.4X\n!", (addr + 0xC000));
+		printf("[RAM] ::: Writing Work RAM at 	%.4X!\n", (addr + 0xC000));
 		fflush(stdout);
-
-		if((sizeof(workRam)/sizeof(*workRam)) <= addr){
-			printf("[RAM] ::: Invalid work RAM Write at %05X\n!", (addr + 0xC000));
-			fflush(stdout);
-			return;
-		}
 
 		workRam[addr] = val;
 	}
@@ -67,12 +61,6 @@ namespace TheBoy {
 		printf("[RAM] ::: Reading High RAM at  %.4X\n!", (addr + 0xC000));
 		fflush(stdout);
 
-		if((sizeof(highRam)/sizeof(*highRam)) <= addr){
-			printf("[RAM] ::: Invalid work RAM Write at %05X\n!", (addr + 0xC000));
-			fflush(stdout);
-			return 0x0;
-		}
-
 		return highRam[addr];
 	}
 
@@ -85,14 +73,8 @@ namespace TheBoy {
 	void Ram::hWrite(bit16 addr, bit8 val) {
 		// Since this memory block start at $FF80
 		addr -= 0xFF80;
-		printf("[RAM] ::: Writing High RAM at  %.4X\n!", (addr + 0xC000));
+		printf("[RAM] ::: Writing High RAM at  %.4X!\n", (addr + 0xC000));
 		fflush(stdout);
-
-		if((sizeof(highRam)/sizeof(*highRam)) <= addr){
-			printf("[RAM] ::: Invalid work RAM Write at %05X\n!", (addr + 0xC000));
-			fflush(stdout);
-			return;
-		}
 
 		highRam[addr] = val;
 	}

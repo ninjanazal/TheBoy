@@ -25,8 +25,7 @@ namespace TheBoy {
 		}
 		// switchable bank (0/1) video Ram
 		else if(addr < 0xA000) {
-			// TODO
-			return 0x00;
+			return emuCtrl->getPpu()->read(addr);
 		}
 		// From cartridge External RAM
 		else if(addr < 0xC000) {
@@ -43,8 +42,10 @@ namespace TheBoy {
 		}
 		// OAM Sprite attribute table
 		else if(addr < 0xFEA0) {
-			// TODO
-			return 0x00;
+			if(emuCtrl->getDma()->isTransfering()){
+				return 0xFF;
+			}
+			return emuCtrl->getPpu()->oamRead(addr);
 		}
 		// Not Usable
 		else if(addr < 0xFF00) {
@@ -97,7 +98,8 @@ namespace TheBoy {
 		}
 		// switchable bank (0/1) video Ram
 		else if(addr < 0xA000) {
-			// TODO
+			std::cout << "VRAM write" << std::endl;
+			emuCtrl->getPpu()->write(addr, val);
 		}
 		// From cartridge External RAM
 		else if(addr < 0xC000) {
@@ -109,11 +111,14 @@ namespace TheBoy {
 		}
 		// Echo RAM, Nintendo says use of this area is prohibited
 		else if(addr < 0xFE00) {
-			// TODO
+			std::cout << "[ADDRESSBUS] ::: Reserver area write request, locked" << std::endl;
 		}
 		// OAM Sprite attribute table
 		else if(addr < 0xFEA0) {
-			// TODO
+			if(emuCtrl->getDma()->isTransfering()){
+				return;
+			}
+			emuCtrl->getPpu()->oamWrite(addr, val);
 		}
 		// Not Usable
 		else if(addr < 0xFF00) {

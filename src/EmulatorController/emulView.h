@@ -74,6 +74,11 @@ namespace TheBoy {
 		 */
 		sf::Vector2u winSize;
 
+		/**
+		 * @brief Defined vRam Tile arrangement
+		 */
+		const sf::Vector2u tileSizeView = sf::Vector2u(24, 16);
+
 
 		/**
 		 * @brief Pointer to the inUse window
@@ -107,9 +112,16 @@ namespace TheBoy {
 
 
 		/**
-		 * @brief Buffer holding the current vRam values
+		 * @brief Current vRam image representation
 		 */
-		sf::Uint8* vramPixels;
+		std::shared_ptr<sf::Image> iGRam;
+
+
+		/**
+		 * @brief Current visual output image
+		 */
+		std::shared_ptr<sf::Image> iView;
+
 
 
 		/**
@@ -136,7 +148,6 @@ namespace TheBoy {
 		std::shared_ptr<sf::Sprite> sView;
 	#pragma endregion
 
-
 		/**
 		 * @brief Loads all the needed objects to memory
 		 */
@@ -147,6 +158,20 @@ namespace TheBoy {
 		 * @brief Updates the text elements positions
 		 */
 		void positionTextElms();
+
+
+		/**
+		 * @brief Updates the debug view texture
+		 */
+		void buildDebugView();
+
+
+		/**
+		 * @brief Adds the target mem tile to the debug pixel array
+		 * @param addr Target reading address
+		 * @param tileId Current tile iD
+		 */
+		void addTileToDebug(bit16 addr, int tileId);
 };	
 } // namespace TheBoy
 

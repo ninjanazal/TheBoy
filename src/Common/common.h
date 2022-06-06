@@ -5,6 +5,7 @@
 #include <map>
 #include <cstdint>
 #include <memory>
+#include <SFML/Graphics.hpp>
 
 
 namespace TheBoy{
@@ -94,6 +95,19 @@ namespace TheBoy{
 	static bit16 reverse16(const bit16 val){
 		return ( (val & 0xFF00) >> 8 | (val & 0x00FF) << 8);
 	}
+
+	// - - - - - - - - - - - - - - - - - - - -
+	//                 COLORS               //
+	// - - - - - - - - - - - - - - - - - - - -
+
+
+	// GameBoy color pallet representation
+	const sf::Color gbPallet[4] = {
+		sf::Color::White,
+		sf::Color(126, 126, 126),
+		sf::Color(63, 63, 63),
+		sf::Color::Black
+	};
 
 }
 

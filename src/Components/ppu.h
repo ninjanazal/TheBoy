@@ -12,7 +12,14 @@ namespace TheBoy {
 		bit8 y;
 		bit8 x;
 		bit8 tIndex;
-		bit8 flags;
+
+		// Defining the flags using bit-field values, 8bit flags
+		unsigned paltN_CGB : 3;
+		unsigned vRamBank : 1;
+		unsigned paltN : 1;
+		unsigned xFlip : 1;
+		unsigned yFlip : 1;
+		unsigned bgWind : 1;
 	} OamElement;
 
 	class Ppu {	
@@ -59,7 +66,46 @@ namespace TheBoy {
 		/**
 		 * @brief Destroy the Ppu object
 		 */
-		~Ppu() = default;
+		~Ppu();
+
+
+		/**
+		 * @brief Ppu interation
+		 */
+		void step();
+
+
+		/**
+		 * @brief Writes a value to the OAM ram position
+		 * @param addr Target address value
+		 * @param val Defined value
+		 */
+		void oamWrite(bit16 addr, bit8 val);
+
+
+		/**
+		 * @brief Reads from the OAM Ram on the defined addres
+		 * @param addr Target addres
+		 * @return bit8 Value on the addres
+		 */
+		bit8 oamRead(bit16 addr);
+
+
+		/**
+		 * @brief Writes to the vRam on the defined address
+		 * @param addr Target address
+		 * @param val Defined value
+		 */
+		void write(bit16 addr, bit8 val);
+
+
+		/**
+		 * @brief Reads from the vRam on the defined address
+		 * @param addr Target addres
+		 * @return bit8 Value on the address
+		 */
+		bit8 read(bit16 addr);
+
 
 	private:
 		/**
@@ -68,7 +114,15 @@ namespace TheBoy {
 		EmulatorController* emulCtrl;
 
 
-		std::shared_ptr<OamElement> oam_ram;
+		/**
+		 * @brief Pointer to the available 40 OAM ram entries
+		 */
+		OamElement oam_ram[40];
+
+		/**
+		 * @brief Memory allocation for the video Ram
+		 */
+		bit8* vRam;
 	};
 } // namespace TheBoy
 #endif

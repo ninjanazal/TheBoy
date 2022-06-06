@@ -34,6 +34,7 @@ namespace TheBoy {
 		comps.view = std::make_shared<EmulView>(this);
 
 		comps.bus = std::make_shared<AddressBus>(this);
+		comps.dma = std::make_shared<Dma>(this);
 		comps.ram = std::make_shared<Ram>(this);
 		comps.ppu = std::make_shared<Ppu>(this);
 
@@ -71,11 +72,13 @@ namespace TheBoy {
 	 * @param cycles 
 	 */
 	void EmulatorController::emulCycles(const int& cycles) {
-		int rCylces = cycles * 4;
-		for (int i = 0; i < rCylces; i++) {
-			emu_state.ticks++;
-			comps.timer->tick();
+		for (int i = 0; i<cycles; i++ ) {
+			for(int n = 0; n < 4; n++) {
+				emu_state.ticks++;
+				comps.timer->tick();
+			}
 		}
+		comps.dma->step();
 	}
 
 
@@ -100,6 +103,18 @@ namespace TheBoy {
 		}
 		return comps.bus;
 	}
+
+	/**
+	 * @brief Get the Dma object
+	 * @return std::shared_ptr<Dma> Shared pointer to the inUse Dma
+	 */
+	std::shared_ptr<Dma> EmulatorController::getDma() {
+		if(!comps.dma){
+			std::cout << "[Emulator] ::: Get Dma on a null shared!" << std::endl;
+		}
+		return comps.dma;
+	}
+
 
 	/**
 	 * @brief Get the Ram object

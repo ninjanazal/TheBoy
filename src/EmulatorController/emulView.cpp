@@ -1,5 +1,6 @@
 #include "emulView.h"
 #include "emulatorController.h"
+#include <math.h>
 
 namespace TheBoy {
 
@@ -14,6 +15,7 @@ namespace TheBoy {
 		);
 
 		mainLoad();
+
 		wText[0]->setString("|TheBoy - Game boy Emulator\n - - - - - - - - - - -\n");
 		wText[1]->setString("|:: Cartrige Information");
 
@@ -56,6 +58,8 @@ namespace TheBoy {
 	void EmulView::Draw(){
 		window->clear(sf::Color::Black);
 		positionTextElms();
+		
+		buildDebugView();
 
 		for (int i = 0; i < (sizeof(wText)/sizeof(wText[0])); i++) {
 			window->draw(*wText[i].get());
@@ -93,9 +97,9 @@ namespace TheBoy {
 		char* msgBuffer(new char[256] {});
 		sprintf(msgBuffer, 
 				"|:: Registors state\n" 
-				"A: %2.2X F: %2.2X\n" 
-				"BC: %2.2X %2.2X DE: %2.2X %2.2X HL: %2.2X %2.2X\n" 
-				"SP: %4.4X PC %4.4X",
+				"A: %2.2X      F: %2.2X\n" 
+				"BC: %2.2X %2.2X  DE: %2.2X %2.2X  HL: %2.2X %2.2X\n" 
+				"SP: %4.4X   PC %4.4X",
 				regs->A, regs->F,
 				regs->B, regs->C, regs->D, regs->E, regs->H, regs->L,
 				regs->SP, regs->PC
@@ -121,10 +125,22 @@ namespace TheBoy {
 	void EmulView::mainLoad() {
 		winSize = window->getSize();
 
+	
+		// 384 = 24 * 16 disposal
+		iGRam = std::make_shared<sf::Image>();
+		iGRam->create(tileSizeView.x * 8, tileSizeView.y * 8, sf::Color::Blue);
+
+		
+		// Ram representation
 		tGRam = std::make_shared<sf::Texture>();
-		sGRam = std::make_shared<sf::Sprite>(*tGRam.get());
+		tGRam->loadFromImage(*iGRam.get());
 
+		sGRam = std::make_shared<sf::Sprite>();
+		sGRam->setTexture(*tGRam.get());
+		sGRam->setScale(1.5f, 1.5f);
+	
 
+		// OutPut view
 		viewPixels = new sf::Uint8[BASE_SCREEN[0] * BASE_SCREEN[1] * 4] {};
 
 		tView = std::make_shared<sf::Texture>();
@@ -140,7 +156,7 @@ namespace TheBoy {
 		if(!wIcon->loadFromFile("assets\\icons\\MaBoy_EmuIcon_32.png")){
 			std::cout << "[VIEW] :: Failed to load window icon! " << std::endl;
 		}
-		window->setIcon(32, 32, wIcon->getPixelsPtr());
+		//window->setIcon(32, 32, wIcon->getPixelsPtr());
 
 		if(!wFont->loadFromFile("assets\\fonts\\JetBrainsMono-Regular.ttf")){
 			std::cout << "[VIEW] :: Failed to load window icon! " << std::endl;
@@ -164,6 +180,74 @@ namespace TheBoy {
 				winSize.x * 0.65f,
 				(i == 0) ? 0.0f : wText[i - 1]->getGlobalBounds().top + wText[i - 1]->getGlobalBounds().height
 			);
+		}
+		sGRam->setPosition(
+			winSize.x * 0.65f,
+			// calculate the bottom position for the last text element
+			wText[(sizeof(wText)/sizeof(wText[0])) - 1]->getGlobalBounds().top +
+					wText[(sizeof(wText)/sizeof(wText[0])) - 1]->getGlobalBounds().height + 10
+		);
+	}
+
+	/**
+	 * @brief Updates the debug view texture
+	 */
+	void EmulView::buildDebugView() {
+		/*
+			Tile data is stored in VRAM in the memory area at $8000-$97FF;
+			with each tile taking 16 bytes, this area defines data for 384 tiles
+			Each tile has 8x8 pixels and has a color depth of 4 colors/gray shades
+			384 = 16 * 24 disposal
+		*/
+		bit16 addr = 0x8000;
+		// Making the display table
+		for (int y = 0; y < tileSizeView.y; y++){
+			for(int x = 0; x < tileSizeView.x; x++){
+				addTileToDebug(addr, ((y * 24) + x ));
+			}
+		}
+
+		tGRam->loadFromImage(*iGRam.get());
+	}
+
+
+	/**
+	 * @brief Adds the target mem tile to the debug pixel array
+	 * @param addr Target reading address
+	 * @param tileId Current tile iD
+	 */
+	void EmulView::addTileToDebug(bit16 addr, int tileId) {
+		/* 
+			with each tile taking 16 bytes
+			Each tile occupies 16 bytes, where each line is represented by 2 bytes
+			For each line, the first byte specifies the least significant bit of the color ID of each pixel,
+			and the second byte specifies the most significant bit. In both bytes, bit 7 represents the leftmost pixel,
+			and bit 0 the rightmost.
+			
+		*/
+		int yTileOff = floor(tileId / tileSizeView.x);
+		int xTileOff = tileId - (yTileOff * tileSizeView.x);
+
+		for (int t= 0; t < 16; t += 2) {
+			// For each tile line, needs to be readed 2 bytes
+			// High and Low tile line value
+			bit8 byte1 = emulCtrl->getBus()->abRead(addr + (tileId * 16) + t);
+			bit8 byte2 = emulCtrl->getBus()->abRead(addr + (tileId * 16) + t + 1);
+
+			// for each bit on the gathered line, the low nib value is the most significat one and vice versa
+			// Place the target bit value from the 1st byte on the left of the target bit from the 2st byte
+			for (int b = 0; b < 8; b++) {
+				bit8 pixelID = ((byte1 & (1 << b)) << 1) | ((byte2 & (1 << b)));
+				// Pixel ID makes the target pixel color value, for the gb is 1 of 4 colors
+				// Since each pixel needs a 4 value entrance
+				// 64 pixels per tile
+
+				iGRam->setPixel(
+					(8 * xTileOff) + b,
+					(8 * yTileOff) + floor(t / 2),
+					gbPallet[pixelID]
+				);
+			}
 		}
 	}
 } // namespace TheBoy

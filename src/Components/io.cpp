@@ -30,12 +30,14 @@ namespace TheBoy {
 			Bit 1 - Clock Speed (0=Normal, 1=Fast) ** CGB Mode Only **
 			Bit 0 - Shift Clock (0=External Clock, 1=Internal Clock)
 		*/
-		switch (addr) {
-		case 0xFF01:
-			return seriaData[0];
 
-		case 0xFF02:
+		if(addr == 0xFF01) {
+			return seriaData[0];
+		}
+
+		if(addr == 0xFF02) {
 			return seriaData[1];
+		}
 	
 		// Timer IO access
 		if(BETWEEN(addr, 0xFF04, 0xFF07)){
@@ -46,26 +48,24 @@ namespace TheBoy {
 		if (addr == 0xFF0F){
 			return emulCtrl->getCpu()->getInterrFlags();
 		}
-		}
 		return 0x0;
 	}
 
 
-	
 	/**
 	 * @brief Write the io value on the defined addres
 	 * @param addr Target Write addres
 	 * @param val value to be written
 	 */
 	void IO::write(bit16 addr, bit8 val) {
-		switch (addr) {
-		case 0xFF01:
+		if(addr == 0xFF01)
 			seriaData[0] = val;
-			break;
+			return;
 
-		case 0xFF02:
+		if(addr == 0xFF02){
 			seriaData[1] = val;
-			break;;
+			return;
+		}
 	
 		// Timer IO access
 		if(BETWEEN(addr, 0xFF04, 0xFF07)){
@@ -78,6 +78,10 @@ namespace TheBoy {
 			emulCtrl->getCpu()->setInterrFlags(val);
 			return;
 		}
+
+		// FF46 - DMA (DMA Transfer and Start Address)
+		if (addr == 0xFF46) {
+			emulCtrl->getDma()->start(val);
 		}
 	}
 	

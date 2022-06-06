@@ -375,7 +375,6 @@ namespace TheBoy{
 		}
 
 
-
 		/**
 		 * @brief On a Instruction SUB resolver
 		 * @param cpu Requester cpu pointer

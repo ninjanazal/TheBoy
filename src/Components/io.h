@@ -52,6 +52,4 @@ namespace TheBoy {
 
 	};	
 } // namespace TheBoy
-
-
 #endif
