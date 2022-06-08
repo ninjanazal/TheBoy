@@ -3,6 +3,26 @@
 
 namespace TheBoy {
 	/**
+	 * @brief Construct a new Emulator Controller:: Emulator Controller object
+	 * @param type Target emulation type
+	 */
+	EmulatorController::EmulatorController() { 
+		std::cout << "[Emulator] ::: controller was created" << std::endl;
+
+		debugBuffer = new char[1024] {};
+		debugMsgPointer = 0;
+	}
+
+
+	/**
+	 * @brief Destroy the Emulator Controller object
+	 */
+	EmulatorController::~EmulatorController() {
+		delete[] debugBuffer;
+	}
+
+
+	/**
 	 * @brief Emulator internal loop
 	 */
 	void EmulatorController::_run() {
@@ -12,17 +32,10 @@ namespace TheBoy {
 			comps.view->ManageEvents();
 
 			comps.cpu->step();
-			
+			debugUpdate();
+
 			comps.view->Draw();
 		}
-	}
-
-	/**
-	 * @brief Construct a new Emulator Controller:: Emulator Controller object
-	 * @param type Target emulation type
-	 */
-	EmulatorController::EmulatorController() { 
-		std::cout << "[Emulator] ::: controller was created" << std::endl;
 	}
 
 
@@ -80,6 +93,23 @@ namespace TheBoy {
 		}
 		comps.dma->step();
 	}
+
+
+	/**
+	 * @brief Updates the debug, information if available
+	 */
+	void EmulatorController::debugUpdate() {
+		// Some tests marks this address for pending information
+		if(getBus()->abRead(0xFF02) == 0x81){
+			debugBuffer[debugMsgPointer++] = getBus()->abRead(0xFF01);
+			getBus()->abWrite(0xFF02, 0);
+		}
+
+		if(debugBuffer[0]){
+			printf("[DEBUGMSG] ::: %s\n", debugBuffer);
+		}
+	}
+
 
 
 	/**

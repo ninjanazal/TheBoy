@@ -38,7 +38,7 @@ namespace TheBoy{
 			// Jump relative can be a increment/decrement for the current Value, and the bit8 definition is unsigned
 			// casting to char
 			// fetchdata holds a 2Byte value, and only 1B should be used
-			char relative = (char)(cpu->getFetchedData() & 0xFF);
+			int8_t relative = (char)(cpu->getFetchedData() & 0xFF);
 			bit16 addr = cpu->getRegisterValue(REG_PC) + relative;
 			jumpToAddress(cpu, addr, false);
 		}
@@ -135,7 +135,7 @@ namespace TheBoy{
 			// EX {03, 13, 23 & 33}
 			if((cpu->getCurrentOPCode() & 0x03) != 0x03) {
 				// Flags check Z 0 H -
-				cpu->setFlags(val == 0, 0, (val & 0xF) >= 16, -1);
+				cpu->setFlags(val == 0, 0, (val & 0x0F) >= 16, -1);
 			} 
 		}
 

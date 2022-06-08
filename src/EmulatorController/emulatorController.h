@@ -103,6 +103,23 @@ namespace TheBoy {
 		EmulatorComponents comps;
 
 
+		/**
+		 * @brief Marks the current writting position
+		 */
+		int debugMsgPointer;
+
+		/**
+		 * @brief Debug message buffer pointer
+		 */
+		char* debugBuffer;
+
+
+		/**
+		 * @brief Updates the debug, information if available
+		 */
+		void debugUpdate();
+
+
 	private:
 
 		/**
@@ -124,7 +141,7 @@ namespace TheBoy {
 		/**
 		 * @brief Destroy the Emulator Controller object
 		 */
-		~EmulatorController() = default;
+		~EmulatorController();
 
 		/**
 		 * @brief Initialize the Emulator with a defined size
@@ -143,8 +160,8 @@ namespace TheBoy {
 		 * @param cycles 
 		 */
 		void emulCycles(const int& cycles);
-	
 
+		
 		/**
 		 * @brief Get the Cartridge object
 		 * @return std::shared_ptr<Cartridge> Shared pointer to the inUse cartridge
