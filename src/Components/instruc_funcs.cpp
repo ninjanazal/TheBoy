@@ -18,7 +18,9 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instNOP(Cpu* cpu) {
+#if VERBOSE
 			std::cout << "[INSTFUNCS] ::: NOP Operation, continue" << std::endl;
+#endif
 		}
 		
 
@@ -135,7 +137,7 @@ namespace TheBoy{
 			// EX {03, 13, 23 & 33}
 			if((cpu->getCurrentOPCode() & 0x03) != 0x03) {
 				// Flags check Z 0 H -
-				cpu->setFlags(val == 0, 0, (val & 0x0F) >= 16, -1);
+				cpu->setFlags(val == 0, 0, (val & 0x0F) == 0, -1);
 			} 
 		}
 
@@ -180,7 +182,7 @@ namespace TheBoy{
 			// EX {0B, 1B, 2B & 3B}
 			if((cpu->getCurrentOPCode() & 0x0B) != 0x0B) {
 				// Flags check Z 0 H -
-				cpu->setFlags(val == 0, 1, (val & 0x0F) >= 16, -1);
+				cpu->setFlags(val == 0, 1, (val & 0x0F) == 0, -1);
 			} 
 		}
 
@@ -195,11 +197,14 @@ namespace TheBoy{
 				// if is a 16bit value
 				if(cpu->getCurrInstruct()->regTypeL >= RegisterType::REG_AF){
 					cpu->requestCycles(1);
+					cpu->requestBusWrite16(cpu->getMemoryDest(), cpu->getFetchedData());
 				}
 				else{
 					// for 8bit writes
 					cpu->requestBusWrite(cpu->getMemoryDest(), cpu->getFetchedData());
 				}
+
+				cpu->requestCycles(1);
 				return;
 			}
 
@@ -211,7 +216,7 @@ namespace TheBoy{
 						(cpu->getFetchedData() & 0xF) >= 0x10;
 				// Evaluates the carry flag status
 				bit8 cFlag = (cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeR) & 0xFF) +
-						(cpu->getFetchedData() & 0xFF) >=0x100;
+						(cpu->getFetchedData() & 0xFF) >= 0x100;
 
 				cpu->setFlags(0, 0, hFlag, cFlag);
 				// Defines the HL Registor to the value of the StackPointer Reg + the 8bit fetched data
@@ -219,6 +224,8 @@ namespace TheBoy{
 					cpu->getCurrInstruct()->regTypeL,
 					cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeR) + (bit8)cpu->getFetchedData()
 				);
+
+				return;
 			}
 			cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, cpu->getFetchedData());
 		}
@@ -470,11 +477,10 @@ namespace TheBoy{
 			// compare A- REG (Since this can be signed or result on a negative val)
 			int val = (int)cpu->getRegisterValue(REG_A) - (int)cpu->getFetchedData();
 			cpu->setFlags( val == 0, 1,
-				((int)cpu->getRegisterValue(REG_A) & 0xF) - ((int)cpu->getFetchedData() & 0xF) < 0,
+				((int)cpu->getRegisterValue(REG_A) & 0x0F) - ((int)cpu->getFetchedData() & 0x0F) < 0,
 				val < 0
 			);
 		}
-
 
 
 		/**

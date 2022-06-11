@@ -1,5 +1,6 @@
 #include "emulatorController.h"
 #include <SFML/Window.hpp>
+#include <functional>
 
 namespace TheBoy {
 	/**
@@ -28,13 +29,26 @@ namespace TheBoy {
 	void EmulatorController::_run() {
 		std::cout << "[Emulator] ::: Starting the emulator update loop" << std::endl;
 
+		instThread = new std::thread(&EmulatorController::cpuStep, this, &emu_state, comps.cpu);
+
 		while (emu_state.running) {
 			comps.view->ManageEvents();
-
-			comps.cpu->step();
+			//comps.cpu->step();
 			debugUpdate();
 
 			comps.view->Draw();
+		}
+	}
+
+
+	/**
+	 * @brief Steps the defined cpu
+	 * @param state Current emulator state
+	 * @param cpu Target step cpu
+	 */
+	void EmulatorController::cpuStep(EmulatorState* state, std::shared_ptr<Cpu> cpu) {
+		while (state->running){
+			cpu->step();
 		}
 	}
 
@@ -92,6 +106,15 @@ namespace TheBoy {
 			}
 		}
 		comps.dma->step();
+	}
+
+
+	/**
+	 * @brief Get the Ticks count
+	 * @return bit16 Current tick count
+	 */
+	bit16 EmulatorController::getTicks() {
+		return emu_state.ticks;
 	}
 
 

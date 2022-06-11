@@ -2,6 +2,7 @@
 #define EMULATORCONTROLLER_H
 
 #include <iostream>
+#include <thread>
 
 #include <SFML/Graphics.hpp>
 #include "Cartridge.h"
@@ -9,7 +10,7 @@
 #include "ram.h"
 #include "dma.h"
 #include "ppu.h"
-#include "io.h"
+#include "iogb.h"
 #include "timer.h"
 
 #include "emulView.h"
@@ -64,7 +65,6 @@ namespace TheBoy {
 		 */
 		std::shared_ptr<Ppu> ppu;
 
-
 		/**
 		 * @brief Emulator IO object
 		 */
@@ -102,6 +102,11 @@ namespace TheBoy {
 		 */
 		EmulatorComponents comps;
 
+		/**
+		 * @brief Thred for the cpu process
+		 */
+		std::thread* instThread;
+
 
 		/**
 		 * @brief Marks the current writting position
@@ -132,6 +137,14 @@ namespace TheBoy {
 		 */
 		//void manageEvents();
 
+
+		/**
+		 * @brief Steps the defined cpu
+		 * @param state Current emulator state
+		 * @param cpu Target step cpu
+		 */
+		void cpuStep(EmulatorState* state, std::shared_ptr<Cpu> cpu);
+
 	public:
 		/**
 		 * @brief Construct a new Emulator Controller object
@@ -161,6 +174,11 @@ namespace TheBoy {
 		 */
 		void emulCycles(const int& cycles);
 
+		/**
+		 * @brief Get the Ticks count
+		 * @return bit16 Current tick count
+		 */
+		bit16 getTicks();
 		
 		/**
 		 * @brief Get the Cartridge object

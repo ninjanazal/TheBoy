@@ -14,6 +14,7 @@ namespace TheBoy {
 			sf::Style::Titlebar | sf::Style::Titlebar | sf::Style::Close
 		);
 
+		window->setFramerateLimit(1);
 		mainLoad();
 
 		wText[0]->setString("|TheBoy - Game boy Emulator\n - - - - - - - - - - -\n");
@@ -57,8 +58,8 @@ namespace TheBoy {
 	 */
 	void EmulView::Draw(){
 		window->clear(sf::Color::Black);
-		positionTextElms();
 		
+		positionTextElms();
 		buildDebugView();
 
 		for (int i = 0; i < (sizeof(wText)/sizeof(wText[0])); i++) {
@@ -207,7 +208,7 @@ namespace TheBoy {
 			}
 		}
 
-		tGRam->loadFromImage(*iGRam.get());
+		tGRam->update(*iGRam.get());
 	}
 
 
@@ -243,10 +244,11 @@ namespace TheBoy {
 				// 64 pixels per tile
 
 				iGRam->setPixel(
-					(8 * xTileOff) + b,
+					(8 * xTileOff) + (7 - b),
 					(8 * yTileOff) + floor(t / 2),
-					gbPallet[pixelID]
+					sf::Color(gbPallet[pixelID])
 				);
+
 			}
 		}
 	}

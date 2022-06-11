@@ -146,6 +146,16 @@ namespace TheBoy {
 		 * @brief Current visual output sprite
 		 */
 		std::shared_ptr<sf::Sprite> sView;
+
+
+		// GameBoy color pallet representation
+		sf::Color gbPallet[4] = {
+			sf::Color::White,
+			sf::Color(170, 170, 170),
+			sf::Color(100, 100, 100),
+			sf::Color::Black
+		};
+
 	#pragma endregion
 
 		/**
@@ -174,6 +184,4 @@ namespace TheBoy {
 		void addTileToDebug(bit16 addr, int tileId);
 };	
 } // namespace TheBoy
-
-
 #endif

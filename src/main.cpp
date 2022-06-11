@@ -13,7 +13,6 @@ int main(int argc, char *argv[]) {
 	emulator = std::make_shared<EmulatorController>();
 
 	//! Remove this hammered path
-	emulator->Start("D:\\Projects\\TheBoy\\ROMS\\Pokemon - Blue Version.gb");
-
+	emulator->Start("D:\\Projects\\TheBoy\\ROMS\\tests\\special.gb");
 	return 0;
 }

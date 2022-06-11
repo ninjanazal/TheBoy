@@ -270,91 +270,90 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		void requestInterrupt(InterruptFuncs::InterruptType iType);
 
 	private:
-
-	/**
-	 * @brief Pointer to the emulator controller
-	 */
-	EmulatorController* emuCtrl;
-
-
-	/**
-	 * @brief Shared pointer to the registers values
-	 */
-	std::shared_ptr<Registers> regs;
-
-	/**
-	 * @brief Defined and declared instruction memory map
-	 */
-	struct InternMem {
-		bit16 fetchData;
-		bit16 memDest;
-		bool destIsMem;
-	} intMem;
+		/**
+		 * @brief Pointer to the emulator controller
+		 */
+		EmulatorController* emuCtrl;
 
 
-	/**
-	 * @brief Marks if the current cpu has been halted, its in idle mode
-	 */
-	bool cpuHLT;
+		/**
+		 * @brief Shared pointer to the registers values
+		 */
+		std::shared_ptr<Registers> regs;
 
-	/**
-	 * @brief Marks if the Cpu is currently suspended by an interrupt handler
-	 */
-	bool interruptMasterState;
-
-
-	/**
-	 * @brief Marks the enabling the interrupt master state (IME), used to managing the cpu cycles
-	 */
-	bool enablingIntMaster;
+		/**
+		 * @brief Defined and declared instruction memory map
+		 */
+		struct InternMem {
+			bit16 fetchData;
+			bit16 memDest;
+			bool destIsMem;
+		} intMem;
 
 
-	/**
-	 * @brief Cpu Interrupt Enable register (0xFFFF) on memory
-	 */
-	bit8 interruptEnable;
+		/**
+		 * @brief Marks if the current cpu has been halted, its in idle mode
+		 */
+		bool cpuHLT;
+
+		/**
+		 * @brief Marks if the Cpu is currently suspended by an interrupt handler
+		 */
+		bool interruptMasterState;
 
 
-	/**
-	 * @brief Marks the current interrupt Setted Flags
-	 */
-	bit8 interruptFlags;
+		/**
+		 * @brief Marks the enabling the interrupt master state (IME), used to managing the cpu cycles
+		 */
+		bool enablingIntMaster;
 
 
-	/**
-	 * @brief Marks the current opcode instruction
-	 */
-	bit8 currOpcode;
+		/**
+		 * @brief Cpu Interrupt Enable register (0xFFFF) on memory
+		 */
+		bit8 interruptEnable;
 
 
-	/**
-	 * @brief Pointer to the current target instruction 
-	 */
-	Instruc *currInstruct;
+		/**
+		 * @brief Marks the current interrupt Setted Flags
+		 */
+		bit8 interruptFlags;
 
 
-	/**
-	 * @brief Resets the current cpu state
-	 */
-	void reset();
+		/**
+		 * @brief Marks the current opcode instruction
+		 */
+		bit8 currOpcode;
 
 
-	/**
-	 * @brief Defined fetch instuction from memory
-	 */
-	void fetch_inst();
+		/**
+		 * @brief Pointer to the current target instruction 
+		 */
+		Instruc *currInstruct;
 
 
-	/**
-	 * @brief Defines fetch data for the loaded instruction
-	 */
-	void fetch_data();
+		/**
+		 * @brief Resets the current cpu state
+		 */
+		void reset();
 
 
-	/**
-	 * @brief Defines the execution process for the instruction with the data
-	 */
-	void executeInst();
+		/**
+		 * @brief Defined fetch instuction from memory
+		 */
+		void fetch_inst();
+
+
+		/**
+		 * @brief Defines fetch data for the loaded instruction
+		 */
+		void fetch_data();
+
+
+		/**
+		 * @brief Defines the execution process for the instruction with the data
+		 */
+		void executeInst();
 	};
 }
 

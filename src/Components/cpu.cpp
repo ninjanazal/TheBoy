@@ -48,13 +48,14 @@ namespace TheBoy {
 			fetch_inst();
 			fetch_data();
 			executeInst();
-
+		
+#if VERBOSE
 			printf(
-				"[CPU] ::: Regs State { A: %2.2X F: %2.2X BC: %2.2X %2.2X DE: %2.2X %2.2X HL: %2.2X %2.2X SP: %4.4X PC %4.4X }\n",
-				regs->A, regs->F, regs->B, regs->C, regs->D, regs->E, regs->H, regs->L, regs->SP, regs->PC
+				"[CPU] ::: [%08lX] Regs State { A: %2.2X F: %2.2X BC: %2.2X %2.2X DE: %2.2X %2.2X HL: %2.2X %2.2X SP: %4.4X PC %4.4X }\n",
+				emuCtrl->getTicks(), regs->A, regs->F, regs->B, regs->C, regs->D, regs->E, regs->H, regs->L, regs->SP, regs->PC
 			);
 			fflush(stdout);
-
+#endif
 
 			emuCtrl->getView()->setRegistorsVals(regs.get());
 		}
@@ -193,11 +194,10 @@ namespace TheBoy {
 	 */
 	void Cpu::setFlags(bit8 z, bit8 n, bit8 h, bit8 c){
 		using namespace CpuFuncs;
-		if(z != -1) { SETBIT(regs->F, 7, z); }
-		SETBIT(regs->F, 6, n);
-		SETBIT(regs->F, 5, h);
-		SETBIT(regs->F, 4, c);
-
+		if(z != 0xFF) { SETBIT(regs->F, 7, z); }
+		if(n != 0xFF) { SETBIT(regs->F, 6, n); }
+		if(h != 0xFF) { SETBIT(regs->F, 5, h); }
+		if(c != 0xFF) { SETBIT(regs->F, 4, c); }
 	}
 
 
@@ -405,13 +405,15 @@ namespace TheBoy {
 				"-> Opcode %2.2X failed to load\n", currOpcode
 			);
 		}
-		
+
+#if VERBOSE
 		sprintf(bfr,
 			"-> OPCODE: %2.2X | PC: %2.2X\n", currOpcode, regs->PC
 		);
 
 		printf("[CPU] ::: ->  OPCODE: %2.2X | PC: %2.2X\n", currOpcode, regs->PC);
 		fflush(stdout);
+#endif
 
 		emuCtrl->getView()->setCurrOperation(bfr);
 		delete[] bfr;
@@ -505,30 +507,36 @@ so the possible range is 0xFF00-0xFFFF.
 		}
 
 		case OPMODE_R_HLI:	// memory operation on a registor and the HL register, incrementing
-			intMem.fetchData = emuCtrl->getBus()->abRead(currInstruct->regTypeL);
+			intMem.fetchData =  emuCtrl->getBus()->abRead(
+				emuCtrl->getCpu()->getRegisterValue(currInstruct->regTypeR)
+			);
+
 			emuCtrl->emulCycles(1);
 			setRegisterValue(REG_HL, getRegisterValue(REG_HL) + 0x01);
 			break;
 
 
 		case OPMODE_R_HLD:	// Memory operation on registor and the HL register, decrementing
-			intMem.fetchData = emuCtrl->getBus()->abRead(currInstruct->regTypeL);
+			intMem.fetchData = emuCtrl->getBus()->abRead(
+				emuCtrl->getCpu()->getRegisterValue(currInstruct->regTypeR)
+			);
+
 			emuCtrl->emulCycles(1);
 			setRegisterValue(REG_HL, getRegisterValue(REG_HL) - 0x01);
 			break;
 
 
 		case OPMODE_HLI_R:	// Memory operation on HL register from register, incrementing
-			intMem.fetchData = emuCtrl->getBus()->abRead(currInstruct->regTypeR);
-			intMem.memDest = emuCtrl->getBus()->abRead(currInstruct->regTypeL);
+			intMem.fetchData = emuCtrl->getCpu()->getRegisterValue(currInstruct->regTypeR);
+			intMem.memDest = emuCtrl->getCpu()->getRegisterValue(currInstruct->regTypeL);
 			intMem.destIsMem = true;
 			setRegisterValue(REG_HL, getRegisterValue(REG_HL) + 0x01);
 			break;
 
 
 		case OPMODE_HLD_R:	// Memory operation on HL register from register, decrementing
-			intMem.fetchData = emuCtrl->getBus()->abRead(currInstruct->regTypeR);
-			intMem.memDest = emuCtrl->getBus()->abRead(currInstruct->regTypeL);
+			intMem.fetchData = emuCtrl->getCpu()->getRegisterValue(currInstruct->regTypeR);
+			intMem.memDest = emuCtrl->getCpu()->getRegisterValue(currInstruct->regTypeL);
 			intMem.destIsMem = true;
 			setRegisterValue(REG_HL, getRegisterValue(REG_HL) - 0x01);
 			break;

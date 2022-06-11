@@ -38,3 +38,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC sfml-system sfml-window sfml-graphi
 # - - - - - - - - - -
 # Directories
 target_include_directories(${PROJECT_NAME} PRIVATE ${INC_DIRECTORIES})
+
+# - - - - - - - - - -
+# Precompilation Defined Macros
+add_compile_definitions(VERBOSE=false)

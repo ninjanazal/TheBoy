@@ -54,7 +54,7 @@ namespace TheBoy {
 		}
 		// I/O Registers
 		else if(addr < 0xFF80) {
-			return emuCtrl->getIO()->read(addr) ;
+			return emuCtrl->getIO()->read(addr);
 		}
 		// Interrupt Enable register
 		else if(addr == 0xFFFF ) {
@@ -98,7 +98,7 @@ namespace TheBoy {
 		}
 		// switchable bank (0/1) video Ram
 		else if(addr < 0xA000) {
-			std::cout << "VRAM write" << std::endl;
+			//std::cout << "VRAM write" << std::endl;
 			emuCtrl->getPpu()->write(addr, val);
 		}
 		// From cartridge External RAM
@@ -148,8 +148,8 @@ namespace TheBoy {
 		//printf("[ADDRESSBUS] ::: Writing 16bits to addr: %2.2X\n", addr);
 		//fflush(stdout);
 
-		emuCtrl->getCartridge()->write(addr + 1, (val >> 8) & 0xFF);
-		emuCtrl->getCartridge()->write(addr, val & 0xFF);
+		abWrite(addr + 1, (val >> 8) & 0xFF);
+		abWrite(addr, val & 0xFF);
 	}
 
 }

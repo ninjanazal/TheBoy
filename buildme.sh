@@ -58,6 +58,9 @@ BuildSFML () {
 		"mingw")
 			cmake -G "MinGW Makefiles" -DBUILD_SHARED_LIBS=FALSE -DSFML_USE_STATIC_STD_LIBS=TRUE -DCMAKE_INSTALL_PREFIX=${CURRENT_PATH}/out ..
 			;;
+		"vs")
+			cmake -G "Visual Studio 17 2022" -DBUILD_SHARED_LIBS=FALSE -DSFML_USE_STATIC_STD_LIBS=TRUE -DCMAKE_INSTALL_PREFIX=${CURRENT_PATH}/out ..
+			;;
 	esac
 
 	echo -e "[SCRIPT] Building SFML at "$PWD"!"
@@ -123,6 +126,9 @@ for i in "$@"; do
 				"mingw")
 					BUILD_TARGET=$targ
 					;;
+				"vs")
+					BUILD_TARGET=$targ
+					;;
 			esac
 			shift
 			;;
@@ -159,6 +165,9 @@ echo -e "[SCRIPT] Generating compilation Project at "$PWD""
 case $BUILD_TARGET in
 	"mingw")
 		cmake -G "MinGW Makefiles" ..
+		;;
+	"vs")
+		cmake -G "Visual Studio 17 2022" ..
 		;;
 esac
 

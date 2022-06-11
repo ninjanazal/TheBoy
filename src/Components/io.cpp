@@ -1,4 +1,4 @@
-#include "io.h"
+#include "iogb.h"
 
 namespace TheBoy {
 	/**
