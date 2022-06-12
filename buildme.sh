@@ -63,9 +63,10 @@ BuildSFML () {
 			;;
 	esac
 
-	echo -e "[SCRIPT] Building SFML at "$PWD"!"
-	cmake --build .
+	echo -e "[SCRIPT] Building SFML at "$PWD"!"	
+	cmake --build .  --config Release
 	cmake --install .
+
 	cd ../..
 }
 
@@ -99,6 +100,7 @@ PrintHelp () {
 	echo -e "*-c (--clearall)  | Will clear the previous compilation and rebuild  |"
 	echo -e "*-t (--target=)   | Changes the target generator                     |"
 	echo -e "   |--> Available: mingw                                             |"
+	echo -e "   |--> Available: vs                                             |"
 	echo -e "_____________________________________________________________________|"
 }
 

@@ -151,8 +151,8 @@ namespace TheBoy {
 		// GameBoy color pallet representation
 		sf::Color gbPallet[4] = {
 			sf::Color::White,
-			sf::Color(170, 170, 170),
-			sf::Color(100, 100, 100),
+			sf::Color(210, 210, 210),
+			sf::Color(45, 45, 45),
 			sf::Color::Black
 		};
 

@@ -46,7 +46,7 @@ namespace TheBoy {
 		// Since this memory block start at $C000
 		addr -= 0xC000;
 #if VERBOSE
-		printf("[RAM] ::: Writing Work RAM at 	%.4X!\n", (addr + 0xC000));
+		printf("[RAM] ::: Writing Work RAM at %.4X -> %2.2X!\n", (addr + 0xC000), val);
 		fflush(stdout);
 #endif
 
@@ -79,7 +79,7 @@ namespace TheBoy {
 		// Since this memory block start at $FF80
 		addr -= 0xFF80;
 #if VERBOSE
-		printf("[RAM] ::: Writing High RAM at  %.4X!\n", (addr + 0xC000));
+		printf("[RAM] ::: Writing High RAM at %.4X -> %2.2X!\n", (addr + 0xC000), val);
 		fflush(stdout);
 #endif
 		highRam[addr] = val;

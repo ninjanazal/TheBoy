@@ -37,7 +37,9 @@ namespace TheBoy {
 		}
 		// Echo RAM, Nintendo says use of this area is prohibited
 		else if(addr < 0xFE00) {
+#if VERBOSE
 			std::cout << "[ADDRESSBUS] ::: Echo RAM read request, locked" << std::endl;
+#endif
 			return 0x00;
 		}
 		// OAM Sprite attribute table
@@ -49,7 +51,9 @@ namespace TheBoy {
 		}
 		// Not Usable
 		else if(addr < 0xFF00) {
+#if VERBOSE
 			std::cout << "[ADDRESSBUS] ::: Reserver area read request, locked" << std::endl;
+#endif
 			return 0x00;
 		}
 		// I/O Registers

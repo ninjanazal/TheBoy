@@ -22,7 +22,6 @@ namespace TheBoy{
 			std::cout << "[INSTFUNCS] ::: NOP Operation, continue" << std::endl;
 #endif
 		}
-		
 
 		/**
 		 * @brief On a Instruction JP resolver
@@ -40,7 +39,7 @@ namespace TheBoy{
 			// Jump relative can be a increment/decrement for the current Value, and the bit8 definition is unsigned
 			// casting to char
 			// fetchdata holds a 2Byte value, and only 1B should be used
-			int8_t relative = (char)(cpu->getFetchedData() & 0xFF);
+			char relative = (char)(cpu->getFetchedData() & 0xFF);
 			bit16 addr = cpu->getRegisterValue(REG_PC) + relative;
 			jumpToAddress(cpu, addr, false);
 		}
@@ -72,7 +71,7 @@ namespace TheBoy{
 				bit16 hi = cpu->pop();
 				cpu->requestCycles(1);
 
-				cpu->setRegisterValue(REG_PC, lo | (hi << 8));
+				cpu->setRegisterValue(REG_PC, (hi << 8) | lo);
 				cpu->requestCycles(1);
 			}
 		}
@@ -188,7 +187,7 @@ namespace TheBoy{
 
 
 		/**
-		 * @brief On a Instruction XOR resolver
+		 * @brief On a Instruction Load resolver
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instLD(Cpu* cpu){
@@ -265,8 +264,10 @@ namespace TheBoy{
 			cpu->requestCycles(1);
 			bit16 h = cpu->pop();
 
+			bit16 val = (h << 8) | l;
+
 			cpu->requestCycles(1);
-			cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, (l | (h << 8)));
+			cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, val);
 
 			// For the Operation {F1}
 			if(cpu->getCurrInstruct()->regTypeL == REG_AF) {
@@ -276,7 +277,7 @@ namespace TheBoy{
 					This if is just a fail safe condition
 				*/
 				cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL,
-					(l | (h << 8)) & 0xFFF0
+					val & 0xFFF0
 				);
 			}
 		}

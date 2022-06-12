@@ -14,7 +14,7 @@ namespace TheBoy {
 			sf::Style::Titlebar | sf::Style::Titlebar | sf::Style::Close
 		);
 
-		window->setFramerateLimit(1);
+		window->setFramerateLimit(30);
 		mainLoad();
 
 		wText[0]->setString("|TheBoy - Game boy Emulator\n - - - - - - - - - - -\n");
@@ -129,7 +129,7 @@ namespace TheBoy {
 	
 		// 384 = 24 * 16 disposal
 		iGRam = std::make_shared<sf::Image>();
-		iGRam->create(tileSizeView.x * 8, tileSizeView.y * 8, sf::Color::Blue);
+		iGRam->create(tileSizeView.x * 8, tileSizeView.y * 8, sf::Color::Black);
 
 		
 		// Ram representation
@@ -202,19 +202,19 @@ namespace TheBoy {
 		*/
 		bit16 addr = 0x8000;
 		// Making the display table
+		//iGRam->create(tileSizeView.x * 8, tileSizeView.y * 8, sf::Color::White);
 		for (int y = 0; y < tileSizeView.y; y++){
 			for(int x = 0; x < tileSizeView.x; x++){
 				addTileToDebug(addr, ((y * 24) + x ));
 			}
 		}
-
 		tGRam->update(*iGRam.get());
 	}
 
 
 	/**
 	 * @brief Adds the target mem tile to the debug pixel array
-	 * @param addr Target reading address
+	 * @param addr Target reading addressGETBIT(byte2, b)
 	 * @param tileId Current tile iD
 	 */
 	void EmulView::addTileToDebug(bit16 addr, int tileId) {
@@ -238,7 +238,7 @@ namespace TheBoy {
 			// for each bit on the gathered line, the low nib value is the most significat one and vice versa
 			// Place the target bit value from the 1st byte on the left of the target bit from the 2st byte
 			for (int b = 0; b < 8; b++) {
-				bit8 pixelID = ((byte1 & (1 << b)) << 1) | ((byte2 & (1 << b)));
+				bit8 pixelID = (GETBIT(byte1, b) << 1) | GETBIT(byte2, b);
 				// Pixel ID makes the target pixel color value, for the gb is 1 of 4 colors
 				// Since each pixel needs a 4 value entrance
 				// 64 pixels per tile
@@ -246,9 +246,8 @@ namespace TheBoy {
 				iGRam->setPixel(
 					(8 * xTileOff) + (7 - b),
 					(8 * yTileOff) + floor(t / 2),
-					sf::Color(gbPallet[pixelID])
+					gbPallet[pixelID]
 				);
-
 			}
 		}
 	}

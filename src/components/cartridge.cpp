@@ -111,7 +111,9 @@ namespace TheBoy {
 	 * @param val Value to be written
 	 */
 	void Cartridge::write(bit16 addr, bit8 val) {
+#if VERBOSE
 		std::cout <<"[CARTRIDGE] :: Cartridge write not implemented!" << std::endl;
+#endif
 		return;
 	}
 
