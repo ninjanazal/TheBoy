@@ -104,8 +104,8 @@ namespace TheBoy {
 				emu_state.ticks++;
 				comps.timer->tick();
 			}
-		}
 		comps.dma->step();
+		}
 	}
 
 
@@ -113,7 +113,7 @@ namespace TheBoy {
 	 * @brief Get the Ticks count
 	 * @return bit16 Current tick count
 	 */
-	bit16 EmulatorController::getTicks() {
+	bit64 EmulatorController::getTicks() {
 		return emu_state.ticks;
 	}
 

@@ -178,7 +178,7 @@ namespace TheBoy {
 		 * @brief Get the Ticks count
 		 * @return bit16 Current tick count
 		 */
-		bit16 getTicks();
+		bit64 getTicks();
 		
 		/**
 		 * @brief Get the Cartridge object

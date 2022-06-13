@@ -194,7 +194,7 @@ namespace TheBoy{
 			if(cpu->getDestenyIsMem()){
 				// Form loads where the target is a memory location ex {0x02}
 				// if is a 16bit value
-				if(cpu->getCurrInstruct()->regTypeL >= RegisterType::REG_AF){
+				if(cpu->getCurrInstruct()->regTypeR >= RegisterType::REG_AF){
 					cpu->requestCycles(1);
 					cpu->requestBusWrite16(cpu->getMemoryDest(), cpu->getFetchedData());
 				}

@@ -45,19 +45,27 @@ namespace TheBoy {
 	 */
 	void Cpu::step(){
 		if(!cpuHLT){
+#if VERBOSE
+			bit16 tempPc = regs->PC;
+#endif
+
 			fetch_inst();
+			requestCycles(1);
 			fetch_data();
-			executeInst();
 		
 #if VERBOSE
 			printf(
 				"[CPU] ::: [%08lX] Regs State { A: %2.2X F: %2.2X BC: %2.2X %2.2X DE: %2.2X %2.2X HL: %2.2X %2.2X SP: %4.4X PC %4.4X }\n",
 				emuCtrl->getTicks(), regs->A, regs->F, regs->B, regs->C, regs->D, regs->E, regs->H, regs->L, regs->SP, regs->PC
 			);
+			printf("[CPU] ::: ->  OPCODE: %2.2X | PC: %2.2X\n", currOpcode, tempPc);
 			fflush(stdout);
 #endif
-
+			if(emuCtrl->getTicks() >= 0x0000B7EC){
+				//std::cout << "debug" << std::endl; 
+			}
 			emuCtrl->getView()->setRegistorsVals(regs.get());
+			executeInst();
 		}
 		else {
 			// During an halted state
@@ -73,6 +81,10 @@ namespace TheBoy {
 		if(interruptMasterState) {
 			InterruptFuncs::handle_interrupt(this);
 			enablingIntMaster = true;
+		}
+
+		if(enablingIntMaster){
+			interruptMasterState = true;
 		}
 	}
 
@@ -405,15 +417,9 @@ namespace TheBoy {
 				"-> Opcode %2.2X failed to load\n", currOpcode
 			);
 		}
-
-#if VERBOSE
 		sprintf(bfr,
 			"-> OPCODE: %2.2X | PC: %2.2X\n", currOpcode, regs->PC
 		);
-
-		printf("[CPU] ::: ->  OPCODE: %2.2X | PC: %2.2X\n", currOpcode, regs->PC);
-		fflush(stdout);
-#endif
 
 		emuCtrl->getView()->setCurrOperation(bfr);
 		delete[] bfr;
@@ -446,7 +452,7 @@ namespace TheBoy {
 
 		case OPMODE_R_V8:	// Memory operation on a register and 8bit value
 			intMem.fetchData = emuCtrl->getBus()->abRead(regs->PC);
-			emuCtrl->emulCycles(1);
+			requestCycles(1);
 
 			regs->PC++;
 			break;
@@ -454,11 +460,11 @@ namespace TheBoy {
 		case OPMODE_R_V16:	// Memory operation on a register and 16biy value
 		case OPMODE_V16: {	// Memory operation on a 16bit value
 			bit16 low = emuCtrl->getBus()->abRead(regs->PC);
-			emuCtrl->emulCycles(1);
+			requestCycles(1);
 			regs->PC++;
 			
 			bit16 high = emuCtrl->getBus()->abRead(regs->PC);
-			emuCtrl->emulCycles(1);
+			requestCycles(1);
 
 			intMem.fetchData = low | (high << 8);
 			regs->PC++;
@@ -467,7 +473,7 @@ namespace TheBoy {
 
 		case OPMODE_V8:		// Memory operation on 8bit value
 			intMem.fetchData = emuCtrl->getBus()->abRead(regs->PC);
-			emuCtrl->emulCycles(1);
+			requestCycles(1);
 			regs->PC++;
 			break;
 		
@@ -502,7 +508,7 @@ so the possible range is 0xFF00-0xFFFF.
 				address |= 0xFF;
 			}
 			intMem.fetchData = emuCtrl->getBus()->abRead(address);
-			emuCtrl->emulCycles(1);
+			requestCycles(1);
 			break;
 		}
 
@@ -511,7 +517,7 @@ so the possible range is 0xFF00-0xFFFF.
 				emuCtrl->getCpu()->getRegisterValue(currInstruct->regTypeR)
 			);
 
-			emuCtrl->emulCycles(1);
+			requestCycles(1);
 			setRegisterValue(REG_HL, getRegisterValue(REG_HL) + 0x01);
 			break;
 
@@ -521,7 +527,7 @@ so the possible range is 0xFF00-0xFFFF.
 				emuCtrl->getCpu()->getRegisterValue(currInstruct->regTypeR)
 			);
 
-			emuCtrl->emulCycles(1);
+			requestCycles(1);
 			setRegisterValue(REG_HL, getRegisterValue(REG_HL) - 0x01);
 			break;
 
@@ -544,23 +550,23 @@ so the possible range is 0xFF00-0xFFFF.
 
 		case OPMODE_R_A8: 	// Memory operation on registor from 8bit memory address
 			intMem.fetchData = emuCtrl->getBus()->abRead(regs->PC);
-			emuCtrl->emulCycles(1);
+			requestCycles(1);
 			regs->PC++;
 			break;
 
 
 		case OPMODE_R_A16: {	// Memory operation on registor from 16bit memory address
 			bit16 low = emuCtrl->getBus()->abRead(regs->PC);
-			emuCtrl->emulCycles(1);
+			requestCycles(1);
 			regs->PC++;
 
 			bit16 high = emuCtrl->getBus()->abRead(regs->PC);
-			emuCtrl->emulCycles(1);
+			requestCycles(1);
 			regs->PC++;
 
 			bit16 addr = low | (high >> 8);
 			intMem.fetchData = emuCtrl->getBus()->abRead(addr);
-			emuCtrl->emulCycles(1);
+			requestCycles(1);
 			break;
 		}
 		
@@ -568,38 +574,38 @@ so the possible range is 0xFF00-0xFFFF.
 		case OPMODE_A8_R:	// Memory operation on 8bit address to registor
 			intMem.memDest = emuCtrl->getBus()->abRead(regs->PC) | 0xFF00; // 8bit address value
 			intMem.destIsMem = true;
-			emuCtrl->emulCycles(1);
+			requestCycles(1);
 			regs->PC++;
 			break;
 
 
 		case OPMODE_HL_SPR:	// Memory operation on SP and Hl registers
 			intMem.fetchData = emuCtrl->getBus()->abRead(regs->PC);
-			emuCtrl->emulCycles(1);
+			requestCycles(1);
 			regs->PC++;
 			break;
 
 
 		case OPMODE_A16_R:{	// Memory operation on registor to 16bit address
 			bit16 low = emuCtrl->getBus()->abRead(regs->PC);
-			emuCtrl->emulCycles(1);
+			requestCycles(1);
 			regs->PC++;
 			
 			bit16 high = emuCtrl->getBus()->abRead(regs->PC);
-			emuCtrl->emulCycles(1);
+			requestCycles(1);
 
 			intMem.memDest = low | (high << 8);~
 			regs->PC++;
 
 			intMem.destIsMem = true;
 			intMem.fetchData = emuCtrl->getBus()->abRead(currInstruct->regTypeR);
-			emuCtrl->emulCycles(1);
+			requestCycles(1);
 			break;
 		}
 
 		case OPMODE_AR_V8:	// Memory operation on 8bit value to registor address
 			intMem.fetchData = emuCtrl->getBus()->abRead(regs->PC);
-			emuCtrl->emulCycles(1);
+			requestCycles(1);
 			regs->PC++;
 			intMem.memDest = getRegisterValue(currInstruct->regTypeL);
 			intMem.destIsMem = true;
@@ -609,7 +615,7 @@ so the possible range is 0xFF00-0xFFFF.
 			intMem.memDest = getRegisterValue(currInstruct->regTypeL);
 			intMem.destIsMem = true;
 			intMem.fetchData = emuCtrl->getBus()->abRead(intMem.memDest);
-			emuCtrl->emulCycles(1);
+			requestCycles(1);
 			break;
 		
 
