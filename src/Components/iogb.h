@@ -20,7 +20,7 @@ namespace TheBoy {
 		/**
 		 * @brief Destroy the IO object
 		 */
-		~IO() = default;
+		~IO();
 
 
 		/**
@@ -48,7 +48,7 @@ namespace TheBoy {
 		/**
 		 * @brief Holds the current IO Serial data
 		 */
-		bit8 seriaData[2];
+		bit8* seriaData;
 
 	};	
 } // namespace TheBoy

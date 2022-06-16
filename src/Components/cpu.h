@@ -84,6 +84,22 @@ As shown above, most registers can be accessed either as one 16-bit register,
 
 
 		/**
+		 * @brief Get the Register Value Byte object 
+		 * @param regType Defined register to get
+		 * @return bit8 Data on the setted register
+		 */
+		bit8 getRegisterValueByte(RegisterType regType);
+
+
+		/**
+		 * @brief Set the Register Value Byte object
+		 * @param regType Registor type to be set
+		 * @param value Value to be set
+		 */
+		void setRegisterValueByte(RegisterType regType, bit8 value);
+
+
+		/**
 		 * @brief Get the Interrupt value
 		 * @return true/False Current interrupt state
 		 */

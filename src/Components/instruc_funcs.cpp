@@ -71,7 +71,8 @@ namespace TheBoy{
 				bit16 hi = cpu->pop();
 				cpu->requestCycles(1);
 
-				cpu->setRegisterValue(REG_PC, (hi << 8) | lo);
+				bit16 val = (hi << 8) | lo;
+				cpu->setRegisterValue(REG_PC, val);
 				cpu->requestCycles(1);
 			}
 		}
@@ -121,12 +122,12 @@ namespace TheBoy{
 			// For the specific INC (HL) Operation {34}
 			if(cpu->getCurrInstruct()->regTypeL == REG_HL &&
 					cpu->getCurrInstruct()->opMode == OPMODE_AR){
-				val = cpu->getRegisterValue(REG_HL) + 0x1;
+				val = cpu->requestBusRead(cpu->getRegisterValue(REG_HL)) + 0x1;
+				val &= 0xFF;
 				// Write the incremented value, write uses 8bit
 				// Preventing overflow
-				cpu->requestBusWrite(REG_HL, val & 0xFF);
-			}
-			else {
+				cpu->requestBusWrite(cpu->getRegisterValue(REG_HL), val);
+			} else {
 				cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, val);
 				// Redefine for check 
 				val = cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL);
@@ -156,7 +157,7 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instDEC(Cpu* cpu) {
-			bit16 val = cpu->getFetchedData() - 0x1;
+			bit16 val = cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) - 0x1;
 
 			// For 16bit registors
 			if(cpu->getCurrInstruct()->regTypeL >= RegisterType::REG_AF) {
@@ -165,13 +166,12 @@ namespace TheBoy{
 
 			// For the specific INC (HL) Operation {34}
 			if(cpu->getCurrInstruct()->regTypeL == REG_HL &&
-					cpu->getCurrInstruct()->opMode == OPMODE_AR){
-				val = cpu->getRegisterValue(REG_HL) - 0x1;
+						cpu->getCurrInstruct()->opMode == OPMODE_AR){
+				val = cpu->requestBusRead(cpu->getRegisterValue(REG_HL)) - 0x1;
 				// Write the incremented value, write uses 8bit
 				// Preventing overflow
-				cpu->requestBusWrite(REG_HL, val & 0xFF);
-			}
-			else {
+				cpu->requestBusWrite(cpu->getRegisterValue(REG_HL), val);
+			} else {
 				cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, val);
 				// Redefine for check 
 				val = cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL);
@@ -181,8 +181,8 @@ namespace TheBoy{
 			// EX {0B, 1B, 2B & 3B}
 			if((cpu->getCurrentOPCode() & 0x0B) != 0x0B) {
 				// Flags check Z 0 H -
-				cpu->setFlags(val == 0, 1, (val & 0x0F) == 0, -1);
-			} 
+				cpu->setFlags(val == 0, 1, (val & 0x0F) == 0x0F, -1);
+			}
 		}
 
 
@@ -247,8 +247,8 @@ namespace TheBoy{
 			else {
 				// Loads to the highRam, the value on the defined register, since the fetch for this operation is a 8Bit
 				// value and to be setted on the high RAM range, a 0xFF00 or operation is need 
-				cpu->requestBusWrite(0xFF00 | cpu->getFetchedData(),
-					cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeR)
+				cpu->requestBusWrite(cpu->getMemoryDest(), 
+					cpu->getRegisterValue(REG_A)
 				);
 			}
 			cpu->requestCycles(1);
@@ -263,10 +263,10 @@ namespace TheBoy{
 			bit16 l = cpu->pop();
 			cpu->requestCycles(1);
 			bit16 h = cpu->pop();
+			cpu->requestCycles(1);
 
 			bit16 val = (h << 8) | l;
 
-			cpu->requestCycles(1);
 			cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, val);
 
 			// For the Operation {F1}
@@ -276,8 +276,8 @@ namespace TheBoy{
 					value, so all flags are changed based on the 8-bit data that is read from memor
 					This if is just a fail safe condition
 				*/
-				cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL,
-					val & 0xFFF0
+				cpu->setRegisterValue(
+					REG_AF, (val & 0xFFF0)
 				);
 			}
 		}
@@ -317,7 +317,7 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instADD(Cpu* cpu) {
-			bit16 val = cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) + cpu->getFetchedData();
+			bit32 val = cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) + cpu->getFetchedData();
 
 			// For 16bit add Instruction
 			if(cpu->getCurrInstruct()->regTypeL >= RegisterType::REG_AF){
@@ -357,7 +357,7 @@ namespace TheBoy{
 				c = (int)(cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) & 0xFF) + (int)(cpu->getFetchedData() & 0xFF) >= 0x100;
 			}
 
-			cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, val);
+			cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, val & 0xFFFF);
 			cpu->setFlags(z, 0, h, c);
 
 		}
@@ -368,6 +368,9 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instADC(Cpu* cpu) {
+			// Holds the initial register and c flag value
+			bit16 oldRegA = cpu->getRegisterValue(REG_A);
+
 			// Add to the A registor the fetch data and the carry flag
 			// and operation for a 8bit value
 			cpu->setRegisterValue(
@@ -377,8 +380,8 @@ namespace TheBoy{
 
 			cpu->setFlags(
 				cpu->getRegisterValue(REG_A) == 0, 0,
-				(cpu->getFetchedData() & 0xF) + (cpu->getRegisterValue(REG_A) & 0xF) + GETBIT(cpu->getRegisterValue(REG_F), 4) > 0xF,
-				cpu->getFetchedData() + cpu->getRegisterValue(REG_A) + GETBIT(cpu->getRegisterValue(REG_F), 4) > 0xFF
+				(oldRegA & 0xF) + (cpu->getFetchedData() & 0xF) + GETBIT(cpu->getRegisterValue(REG_F), 4) > 0xF,
+				oldRegA + cpu->getFetchedData() + GETBIT(cpu->getRegisterValue(REG_F), 4) > 0xFF
 			);
 		}
 
@@ -390,13 +393,13 @@ namespace TheBoy{
 		static void instSUB(Cpu* cpu) {
 			bit16 value = cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) - cpu->getFetchedData();
 
-			cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, value);
 			// Since values can be negative, cast to int
 			cpu->setFlags(
 				value == 0, 1,
 				((int)cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) & 0xF) - ((int)cpu->getFetchedData() & 0xF) < 0,
 				((int)cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL)) - ((int)cpu->getFetchedData()) < 0
 			);
+			cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, value);
 		}
 
 		/**
@@ -406,11 +409,6 @@ namespace TheBoy{
 		static void instSBC(Cpu* cpu) {
 			bit8 value = cpu->getFetchedData() + GETBIT(cpu->getRegisterValue(REG_F), 4);
 			
-			cpu->setRegisterValue(
-				cpu->getCurrInstruct()->regTypeL,
-				cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) - value
-			);
-
 			// Since values can be negative, cast to int
 			cpu->setFlags(
 				// Z flag, n flag should be set to 1
@@ -421,6 +419,11 @@ namespace TheBoy{
 				// carry flag
 				((int)cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL)) -
 						((int)cpu->getFetchedData()) - ((int)GETBIT(cpu->getRegisterValue(REG_F), 4))  < 0
+			);
+
+			cpu->setRegisterValue(
+				cpu->getCurrInstruct()->regTypeL,
+				cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) - value
 			);
 		}
 
@@ -446,7 +449,7 @@ namespace TheBoy{
 		 */
 		static void instXOR(Cpu* cpu) {
 			cpu->setRegisterValue(REG_A,
-				cpu->getRegisterValue(REG_A) ^ cpu->getFetchedData()
+				cpu->getRegisterValue(REG_A) ^ cpu->getFetchedData() & 0xFF
 			);
 
 			cpu->setFlags( cpu->getRegisterValue(REG_A) == 0,
@@ -461,7 +464,7 @@ namespace TheBoy{
 		 */
 		static void instOR(Cpu* cpu) {
 			cpu->setRegisterValue( REG_A,
-				cpu->getRegisterValue(REG_A) | cpu->getFetchedData()
+				cpu->getRegisterValue(REG_A) | cpu->getFetchedData() & 0xFF
 			);
 
 			cpu->setFlags( cpu->getRegisterValue(REG_A) == 0,
@@ -511,10 +514,6 @@ namespace TheBoy{
 			*/
 
 			RegisterType rType = REG_NONE;
-
-			// Using a 8bit value since all operations occour as  8bit value
-			bit8 reg_value = cpu->getRegisterValue(rType);
-
 			if(OPPrf & 0b111 <= 0b111){
 				rType = helperPCB[OPPrf & 0b111];
 			}
@@ -541,6 +540,10 @@ namespace TheBoy{
 			bit8 PBit = (OPPrf >> 3) & 0b111;
 			bit8 POperation  = (OPPrf >> 6) & 0b11;
 
+			// Using a 8bit value since all operations occour as  8bit value
+			bit8 reg_value = cpu->getRegisterValue(rType);
+
+
 			cpu->requestCycles(1);
 
 			// For the operations with the HL Registed
@@ -554,21 +557,21 @@ namespace TheBoy{
 				// BIT OPERATION
 				// Operation evaluates if the defined bit  is set on the registor and set it on the
 				// Z Flag, if this bit is set, the z value is 0 else is 1
-				cpu->setFlags(!(reg_value & (0b1 << PBit)), 0, 1, -1);
+				cpu->setFlags(!(reg_value & (1 << PBit)), 0, 1, -1);
 				return;
 			case 0b10:
 				// RES OPERATION
 				// This operation resets the defined bit
 				// current registor value and the defined notBit 
-				reg_value &= ~(0b1 << PBit);
-				cpu->setRegisterValue(rType, reg_value);
+				reg_value &= ~(1 << PBit);
+				cpu->setRegisterValueByte(rType, reg_value);
 				return;
 
 			case 0b11:
 				// SET OPERATION
 				// This operation sets the defined bit value
 				reg_value |= (0b1 << PBit);
-				cpu->setRegisterValue(rType, reg_value);
+				cpu->setRegisterValueByte(rType, reg_value);
 				return;
 			}
 
@@ -583,22 +586,25 @@ namespace TheBoy{
 					// RLC OPERATION
 					// Rotate Left operation, shift the value 1 to left and set the old 1st bit to the end
 					bit8 rRes = (reg_value << 1) & 0xFF;
-
-					rRes |= reg_value >> 7;
-					cpu->setRegisterValue(rType, rRes);
+					bool setC = false;
+					if((reg_value & (1 << 7)) != 0){
+						rRes |= 1;
+						setC = true;
+					}
+					cpu->setRegisterValueByte(rType, rRes);
 
 					// C flag is set if a carry value existed
-					cpu->setFlags( rRes == 0, 0, 0, rRes & 0b1);
+					cpu->setFlags( rRes == 0, 0, 0, setC);
 					return;
 				}
 
 				case 0b001: {
 					// RRC OPERATION
 					// Rotate Right operation, shift the value 1 bit to right and set the old last bit to the begining
-					bit8 rRes = (reg_value >> 1) & 0xFF;
-					rRes |= (reg_value << 7) & 0xFF;
+					bit8 rRes = (reg_value >> 1);
+					rRes |= (reg_value << 7);
 
-					cpu->setRegisterValue(rType, rRes);
+					cpu->setRegisterValueByte(rType, rRes);
 					cpu->setFlags(rRes == 0, 0, 0, reg_value & 0x1);
 					return;
 				}
@@ -606,21 +612,21 @@ namespace TheBoy{
 				case 0b010: {
 					// RL OPERATION
 					// Rotate Left using the current carry lflag value
-					bit8 rRes = (reg_value << 1) & 0xFF;
+					bit8 rRes = (reg_value << 1);
 					rRes |= cFl;
 
-					cpu->setRegisterValue(rType, rRes);
-					cpu->setFlags(rRes == 0x0, 0, 0, reg_value >> 7);
+					cpu->setRegisterValueByte(rType, rRes);
+					cpu->setFlags(rRes == 0x0, 0, 0, reg_value & 0x80);
 					return;
 				}
 
 				case 0b011: {
 					// RR OPERATION
 					// Rotate right using the current carry lflag value
-					bit8 rRes = (reg_value >> 1) & 0xFF;
+					bit8 rRes = (reg_value >> 1);
 					rRes |= (cFl << 7);
 
-					cpu->setRegisterValue(rType, rRes);
+					cpu->setRegisterValueByte(rType, rRes);
 					cpu->setFlags(rRes == 0, 0, 0, reg_value & 0b1);
 					return;
 				}
@@ -628,10 +634,10 @@ namespace TheBoy{
 				case 0b100 : {
 					// SLA OPERATION
 					// Shift left arithmetic
-					bit8 rRes = (reg_value << 1) & 0xFF;
+					bit8 rRes = (reg_value << 1);
 
-					cpu->setRegisterValue(rType, rRes);
-					cpu->setFlags(rRes == 0x0, 0, 0, reg_value >> 7);
+					cpu->setRegisterValueByte(rType, rRes);
+					cpu->setFlags(rRes == 0x0, 0, 0, reg_value & 0x80);
 					return;
 				}
 
@@ -639,10 +645,9 @@ namespace TheBoy{
 					// SRA OPERATION
 					// Shift right arithmetic, shift right arithmetic (b7=b7)
 					// The most significant bit stays the same
-					bit8 rRes = (reg_value >> 1) & 0xFF;
-					rRes |= reg_value & 0x80;
+					bit8 rRes = (int8_t)(reg_value >> 1);
 
-					cpu->setRegisterValue(rType, rRes);
+					cpu->setRegisterValueByte(rType, rRes);
 					cpu->setFlags(rRes == 0, 0, 0, reg_value & 0b1);
 					return;
 				}
@@ -650,10 +655,10 @@ namespace TheBoy{
 				case 0b110: {
 					// SWAP OPERATION
 					// Swaps the low nibble to the high nibble for the defined value
-					bit8 rRes = ((reg_value & 0xF0) >> 4) | ((reg_value & 0xF) << 4);
+					reg_value = ((reg_value & 0xF0) >> 4) | ((reg_value & 0xF) << 4);
 
-					cpu->setRegisterValue(rType, rRes);
-					cpu->setFlags(rRes =0, 0, 0, 0);
+					cpu->setRegisterValue(rType, reg_value);
+					cpu->setFlags(reg_value == 0, 0, 0, 0);
 					return;
 				}
 
@@ -676,11 +681,12 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instRLCA(Cpu* cpu) {
-			bit8 res = (cpu->getRegisterValue(REG_A) << 1) & 0xFF;
-			res |= cpu->getRegisterValue(REG_A) >> 7;
-
-			cpu->setFlags(0, 0, 0, cpu->getRegisterValue(REG_A) >> 7);
+			bit8 res = cpu->getRegisterValue(REG_A);
+			bool cFlag = (res >> 7) & 0x1;
+			res = (res << 1) | cFlag;
 			cpu->setRegisterValue(REG_A, res);
+
+			cpu->setFlags(0, 0, 0, cFlag);
 		}
 
 
@@ -689,11 +695,10 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instRRCA(Cpu* cpu) {
-			bit8 res = (cpu->getRegisterValue(REG_A) >> 1) & 0xFF;
-			res |= (cpu->getRegisterValue(REG_A) & 0b1) << 7;
-			
+			bit8 res = cpu->getRegisterValue(REG_A) & 0x1;
+			cpu->setRegisterValue(REG_A, cpu->getRegisterValue(REG_A) >> 1);
+			cpu->setRegisterValue(REG_B,cpu->getRegisterValue(REG_B) | (res << 7));			
 			cpu->setFlags(0, 0, 0, (cpu->getRegisterValue(REG_A) & 0b1));
-			cpu->setRegisterValue(REG_A, res);
 		}
 
 
@@ -702,11 +707,12 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instRLA(Cpu* cpu) {
-			bit8 res = (cpu->getRegisterValue(REG_A) << 1) & 0xFF;
-			res |= GETBIT(cpu->getRegisterValue(REG_F), 4);
-
-			cpu->setFlags(0, 0, 0, cpu->getRegisterValue(REG_A) >> 7);
-			cpu->setRegisterValue(REG_A, res);
+			bit8 cFlag = (cpu->getRegisterValue(REG_A) >> 7) & 0x1;
+		
+			cpu->setRegisterValue(REG_A, 
+				(cpu->getRegisterValue(REG_A) << 1) | GETBIT(cpu->getRegisterValue(REG_F), 4)
+			);
+			cpu->setFlags(0, 0, 0, cFlag);
 		}
 
 
@@ -715,11 +721,13 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instRRA(Cpu* cpu) {
-			bit8 res = (cpu->getRegisterValue(REG_A) >> 1) & 0xFF;
-			res |= GETBIT(cpu->getRegisterValue(REG_F), 4) << 7;
+			bit8 cFlag = cpu->getRegisterValue(REG_A) & 0x1;
+			bit8 regA = cpu->getRegisterValue(REG_A);
+			regA >>= 1;
+			regA |= (GETBIT(cpu->getRegisterValue(REG_F), 4) << 7);
 
-			cpu->setFlags(0, 0, 0, cpu->getRegisterValue(REG_A) & 0b1);
-			cpu->setRegisterValue(REG_A, res);
+			cpu->setRegisterValue(REG_A, regA);
+			cpu->setFlags(0, 0, 0, cFlag);
 		}
 
 

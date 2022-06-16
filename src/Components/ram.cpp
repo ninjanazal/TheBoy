@@ -23,16 +23,17 @@ namespace TheBoy {
 	bit8 Ram::wRead(bit16 addr) {
 		// Since this memory block start at $C000
 		addr -= 0xC000;
-#if VERBOSE
-		printf("[RAM] ::: Reading Work RAM at  %.4X!\n", (addr + 0xC000));
-		fflush(stdout);
-#endif
-
+		
 		if(addr >= 0x2000){
 			printf("[RAM] ::: Invalid work RAM Read at %05X!", (addr + 0xC000));
 			fflush(stdout);
 			return 0x0;
 		}
+#if VERBOSE
+		printf("[RAM] ::: Reading Work RAM at  %.4X! -> %2.2X\n", (addr + 0xC000), workRam[addr]);
+		fflush(stdout);
+#endif
+
 		return workRam[addr];
 	}
 

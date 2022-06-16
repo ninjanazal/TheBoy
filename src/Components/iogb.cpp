@@ -7,6 +7,14 @@ namespace TheBoy {
 	 */
 	IO::IO(EmulatorController* ctrl) : emulCtrl(ctrl) {
 		std::cout << "[IO] ::: IO has been created" << std::endl;
+		seriaData = new bit8[2] {};
+	}
+
+	/**
+	 * @brief Destroy the IO object
+	 */
+	IO::~IO() {
+		delete[] seriaData;
 	}
 
 	/**
@@ -57,10 +65,11 @@ namespace TheBoy {
 	 * @param addr Target Write addres
 	 * @param val value to be written
 	 */
-	void IO::write(bit16 addr, bit8 val) {
-		if(addr == 0xFF01)
+	void IO::write(bit16 addr, bit8 val) {	
+		if(addr == 0xFF01){
 			seriaData[0] = val;
 			return;
+		}
 
 		if(addr == 0xFF02){
 			seriaData[1] = val;

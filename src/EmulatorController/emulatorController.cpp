@@ -33,10 +33,8 @@ namespace TheBoy {
 
 		while (emu_state.running) {
 			comps.view->ManageEvents();
-			//comps.cpu->step();
-			debugUpdate();
-
 			comps.view->Draw();
+			debugOutput();
 		}
 	}
 
@@ -49,6 +47,7 @@ namespace TheBoy {
 	void EmulatorController::cpuStep(EmulatorState* state, std::shared_ptr<Cpu> cpu) {
 		while (state->running){
 			cpu->step();
+			debugUpdate();
 		}
 	}
 
@@ -123,19 +122,31 @@ namespace TheBoy {
 	 */
 	void EmulatorController::debugUpdate() {
 		// Some tests marks this address for pending information
-		if(getBus()->abRead(0xFF02) == 0x81){
-			debugBuffer[debugMsgPointer++] = getBus()->abRead(0xFF01);
-			getBus()->abWrite(0xFF02, 0);
-		}
+		bit8 res = comps.bus->abRead(0xFF02);
+		if(res == 0x81){
+			char r = comps.bus->abRead(0xFF01);
 
-		if(debugBuffer[0]){
-			printf("[DEBUGMSG] ::: %s\n", debugBuffer);
+			debugBuffer[debugMsgPointer] = r;
+			debugMsgPointer++;
+
+			getBus()->abWrite(0xFF02, 0);
 		}
 	}
 
 
-
 	/**
+	 * @brief Outputs the current IO buffer debug
+	 */
+	void EmulatorController::debugOutput() {
+#if IOOUT
+		if(debugBuffer[0]){
+			printf("[DEBUGMSG] ::: %s\n", debugBuffer);
+		}
+#endif
+	}
+
+ 
+ 	/**
 	 * @brief Get the Cartridge object
 	 * @return std::shared_ptr<Cartridge> Shared pointer to the inUse cartridge
 	 */

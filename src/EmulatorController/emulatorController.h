@@ -125,6 +125,12 @@ namespace TheBoy {
 		void debugUpdate();
 
 
+		/**
+		 * @brief Outputs the current IO buffer debug
+		 */
+		void debugOutput();
+
+
 	private:
 
 		/**
