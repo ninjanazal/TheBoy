@@ -267,19 +267,16 @@ namespace TheBoy{
 
 			bit16 val = (h << 8) | l;
 
-			cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, val);
-
 			// For the Operation {F1}
-			if(cpu->getCurrInstruct()->regTypeL == REG_AF) {
+			//if(cpu->getCurrInstruct()->regTypeL == REG_AF) {
 				/*
 					POP AF completely replaces the F register
 					value, so all flags are changed based on the 8-bit data that is read from memor
 					This if is just a fail safe condition
 				*/
-				cpu->setRegisterValue(
-					REG_AF, (val & 0xFFF0)
-				);
-			}
+			//	val &= 0xFFF0;
+			//}
+			cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, val);
 		}
 
 

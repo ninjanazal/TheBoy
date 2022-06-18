@@ -41,5 +41,5 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${INC_DIRECTORIES})
 
 # - - - - - - - - - -
 # Precompilation Defined Macros
-add_compile_definitions(VERBOSE=false)
+add_compile_definitions(VERBOSE=true)
 add_compile_definitions(IOOUT=true)

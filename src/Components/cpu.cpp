@@ -61,9 +61,7 @@ namespace TheBoy {
 			printf("[CPU] ::: ->  OPCODE: %2.2X | PC: %2.2X\n", currOpcode, tempPc);
 			fflush(stdout);
 #endif
-			if(emuCtrl->getTicks() >= 0x0000B7EC){
-				//std::cout << "debug" << std::endl; 
-			}
+
 			emuCtrl->getView()->setRegistorsVals(regs.get());
 			executeInst();
 		}
@@ -454,22 +452,18 @@ namespace TheBoy {
 		currInstruct = TheBoy::getByOpcode(currOpcode);
 		
 		char* bfr(new char[64] {});
-
 		if(currInstruct == nullptr){
-			sprintf(bfr, 
-				"-> Opcode %2.2X failed to load\n", currOpcode
-			);
+			sprintf(bfr, "-> Opcode %2.2X failed to load", currOpcode);
+		} else {
+			sprintf(bfr, "-> Opcode %2.2X", currOpcode);
 		}
-		sprintf(bfr,
-			"-> OPCODE: %2.2X | PC: %2.2X\n", currOpcode, regs->PC
-		);
 
 		emuCtrl->getView()->setCurrOperation(bfr);
-		delete[] bfr;
-
+		delete[] bfr;	
 
 		regs->PC++;
 	}
+
 
 	/**
 	 * @brief Defines fetch data for the loaded instruction
@@ -518,7 +512,6 @@ namespace TheBoy {
 			intMem.fetchData = requestBusRead(regs->PC);
 			requestCycles(1);
 			regs->PC++;
-			0xFE;
 			return;
 		
 
