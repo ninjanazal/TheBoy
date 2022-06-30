@@ -45,7 +45,7 @@ BuildSFML () {
 		mkdir out
 	fi
 
-	cd SFML
+	cd Modules/SFML
 
 	if [ ! -d "Build" ]; then
 		mkdir Build
@@ -64,10 +64,10 @@ BuildSFML () {
 	esac
 
 	echo -e "[SCRIPT] Building SFML at "$PWD"!"	
-	cmake --build .  --config Release
+	cmake --build .
 	cmake --install .
 
-	cd ../..
+	cd ../../..
 }
 
 
@@ -76,7 +76,7 @@ BuildSFML () {
 # Confirms the SFMl Current folders
 # - - - - - - - - - -
 ValidateSFML () {
-	if [ ! -d "SFML/Build" ]; then
+	if [ ! -d "Modules/SFML/Build" ]; then
 		echo -e "[SCRIPT] Build folder not found"
 		BuildSFML
 	fi
@@ -140,7 +140,11 @@ done
 
 if [ "$CLEAR_ALL" = TRUE ]; then
 	echo -e "[SCRIPT] Cleaning up"
-		rm build -R
+		rm out -R
+		rm Build -R
+		cd Modules/SFML/
+		rm Build -R
+		cd ../../
 fi
 
 ValidateSFML
