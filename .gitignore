@@ -415,7 +415,7 @@ FodyWeavers.xsd
 .history
 .ionide
 
-SFML/
+#SFML/
 
 ROMS/
 

@@ -59,7 +59,7 @@ BuildSFML () {
 			cmake -G "MinGW Makefiles" -DBUILD_SHARED_LIBS=FALSE -DSFML_USE_STATIC_STD_LIBS=TRUE -DCMAKE_INSTALL_PREFIX=${CURRENT_PATH}/out ..
 			;;
 		"vs")
-			cmake -G "Visual Studio 17 2022" -DBUILD_SHARED_LIBS=FALSE -DSFML_USE_STATIC_STD_LIBS=TRUE -DCMAKE_INSTALL_PREFIX=${CURRENT_PATH}/out ..
+			cmake -G "Visual Studio 15 2017 Win64" -DBUILD_SHARED_LIBS=FALSE -DSFML_USE_STATIC_STD_LIBS=TRUE -DCMAKE_INSTALL_PREFIX=${CURRENT_PATH}/out ..
 			;;
 	esac
 
@@ -76,13 +76,6 @@ BuildSFML () {
 # Confirms the SFMl Current folders
 # - - - - - - - - - -
 ValidateSFML () {
-	if [ ! -d "SFML" ]; then
-		echo -e "[SCRIPT] SFML not found"
-
-		git clone $SFML_GIT
-		BuildSFML
-	fi
-
 	if [ ! -d "SFML/Build" ]; then
 		echo -e "[SCRIPT] Build folder not found"
 		BuildSFML
@@ -169,7 +162,7 @@ case $BUILD_TARGET in
 		cmake -G "MinGW Makefiles" ..
 		;;
 	"vs")
-		cmake -G "Visual Studio 17 2022" ..
+		cmake -G "Visual Studio 15 2017 Win64" ..
 		;;
 esac
 
