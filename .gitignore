@@ -29,23 +29,6 @@ _deps
 # Mono auto generated files
 mono_crash.*
 
-# Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-[Ww][Ii][Nn]32/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
-bld/
-[Bb]in/
-[Oo]bj/
-[Ll]og/
-[Ll]ogs/
-[Bb]uild/
-[Oo]ut/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -417,7 +400,8 @@ FodyWeavers.xsd
 
 #SFML/
 
-ROMS/
+ROMS/*.*
+
 
 ## Logs
 *log*.txt
