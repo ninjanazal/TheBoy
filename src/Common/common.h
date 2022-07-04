@@ -8,7 +8,7 @@
 #include <SFML/Graphics.hpp>
 
 
-namespace TheBoy{
+namespace TheBoy {
 
 	// - - - - - - - - - - - - - - - - - - - -
 	//                 MACROS               //
@@ -18,31 +18,35 @@ namespace TheBoy{
 	/**
 	 * @brief Defines the GameBoy ScreenSize
 	 */
-	#define BASE_SCREEN (unsigned int[]){160, 144}
+#define BASE_SCREEN (unsigned int[]){160, 144}
 
 
-	/**
-	 * @brief Gets the bit n state from value
-	 */
-	#define GETBIT(from, n) (from >> n) & 1
+	 /**
+	  * @brief Gets the bit n state from value
+	  */
+#define GETBIT(from, n) (from >> n) & 1
 
 
-	/**
-	 * @brief Sets a defined bit value
-	 */
-	#define SETBIT(to, n, val) (to = (to & ~(1 << n)) | (val << n));
+	  /**
+	   * @brief Sets a defined bit value
+	   */
+#define SETBIT(to, n, val) (to = (to & ~(1 << n)) | (val << n));
 
 
-	/**
-	 * @brief Checks if a value is between a min and max value
-	 */
-	#define BETWEEN(val, min, max) ((val >= min) && (val <= max))
+	   /**
+		* @brief Checks if a value is between a min and max value
+		*/
+#define BETWEEN(val, min, max) ((val >= min) && (val <= max))
 
 
 	// - - - - - - - - - - - - - - - - - - - -
 	//               TypeDefs               //
 	// - - - - - - - - - - - - - - - - - - - -
 
+	/**
+	 * @brief Defines the GameBoy ScreenSize
+	 */
+	const unsigned int kBaseScreen[] = { 160, 144 };
 
 	/**
 	 * @brief Defined types for the current project type
@@ -57,7 +61,7 @@ namespace TheBoy{
 	/**
 	 * @brief Defines teh Emulator state
 	 */
-	typedef struct {
+	typedef struct EmulatorState {
 		/**
 		 * @brief Marks if the current emulator is paused
 		 */
@@ -78,7 +82,7 @@ namespace TheBoy{
 		/**
 		 * @brief Resets the Emulator state values
 		 */
-		void reset(){
+		void reset() {
 			paused = false;
 			running = true;
 			ticks = 0;
@@ -92,8 +96,8 @@ namespace TheBoy{
 	 * @param val Value to ve reversed
 	 * @return bit16 Reversed value
 	 */
-	static bit16 reverse16(const bit16 val){
-		return ( (val & 0xFF00) >> 8 | (val & 0x00FF) << 8);
+	static bit16 reverse16(const bit16 val) {
+		return ((val & 0xFF00) >> 8 | (val & 0x00FF) << 8);
 	}
 
 }

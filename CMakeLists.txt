@@ -2,14 +2,11 @@
 # project specific logic here.
 #
 cmake_minimum_required (VERSION 3.8)
+
+set (CMAKE_CXX_STANDARD 17)
 project (TheBoy LANGUAGES CXX)
 
-#set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "SFML\\extlibs\\headers")   
-#set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "SFML\\extlibs\\libs-msvc\\x64")
+#set(CMAKE_CONFIGURATION_TYPES  Release)
 
-set(SFML_DIR ${CMAKE_CURRENT_SOURCE_DIR}/out/lib/cmake/SFML/)
-set(SFML_STATIC_LIBRARIES TRUE)
-
-find_package(SFML 2.5 COMPONENTS graphics system window audio REQUIRED)
-
+message("[ :: USING ${TARGETCONFIG} :: ]")
 add_subdirectory(src)

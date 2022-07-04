@@ -2,12 +2,6 @@
 
 
 # - - - - - - - - - -
-# Target SFML repo with branch
-# - - - - - - - - - -
-SFML_GIT="https://github.com/SFML/SFML.git -b 2.5.x"
-
-
-# - - - - - - - - - -
 # Holds the base global path
 # - - - - - - - - - -
 CURRENT_PATH=$PWD
@@ -34,53 +28,6 @@ RUN_CONFIG=FALSE
 # - - - - - - - - - - - - - - - - - - - -
 # FUNCTIONS - - - - - - - - - - - - - - -
 # - - - - - - - - - - - - - - - - - - - -
-
-
-# - - - - - - - - - -
-# Builds the sfml lib
-# - - - - - - - - - -
-BuildSFML () {
-	echo -e "[SCRIPT] Building SFML Module!"
-	if [ ! -d "out" ]; then
-		mkdir out
-	fi
-
-	cd Modules/SFML
-
-	if [ ! -d "Build" ]; then
-		mkdir Build
-	fi
-
-	cd Build
-	echo -e "[SCRIPT] Generating SFML Compiling properties at ${PWD}!"
-	
-	case $BUILD_TARGET in
-		"mingw")
-			cmake -G "MinGW Makefiles" -DBUILD_SHARED_LIBS=FALSE -DSFML_USE_STATIC_STD_LIBS=TRUE -DCMAKE_INSTALL_PREFIX=${CURRENT_PATH}/out ..
-			;;
-		"vs")
-			cmake -G "Visual Studio 15 2017 Win64" -DBUILD_SHARED_LIBS=FALSE -DSFML_USE_STATIC_STD_LIBS=TRUE -DCMAKE_INSTALL_PREFIX=${CURRENT_PATH}/out ..
-			;;
-	esac
-
-	echo -e "[SCRIPT] Building SFML at "$PWD"!"	
-	cmake --build .
-	cmake --install .
-
-	cd ../../..
-}
-
-
-
-# - - - - - - - - - -
-# Confirms the SFMl Current folders
-# - - - - - - - - - -
-ValidateSFML () {
-	if [ ! -d "Modules/SFML/Build" ]; then
-		echo -e "[SCRIPT] Build folder not found"
-		BuildSFML
-	fi
-}
 
 
 # - - - - - - - - - -
@@ -140,14 +87,8 @@ done
 
 if [ "$CLEAR_ALL" = TRUE ]; then
 	echo -e "[SCRIPT] Cleaning up"
-		rm out -R
-		rm Build -R
-		cd Modules/SFML/
-		rm Build -R
-		cd ../../
+		rm Build -R -rf
 fi
-
-ValidateSFML
 
 
 
@@ -163,10 +104,10 @@ echo -e "[SCRIPT] Generating compilation Project at "$PWD""
 
 case $BUILD_TARGET in
 	"mingw")
-		cmake -G "MinGW Makefiles" ..
+		cmake -G "MinGW Makefiles" -DTARGETCONFIG="mingw" ..
 		;;
 	"vs")
-		cmake -G "Visual Studio 15 2017 Win64" ..
+		cmake -G "Visual Studio 17 2022" -DTARGETCONFIG="vs" ..
 		;;
 esac
 

@@ -8,3 +8,11 @@ set ( SOURCE
 
 	PARENT_SCOPE
 )
+
+set ( HEADERS 
+	${HEADERS}
+	${CMAKE_CURRENT_SOURCE_DIR}/emulatorController.h
+	${CMAKE_CURRENT_SOURCE_DIR}/emulView.h
+
+	PARENT_SCOPE
+)

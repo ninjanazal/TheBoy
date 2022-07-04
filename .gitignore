@@ -402,6 +402,7 @@ FodyWeavers.xsd
 
 ROMS/*.*
 
+[Bb]uild/
 
 ## Logs
 *log*.txt

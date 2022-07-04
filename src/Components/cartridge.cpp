@@ -36,7 +36,7 @@ namespace TheBoy {
 		rom_size = loadStream.tellg();
 		loadStream.seekg(0, std::ios_base::beg);
 
-		char* temp_data(new char[rom_size] {});
+		char* temp_data(new char[rom_size + 1] {});
 		loadStream.read(temp_data, rom_size);
 		loadStream.close();
 		

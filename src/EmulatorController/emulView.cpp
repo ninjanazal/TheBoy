@@ -142,10 +142,10 @@ namespace TheBoy {
 	
 
 		// OutPut view
-		viewPixels = new sf::Uint8[BASE_SCREEN[0] * BASE_SCREEN[1] * 4] {};
+		viewPixels = new sf::Uint8[kBaseScreen[0] * kBaseScreen[1] * 4] {};
 
 		tView = std::make_shared<sf::Texture>();
-		tView->create(BASE_SCREEN[0], BASE_SCREEN[1]);
+		tView->create(kBaseScreen[0], kBaseScreen[1]);
 		tView->update(viewPixels);
 		
 		sView = std::make_shared<sf::Sprite>(*tView.get());		

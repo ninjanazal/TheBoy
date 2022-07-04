@@ -5,6 +5,16 @@ set( SOURCE
 ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
 )
 
+set ( HEADERS )
+
+# - - - - - - - - - -
+# Precompilation Defined Macros
+add_compile_definitions(VERBOSE=true)
+add_compile_definitions(IOOUT=true)
+
+add_compile_definitions(SFML_STATIC TRUE)
+
+
 # - - - - - - - - - -
 # Set Include directories path
 # - - - - - - - - - -
@@ -22,24 +32,32 @@ add_subdirectory(Common)
 add_subdirectory(Components)
 add_subdirectory(EmulatorController)
 
+
 # message(${SOURCE})
 # - - - - - - - - - -
 # Create executable with the defined source
 # - - - - - - - - - -
-add_executable (${PROJECT_NAME} ${SOURCE})
+add_executable (${PROJECT_NAME} ${HEADERS} ${SOURCE})
+
+set(SFML_DIR ${CMAKE_SOURCE_DIR}/Vendor/SFML/${TARGETCONFIG}/lib/cmake/SFML)
+set(SFML_STATIC_LIBRARIES TRUE)
+
+find_package(SFML 2.5 COMPONENTS graphics system window audio REQUIRED)
+target_link_libraries(${PROJECT_NAME} PUBLIC sfml-system sfml-window sfml-graphics sfml-audio)
+
+
+if ( ${TARGETCONFIG} STREQUAL "vs" )
+	message("[ LINKING FOR VS TARGET ]")
+elseif( ${TARGETCONFIG} STREQUAL "mingw" )
+	message("[ LINKING FOR MINGW TARGET ]")
+endif()
 
 
 # - - - - - - - - - -
 # Link/Include
 # - - - - - - - - - -
-# SFML
-target_link_libraries(${PROJECT_NAME} PUBLIC sfml-system sfml-window sfml-graphics sfml-audio)
-
 # - - - - - - - - - -
 # Directories
 target_include_directories(${PROJECT_NAME} PRIVATE ${INC_DIRECTORIES})
 
-# - - - - - - - - - -
-# Precompilation Defined Macros
-add_compile_definitions(VERBOSE=true)
-add_compile_definitions(IOOUT=true)
+
