@@ -14,9 +14,9 @@ namespace TheBoy {
 	};
 
 
-	/**
-	 * @brief constant propertie holding some new Licensees codes
-	 */
+	/// <summary>
+	/// Constant property holding some new Licensees codes
+	/// </summary>
 	static const std::map<bit8, std::string> LIC_CODE = {
 		{ 0x00, "None" 						},
 		{ 0x01, "Nintendo R&D1" 			},

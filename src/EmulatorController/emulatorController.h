@@ -105,7 +105,7 @@ namespace TheBoy {
 		/**
 		 * @brief Thred for the cpu process
 		 */
-		std::thread* instThread;
+		std::unique_ptr<std::thread> instThread;
 
 
 		/**

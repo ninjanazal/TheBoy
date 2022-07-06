@@ -47,9 +47,13 @@ target_link_libraries(${PROJECT_NAME} PUBLIC sfml-system sfml-window sfml-graphi
 
 
 if ( ${TARGETCONFIG} STREQUAL "vs" )
-	message("[ LINKING FOR VS TARGET ]")
+	message("[ SETUP FOR VS TARGET ]")
+	set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
+
+	file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR}/src)
+
 elseif( ${TARGETCONFIG} STREQUAL "mingw" )
-	message("[ LINKING FOR MINGW TARGET ]")
+	message("[ SETUP FOR MINGW TARGET ]")
 endif()
 
 

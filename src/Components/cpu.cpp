@@ -56,13 +56,13 @@ namespace TheBoy {
 #if VERBOSE
 			printf(
 				"[CPU] ::: [%08lX] Regs State { A: %2.2X F: %2.2X BC: %2.2X %2.2X DE: %2.2X %2.2X HL: %2.2X %2.2X SP: %4.4X PC %4.4X }\n",
-				emuCtrl->getTicks(), regs->A, regs->F, regs->B, regs->C, regs->D, regs->E, regs->H, regs->L, regs->SP, regs->PC
+				static_cast<int>(emuCtrl->getTicks()), regs->A, regs->F, regs->B, regs->C, regs->D, regs->E, regs->H, regs->L, regs->SP, regs->PC
 			);
 			printf("[CPU] ::: ->  OPCODE: %2.2X | PC: %2.2X\n", currOpcode, tempPc);
 			fflush(stdout);
 #endif
 
-			emuCtrl->getView()->setRegistorsVals(regs.get());
+			//emuCtrl->getView()->setRegistorsVals(regs.get());
 			executeInst();
 		}
 		else {
@@ -444,6 +444,31 @@ namespace TheBoy {
 	}
 
 
+	/// <summary>
+	/// Gets the cpu summary string, used to print
+	/// </summary>
+	/// <param name="cpuStr">Pointer to target Registor summary string</param>
+	/// <param name="opCodeStr">Pointer to target opCode summary string</param>
+	void Cpu::getCpuSummary(char* cpuStr, char* opCodeStr) {
+		sprintf_s(cpuStr, 256,
+			"|:: Registors state\n"
+			"A: %2.2X      F: %2.2X\n"
+			"BC: %2.2X %2.2X  DE: %2.2X %2.2X  HL: %2.2X %2.2X\n"
+			"SP: %4.4X   PC %4.4X",
+			regs->A, regs->F,
+			regs->B, regs->C, regs->D, regs->E, regs->H, regs->L,
+			regs->SP, regs->PC
+		);
+
+		sprintf_s(
+			opCodeStr, 64,
+			(currInstruct == nullptr) ? "-> Opcode %2.2X failed to load" : "-> Opcode %2.2X",
+			currOpcode
+		);
+	}
+
+
+
 	/**
 	 * @brief Defined fetch instuction from memory
 	 */
@@ -453,12 +478,12 @@ namespace TheBoy {
 		
 		char* bfr(new char[64] {});
 		if(currInstruct == nullptr){
-			sprintf(bfr, "-> Opcode %2.2X failed to load", currOpcode);
+			sprintf_s(bfr, 64, "-> Opcode %2.2X failed to load", currOpcode);
 		} else {
-			sprintf(bfr, "-> Opcode %2.2X", currOpcode);
+			sprintf_s(bfr, 64, "-> Opcode %2.2X", currOpcode);
 		}
 
-		emuCtrl->getView()->setCurrOperation(bfr);
+		//emuCtrl->getView()->setCurrOperation(bfr);
 		delete[] bfr;	
 
 		regs->PC++;
@@ -654,7 +679,7 @@ so the possible range is 0xFF00-0xFFFF.
 
 		default:			// If none, this is a unknow operation mode
 			char* m(new char[128] {});
-			sprintf(m, "[CPU] ::: Unknown Operation mode on the instruction [OPCODE: %2.2X]\n", currOpcode);
+			sprintf_s(m, 128, "[CPU] ::: Unknown Operation mode on the instruction [OPCODE: %2.2X]\n", currOpcode);
 			emuCtrl->forceEmuStop(m);
 			delete[] m;
 			break;
@@ -668,7 +693,7 @@ so the possible range is 0xFF00-0xFFFF.
 		CpuFuncs::INST_FUNC exe = CpuFuncs::getInstructProcess(currInstruct->insType);
 		if(!exe || currInstruct->insType == INST_NONE){
 			char* m(new char[128] {});
-			sprintf(m, "[CPU] ::: Unknown execution function for [OPCODE: %2.2X]\n", currOpcode);
+			sprintf_s(m, 128, "[CPU] ::: Unknown execution function for [OPCODE: %2.2X]\n", currOpcode);
 			emuCtrl->forceEmuStop(m);
 			delete[] m;
 			return;

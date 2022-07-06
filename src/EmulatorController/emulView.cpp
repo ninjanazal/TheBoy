@@ -9,7 +9,7 @@ namespace TheBoy {
 	 * @param ctrl Target emulator controller
 	 */
 	EmulView::EmulView(EmulatorController* ctrl) : emulCtrl(ctrl) {
-		window = std::make_shared<sf::RenderWindow>(
+		window = std::make_unique<sf::RenderWindow>(
 			sf::VideoMode(900, 500), "TheBoy Emulator",
 			sf::Style::Titlebar | sf::Style::Titlebar | sf::Style::Close
 		);
@@ -59,6 +59,7 @@ namespace TheBoy {
 	void EmulView::Draw(){
 		window->clear(sf::Color::Black);
 		
+		setRegistorsVals();
 		positionTextElms();
 		buildDebugView();
 
@@ -94,30 +95,17 @@ namespace TheBoy {
 	 * @brief Set the Registors Vals on screen
 	 * @param regs Target CPU registors
 	*/
-	void EmulView::setRegistorsVals(const Registers* regs){
-		char* msgBuffer(new char[256] {});
-		sprintf(msgBuffer, 
-				"|:: Registors state\n" 
-				"A: %2.2X      F: %2.2X\n" 
-				"BC: %2.2X %2.2X  DE: %2.2X %2.2X  HL: %2.2X %2.2X\n" 
-				"SP: %4.4X   PC %4.4X",
-				regs->A, regs->F,
-				regs->B, regs->C, regs->D, regs->E, regs->H, regs->L,
-				regs->SP, regs->PC
-		);
-		wText[4]->setString(msgBuffer);
-		delete[] msgBuffer;
+	void EmulView::setRegistorsVals(){
+		char* regBuffer(new char[256] { });
+		char* opBuffer(new char[64]{ });
+
+		emulCtrl->getCpu()->getCpuSummary(regBuffer, opBuffer);
+
+		wText[4]->setString(regBuffer);
+		wText[5]->setString(opBuffer);
+		delete[] regBuffer;
+		delete[] opBuffer;
 	}
-
-
-	/**
-	 * @brief Set the Curr Operation information on screen
-	 * @param inf Current operation info
-	 */
-	void EmulView::setCurrOperation(const char* inf) {
-		wText[5]->setString(inf);
-	}
-
 
 
 	/**
@@ -151,13 +139,13 @@ namespace TheBoy {
 		sView = std::make_shared<sf::Sprite>(*tView.get());		
 
 
-		wIcon = std::make_shared<sf::Image>();
+		wIcon = std::make_unique <sf::Image>();
 		wFont = std::make_shared<sf::Font>();
 		
 		if(!wIcon->loadFromFile("assets\\icons\\MaBoy_EmuIcon_32.png")){
 			std::cout << "[VIEW] :: Failed to load window icon! " << std::endl;
 		}
-		//window->setIcon(32, 32, wIcon->getPixelsPtr());
+		else { window->setIcon(32, 32, wIcon->getPixelsPtr()); }
 
 		if(!wFont->loadFromFile("assets\\fonts\\JetBrainsMono-Regular.ttf")){
 			std::cout << "[VIEW] :: Failed to load window icon! " << std::endl;
@@ -203,8 +191,8 @@ namespace TheBoy {
 		bit16 addr = 0x8000;
 		// Making the display table
 		//iGRam->create(tileSizeView.x * 8, tileSizeView.y * 8, sf::Color::White);
-		for (int y = 0; y < tileSizeView.y; y++){
-			for(int x = 0; x < tileSizeView.x; x++){
+		for (unsigned int y = 0; y < tileSizeView.y; y++){
+			for(unsigned int x = 0; x < tileSizeView.x; x++){
 				addTileToDebug(addr, ((y * 24) + x ));
 			}
 		}
@@ -226,7 +214,7 @@ namespace TheBoy {
 			and bit 0 the rightmost.
 			
 		*/
-		int yTileOff = floor(tileId / tileSizeView.x);
+		int yTileOff = static_cast<int>(floor(tileId / tileSizeView.x));
 		int xTileOff = tileId - (yTileOff * tileSizeView.x);
 
 		for (int t= 0; t < 16; t += 2) {
@@ -245,7 +233,7 @@ namespace TheBoy {
 
 				iGRam->setPixel(
 					(8 * xTileOff) + (7 - b),
-					(8 * yTileOff) + floor(t / 2),
+					(8 * yTileOff) + static_cast<int>(floor(t / 2)),
 					gbPallet[pixelID]
 				);
 			}

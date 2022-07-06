@@ -47,20 +47,6 @@ namespace TheBoy {
 		void setCartChecksum(const char* inf);
 
 
-		/**
-		 * @brief Set the Registors Vals on screen
-		 * @param regs Target CPU registors
-		 */
-		void setRegistorsVals(const Registers* regs);
-
-
-		/**
-		 * @brief Set the Curr Operation information on screen
-		 * @param inf Current operation info
-		 */
-		void setCurrOperation(const char* inf);
-
-
 	private:
 	#pragma region Properties
 		/**
@@ -83,13 +69,13 @@ namespace TheBoy {
 		/**
 		 * @brief Pointer to the inUse window
 		 */
-		std::shared_ptr<sf::RenderWindow> window;
+		std::unique_ptr<sf::RenderWindow> window;
 
 
 		/**
 		 * @brief Window icon texture
 		 */
-		std::shared_ptr<sf::Image> wIcon;
+		std::unique_ptr<sf::Image> wIcon;
 
 
 		/**
@@ -164,9 +150,15 @@ namespace TheBoy {
 		void mainLoad();
 
 
-		/**
-		 * @brief Updates the text elements positions
-		 */
+		/// <summary>
+		/// Set the Registors Vals on screen
+		/// </summary>
+		void setRegistorsVals();
+
+
+		/// <summary>
+		/// Updates the text elements positions
+		/// </summary>
 		void positionTextElms();
 
 

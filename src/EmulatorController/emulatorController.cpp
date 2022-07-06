@@ -12,6 +12,7 @@ namespace TheBoy {
 
 		debugBuffer = new char[1024] {};
 		debugMsgPointer = 0;
+		emu_state.reset();
 	}
 
 
@@ -28,8 +29,7 @@ namespace TheBoy {
 	 */
 	void EmulatorController::_run() {
 		std::cout << "[Emulator] ::: Starting the emulator update loop" << std::endl;
-
-		instThread = new std::thread(&EmulatorController::cpuStep, this, &emu_state, comps.cpu);
+		instThread = std::make_unique<std::thread>(&EmulatorController::cpuStep, this, &emu_state, comps.cpu);
 
 		while (emu_state.running) {
 			comps.view->ManageEvents();

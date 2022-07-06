@@ -279,11 +279,20 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		 */
 		void setInterrFlags(bit8 flags);
 
+
 		/**
 		 * @brief Requests a interrupt by type on the current Cpu
 		 * @param iType Iterrupt type
 		 */
 		void requestInterrupt(InterruptFuncs::InterruptType iType);
+
+
+		/// <summary>
+		/// Gets the cpu summary string, used to print
+		/// </summary>
+		/// <param name="cpuStr">Pointer to target Registor summary string</param>
+		/// <param name="opCodeStr">Pointer to target opCode summary string</param>
+		void getCpuSummary(char* cpuStr, char* opCodeStr);
 
 	private:
 		/**

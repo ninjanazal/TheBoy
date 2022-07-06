@@ -33,7 +33,7 @@ namespace TheBoy {
 		}
 		std::cout << "[CARTRIDGE] :: Valid cartridge path, reading ..." << std::endl;
 
-		rom_size = loadStream.tellg();
+		rom_size = static_cast<bit32>(loadStream.tellg());
 		loadStream.seekg(0, std::ios_base::beg);
 
 		char* temp_data(new char[rom_size + 1] {});
@@ -65,9 +65,9 @@ namespace TheBoy {
 	const char* Cartridge::getCartLicenseeName() {
 		if(LIC_CODE.count(cart_state->lic_code) != 0){
 			if(isNewTypeCartridge())
-				return &*LIC_CODE.at(cart_state->old_lic_code).begin();
+				return const_cast<char*>(& *LIC_CODE.at(cart_state->old_lic_code).begin());
 
-			return &*LIC_CODE.at(cart_state->lic_code).begin();
+			return const_cast<char*>(& *LIC_CODE.at(cart_state->lic_code).begin());
 		}
 		return "UNDEFINED";
 	}
@@ -123,14 +123,15 @@ namespace TheBoy {
 	 */
 	void Cartridge::printCartridgeValues() {
 		char* msgBuffer(new char[256] {});
-		sprintf(msgBuffer, 
+
+		sprintf_s(msgBuffer, 256,
 			"-> Title     : %s\n"
 			"-> Type      : %2.2X (%s)\n"
 			"-> ROM Size  : %d KiB\n"
 			"-> RAM Size  : %2.2X\n"
 			"-> Lice Code : %2.2X (%s)\n"
 			"-> ROM Vers  : %2.2X", cart_state->title, cart_state->cart_type, getCartTypeName(),
-			0x20 << cart_state->rom_size, cart_state->ram_size, cart_state->lic_code, getCartLicenseeName()
+			0x20 << cart_state->rom_size, cart_state->ram_size, cart_state->lic_code, getCartLicenseeName(), cart_state->rom_version
 		);
 
 
@@ -158,7 +159,7 @@ namespace TheBoy {
 		}
 
 		char* msgBuf(new char[64] {});
-		sprintf(msgBuf, "[CARTRIDGE] :: Checksum Result : %2.2X (%X)\n", cart_state->checksum, (x & 0xFF));
+		sprintf_s(msgBuf, 64, "[CARTRIDGE] :: Checksum Result : %2.2X (%X)\n", cart_state->checksum, (x & 0xFF));
 		
 		emulCtrl->getView()->setCartChecksum(msgBuf);
 		delete[] msgBuf;

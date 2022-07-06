@@ -377,8 +377,8 @@ namespace TheBoy{
 
 			cpu->setFlags(
 				cpu->getRegisterValue(REG_A) == 0, 0,
-				(oldRegA & 0xF) + (cpu->getFetchedData() & 0xF) + GETBIT(cpu->getRegisterValue(REG_F), 4) > 0xF,
-				oldRegA + cpu->getFetchedData() + GETBIT(cpu->getRegisterValue(REG_F), 4) > 0xFF
+				((oldRegA & 0xF) + (cpu->getFetchedData() & 0xF) + GETBIT(cpu->getRegisterValue(REG_F), 4)) > 0xF,
+				(oldRegA + cpu->getFetchedData() + GETBIT(cpu->getRegisterValue(REG_F), 4)) > 0xFF
 			);
 		}
 
@@ -511,7 +511,7 @@ namespace TheBoy{
 			*/
 
 			RegisterType rType = REG_NONE;
-			if(OPPrf & 0b111 <= 0b111){
+			if((OPPrf & 0b111) <= 0b111){
 				rType = helperPCB[OPPrf & 0b111];
 			}
 
@@ -680,7 +680,7 @@ namespace TheBoy{
 		static void instRLCA(Cpu* cpu) {
 			bit8 res = cpu->getRegisterValue(REG_A);
 			bool cFlag = (res >> 7) & 0x1;
-			res = (res << 1) | cFlag;
+			res = bool(res << 1) | cFlag;
 			cpu->setRegisterValue(REG_A, res);
 
 			cpu->setFlags(0, 0, 0, cFlag);
@@ -759,7 +759,7 @@ namespace TheBoy{
 					val += 0x60;
 					cFlag = 0b1;
 				}
-				if(GETBIT(cpu->getRegisterValue(REG_F), 5) || cpu->getRegisterValue(REG_A) & 0xF > 0x9) {
+				if(GETBIT(cpu->getRegisterValue(REG_F), 5) || (cpu->getRegisterValue(REG_A) & 0xF) > 0x9) {
 					val += 0x6;
 				}
 			} else {
