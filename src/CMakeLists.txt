@@ -39,6 +39,10 @@ add_subdirectory(EmulatorController)
 # - - - - - - - - - -
 add_executable (${PROJECT_NAME} ${HEADERS} ${SOURCE})
 
+if(MSVC)
+	set (TARGETCONFIG "vs")
+endif()
+
 set(SFML_DIR ${CMAKE_SOURCE_DIR}/Vendor/SFML/${TARGETCONFIG}/lib/cmake/SFML)
 set(SFML_STATIC_LIBRARIES TRUE)
 
@@ -49,12 +53,13 @@ target_link_libraries(${PROJECT_NAME} PUBLIC sfml-system sfml-window sfml-graphi
 if ( ${TARGETCONFIG} STREQUAL "vs" )
 	message("[ SETUP FOR VS TARGET ]")
 	set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
-
-	file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR}/src)
-
 elseif( ${TARGETCONFIG} STREQUAL "mingw" )
 	message("[ SETUP FOR MINGW TARGET ]")
 endif()
+
+file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR}/src)
+
+
 
 
 # - - - - - - - - - -

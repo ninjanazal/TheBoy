@@ -260,6 +260,9 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instPOP(Cpu* cpu){
+			if (cpu->getCurrInstruct()->regTypeL == REG_AF) {
+				std::cout << "target pop" << std::endl;
+			}
 			bit16 l = cpu->pop();
 			cpu->requestCycles(1);
 			bit16 h = cpu->pop();
@@ -268,14 +271,14 @@ namespace TheBoy{
 			bit16 val = (h << 8) | l;
 
 			// For the Operation {F1}
-			//if(cpu->getCurrInstruct()->regTypeL == REG_AF) {
+			if(cpu->getCurrInstruct()->regTypeL == REG_AF) {
 				/*
 					POP AF completely replaces the F register
 					value, so all flags are changed based on the 8-bit data that is read from memor
 					This if is just a fail safe condition
 				*/
-			//	val &= 0xFFF0;
-			//}
+				val &= 0xFFF0;
+			}
 			cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, val);
 		}
 
