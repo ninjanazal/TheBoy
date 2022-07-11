@@ -56,7 +56,7 @@ namespace TheBoy {
 #if VERBOSE
 			printf(
 				"[CPU] ::: [%08lX] Regs State { A: %2.2X F: %2.2X BC: %2.2X %2.2X DE: %2.2X %2.2X HL: %2.2X %2.2X SP: %4.4X PC %4.4X }\n",
-				static_cast<int>(emuCtrl->getTicks()), regs->A, regs->F, regs->B, regs->C, regs->D, regs->E, regs->H, regs->L, regs->SP, regs->PC
+				emuCtrl->getTicks(), regs->A, regs->F, regs->B, regs->C, regs->D, regs->E, regs->H, regs->L, regs->SP, regs->PC
 			);
 			printf("[CPU] ::: ->  OPCODE: %2.2X | PC: %2.2X\n", currOpcode, tempPc);
 			fflush(stdout);

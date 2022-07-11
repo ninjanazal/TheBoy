@@ -496,6 +496,18 @@ namespace TheBoy{
 		};
 
 
+		/// <summary>
+		/// Gets the Target registor from the prefix CB opCode
+		/// </summary>
+		/// <param name="cpOp">Target OpCode value</param>
+		/// <returns>corresponding RegisterType</returns>
+		RegisterType getPREFCBRegistor(bit8 cpOp) {
+			if (cpOp > 0b111) {
+				return REG_NONE;
+			}
+			return helperPCB[cpOp];
+		}
+
 		/**
 		 * @brief On a Instruction PREFIX CB resolver
 		 * @param cpu Requester cpu pointer
@@ -513,11 +525,8 @@ namespace TheBoy{
 				Soo the firsts 3 bits can indicate the registor type
 			*/
 
-			RegisterType rType = REG_NONE;
-			if((OPPrf & 0b111) <= 0b111){
-				rType = helperPCB[OPPrf & 0b111];
-			}
-
+			RegisterType rType = getPREFCBRegistor((OPPrf & 0b111));
+		
 			/*
 				For decoding the bit value (if used) and the operation, EX.:
 				{A5}  || RES 4,L ||
@@ -570,13 +579,13 @@ namespace TheBoy{
 			case 0b11:
 				// SET OPERATION
 				// This operation sets the defined bit value
-				reg_value |= (0b1 << PBit);
+				reg_value |= (1 << PBit);
 				cpu->setRegisterValueByte(rType, reg_value);
 				return;
 			}
 
 			// for OPCodes less than {0x40}, those use the C flag value
-			bit8 cFl = GETBIT(cpu->getRegisterValue(REG_C), 4);
+			bit8 cFl = GETBIT(cpu->getRegisterValue(REG_F), 4);
 
 			/*
 				To evaluate what istruction is beeing used the PBit value will be used
@@ -601,43 +610,48 @@ namespace TheBoy{
 				case 0b001: {
 					// RRC OPERATION
 					// Rotate Right operation, shift the value 1 bit to right and set the old last bit to the begining
-					bit8 rRes = (reg_value >> 1);
-					rRes |= (reg_value << 7);
+					bit8 rRes = reg_value;
+					reg_value >>= 1;
+					reg_value |= (rRes << 7);
 
-					cpu->setRegisterValueByte(rType, rRes);
-					cpu->setFlags(rRes == 0, 0, 0, reg_value & 0x1);
+					cpu->setRegisterValueByte(rType, reg_value);
+					cpu->setFlags(reg_value == 0, 0, 0, rRes& 0x1);
 					return;
 				}
 
 				case 0b010: {
 					// RL OPERATION
 					// Rotate Left using the current carry lflag value
-					bit8 rRes = (reg_value << 1);
-					rRes |= cFl;
+					bit8 rRes = reg_value;
+					reg_value <<= 1;
+					reg_value |= cFl;
 
-					cpu->setRegisterValueByte(rType, rRes);
-					cpu->setFlags(rRes == 0x0, 0, 0, reg_value & 0x80);
+					cpu->setRegisterValueByte(rType, reg_value);
+					cpu->setFlags(reg_value == 0x0, 0, 0, (rRes & 0x80));
 					return;
 				}
 
 				case 0b011: {
 					// RR OPERATION
 					// Rotate right using the current carry lflag value
-					bit8 rRes = (reg_value >> 1);
-					rRes |= (cFl << 7);
+					bit8 rRes = reg_value;
+					reg_value >>= 1;
 
-					cpu->setRegisterValueByte(rType, rRes);
-					cpu->setFlags(rRes == 0, 0, 0, reg_value & 0b1);
+					reg_value |= (cFl << 7);
+
+					cpu->setRegisterValueByte(rType, reg_value);
+					cpu->setFlags(reg_value == 0, 0, 0, rRes & 0b1);
 					return;
 				}
 
 				case 0b100 : {
 					// SLA OPERATION
 					// Shift left arithmetic
-					bit8 rRes = (reg_value << 1);
+					bit8 rRes = reg_value;
+					reg_value <<= 1;
 
-					cpu->setRegisterValueByte(rType, rRes);
-					cpu->setFlags(rRes == 0x0, 0, 0, reg_value & 0x80);
+					cpu->setRegisterValueByte(rType, reg_value);
+					cpu->setFlags(reg_value == 0x0, 0, 0, (reg_value & 0x80));
 					return;
 				}
 
