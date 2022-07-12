@@ -82,7 +82,7 @@ namespace TheBoy {
 		bit16 l = abRead(addr);
 		bit16 h = abRead(addr + 0x1);
 
-		return l | (h << 8);
+		return (l | (h << 8));
 	}
 
 

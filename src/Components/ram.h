@@ -16,10 +16,10 @@ namespace TheBoy {
 		Ram(EmulatorController* ctrl);
 
 
-		/**
-		 * @brief Destroy the Ram object
-		 */
-		~Ram() = default;
+		/// <summary>
+		/// Destroy the Ram object
+		/// </summary>
+		~Ram();
 
 
 		/**

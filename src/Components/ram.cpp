@@ -11,8 +11,16 @@ namespace TheBoy {
 		std::cout << "[RAM] ::: RAM has been created!" << std::endl;
 		emuCtrl = ctrl;
 
-		workRam = new bit8[0x2000];
-		highRam = new bit8[0x80];
+		workRam = new bit8[0x2000] { };
+		highRam = new bit8[0x80] { };
+	}
+
+	/// <summary>
+	/// Destroy the Ram object
+	/// </summary>
+	Ram::~Ram() {
+		delete[] workRam;
+		delete[] highRam;
 	}
 
 	/**
