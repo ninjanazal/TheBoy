@@ -88,6 +88,7 @@ done
 if [ "$CLEAR_ALL" = TRUE ]; then
 	echo -e "[SCRIPT] Cleaning up"
 		rm Build -R -rf
+		rm out -R -rf
 fi
 
 

@@ -497,6 +497,11 @@ namespace TheBoy {
 		intMem.fetchData = 0x0;
 		intMem.destIsMem = false;
 
+		if (currInstruct == NULL) {
+			std::cout << "Failed to get the current Instruction" << std::endl;
+			return;
+		}
+
 		switch (currInstruct->opMode) {
 		case OPMODE_NONE: 	// No memory operation needed			
 			return;
@@ -509,7 +514,7 @@ namespace TheBoy {
 
 		case OPMODE_R_R:	// Memory operation on two registers
 			intMem.fetchData = getRegisterValue(currInstruct->regTypeR);
-			break;
+			return;
 
 
 		case OPMODE_R_V8:	// Memory operation on a register and 8bit value
@@ -518,6 +523,7 @@ namespace TheBoy {
 
 			regs->PC++;
 			return;
+
 
 		case OPMODE_R_V16:	// Memory operation on a register and 16biy value
 		case OPMODE_V16: {	// Memory operation on a 16bit value
@@ -528,7 +534,7 @@ namespace TheBoy {
 			bit16 high = requestBusRead(regs->PC);
 			requestCycles(1);
 
-			intMem.fetchData = low | (high << 8);
+			intMem.fetchData = (low | (high << 8));
 			regs->PC++;
 			return;
 		}
@@ -579,7 +585,7 @@ so the possible range is 0xFF00-0xFFFF.
 
 			requestCycles(1);
 			setRegisterValue(REG_HL, getRegisterValue(REG_HL) + 0x1);
-			break;
+			return;
 
 
 		case OPMODE_R_HLD:	// Memory operation on registor and the HL register, decrementing
@@ -595,7 +601,7 @@ so the possible range is 0xFF00-0xFFFF.
 			intMem.memDest = getRegisterValue(currInstruct->regTypeL);
 			intMem.destIsMem = true;
 			setRegisterValue(REG_HL, getRegisterValue(REG_HL) + 0x1);
-			break;
+			return;
 
 
 		case OPMODE_HLD_R:	// Memory operation on HL register from register, decrementing
@@ -622,10 +628,10 @@ so the possible range is 0xFF00-0xFFFF.
 			requestCycles(1);
 			regs->PC++;
 
-			bit16 addr = low | (high << 8);
+			bit16 addr = (low | (high << 8));
 			intMem.fetchData = requestBusRead(addr);
 			requestCycles(1);
-			break;
+			return;
 		}
 		
 
@@ -641,7 +647,7 @@ so the possible range is 0xFF00-0xFFFF.
 			intMem.fetchData = requestBusRead(regs->PC);
 			requestCycles(1);
 			regs->PC++;
-			break;
+			return;
 
 
 		case OPMODE_A16_R:{	// Memory operation on registor to 16bit address
@@ -652,10 +658,10 @@ so the possible range is 0xFF00-0xFFFF.
 			bit16 high = requestBusRead(regs->PC);
 			requestCycles(1);
 
-			intMem.memDest = low | (high << 8);
-			regs->PC++;
-
+			intMem.memDest = (low | (high << 8));
 			intMem.destIsMem = true;
+
+			regs->PC++;
 			intMem.fetchData = getRegisterValue(currInstruct->regTypeR);
 			return;
 		}
@@ -671,10 +677,9 @@ so the possible range is 0xFF00-0xFFFF.
 		case OPMODE_AR:		// Memory operation on registor address
 			intMem.memDest = getRegisterValue(currInstruct->regTypeL);
 			intMem.destIsMem = true;
-			intMem.fetchData = requestBusRead(intMem.memDest);
+			intMem.fetchData = requestBusRead(getRegisterValue(currInstruct->regTypeL));
 			requestCycles(1);
 			return;
-		
 
 
 		default:			// If none, this is a unknow operation mode
@@ -682,7 +687,7 @@ so the possible range is 0xFF00-0xFFFF.
 			sprintf_s(m, 128, "[CPU] ::: Unknown Operation mode on the instruction [OPCODE: %2.2X]\n", currOpcode);
 			emuCtrl->forceEmuStop(m);
 			delete[] m;
-			break;
+			return;
 		}
 	}
 

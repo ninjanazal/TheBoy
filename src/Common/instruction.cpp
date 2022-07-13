@@ -38,7 +38,7 @@ namespace TheBoy {
 		/*0x1C*/ {INST_INC, OPMODE_R, REG_E},
 		/*0x1D*/ {INST_DEC, OPMODE_R, REG_E},
 		/*0x1E*/ {INST_LD, OPMODE_R_V8, REG_E},
-		/*0x1F*/ {INST_RRA}, // Check
+		/*0x1F*/ {INST_RRA},
 		/*0x20*/ {INST_JR, OPMODE_V8, REG_NONE, REG_NONE, CONDTYPE_NZ},
 		/*0x21*/ {INST_LD, OPMODE_R_V16, REG_HL},
 		/*0x22*/ {INST_LD, OPMODE_HLI_R, REG_HL, REG_A},
