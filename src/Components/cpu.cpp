@@ -78,7 +78,7 @@ namespace TheBoy {
 
 		if(interruptMasterState) {
 			InterruptFuncs::handle_interrupt(this);
-			enablingIntMaster = true;
+			enablingIntMaster = false;
 		}
 
 		if(enablingIntMaster){

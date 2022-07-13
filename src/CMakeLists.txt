@@ -9,7 +9,7 @@ set ( HEADERS )
 
 # - - - - - - - - - -
 # Precompilation Defined Macros
-add_compile_definitions(VERBOSE=true)
+add_compile_definitions(VERBOSE=${VERBOSE})
 add_compile_definitions(IOOUT=true)
 
 add_compile_definitions(SFML_STATIC TRUE)

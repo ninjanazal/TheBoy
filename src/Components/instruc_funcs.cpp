@@ -221,7 +221,7 @@ namespace TheBoy{
 				// Defines the HL Registor to the value of the StackPointer Reg + the 8bit fetched data
 				cpu->setRegisterValue(
 					cpu->getCurrInstruct()->regTypeL,
-					cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeR) + (bit8)cpu->getFetchedData()
+					cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeR) + (char)cpu->getFetchedData()
 				);
 
 				return;
@@ -260,9 +260,6 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instPOP(Cpu* cpu){
-			if (cpu->getCurrInstruct()->regTypeL == REG_AF) {
-				std::cout << "target pop" << std::endl;
-			}
 			bit16 l = cpu->pop();
 			cpu->requestCycles(1);
 			bit16 h = cpu->pop();
@@ -326,7 +323,7 @@ namespace TheBoy{
 
 			// For the spetial ADD instruction opCode {E8} where a value is added to the Stack pointer
 			if(cpu->getCurrInstruct()->regTypeL == REG_SP) {
-				// add a value to the SP for the current Value, and the bit8 definition is unsigned
+				// add a value to the SP for the current Value, and the bit8 ndefinition is unsigned
 				// casting to char, can be a negative value
 				val = cpu->getRegisterValue(REG_SP) + (char)(cpu->getFetchedData());
 			}
@@ -784,7 +781,7 @@ namespace TheBoy{
 				if(GETBIT(cpu->getRegisterValue(REG_F), 5)) { val -= 0x6; }
 			}
 
-			cpu->setRegisterValue(REG_A, val);
+			cpu->setRegisterValue(REG_A, cpu->getRegisterValue(REG_A) + val);
 			cpu->setFlags(val == 0, -1, 0, cFlag);
 		}
 
@@ -864,41 +861,41 @@ namespace TheBoy{
 		 * @brief Defines Instruction type to the resolvers
 		 */
 		static INST_FUNC instructResolvers[] = {
-			instNone,
-			instNOP,
-			instLD,
-			instDEC,
-			instJP,
-			instDI,
-			instEI,
-			instINC,
-			instHALT,
-			instLDH,
-			instPOP,
-			instPUSH,
-			instCALL,
-			instRET,
-			instRETI,
-			instJR,
-			instRST,
-			instADD,
-			instADC,
-			instSUB,
-			instSBC,
-			instAND,
-			instXOR,
-			instOR,
-			instCP,
-			instPRECB,
-			instRLCA,
-			instRRCA,
-			instRLA,
-			instRRA,
-			instSTOP,
-			instDAA,
-			instCPL,
-			instSCF,
-			instCCF
+			/*INST_NONE*/	instNone,
+			/*INST_NOP*/ 	instNOP,
+			/*INST_LD*/		instLD,
+			/*INST_DEC*/ 	instDEC,
+			/*INST_JP*/		instJP,
+			/*INST_DI*/ 	instDI,
+			/*INST_EI*/ 	instEI,
+			/*INST_INC*/ 	instINC,
+			/*INST_HALT*/ 	instHALT,
+			/*INST_LDH*/ 	instLDH,
+			/*INST_POP*/ 	instPOP,
+			/*INST_PUSH*/ 	instPUSH,
+			/*INST_CALL*/ 	instCALL,
+			/*INST_RET*/ 	instRET,
+			/*INST_RETI*/ 	instRETI,
+			/*INST_JR*/ 	instJR,
+			/*INST_RST*/ 	instRST,
+			/*INST_ADD*/ 	instADD,
+			/*INST_ADC*/ 	instADC,
+			/*INST_SUB*/ 	instSUB,
+			/*INST_SBC*/ 	instSBC,
+			/*INST_AND*/ 	instAND,
+			/*INST_XOR*/ 	instXOR,
+			/*INST_OR*/ 	instOR,
+			/*INST_CP*/ 	instCP,
+			/*INST_PRECB*/ 	instPRECB,
+			/*INST_RLCA*/ 	instRLCA,
+			/*INST_RRCA*/ 	instRRCA,
+			/*INST_RLA*/ 	instRLA,
+			/*INST_RRA*/ 	instRRA,
+			/*INST_STOP*/ 	instSTOP,
+			/*INST_DAA*/ 	instDAA,
+			/*INST_CPL*/ 	instCPL,
+			/*INST_SCF*/ 	instSCF,
+			/*INST_CCF*/ 	instCCF
 		};
 		
 

@@ -25,6 +25,12 @@ BUILD_TARGET="mingw"
 RUN_CONFIG=FALSE
 
 
+# - - - - - - - - - -
+# Marks if should run using verbose mode
+# - - - - - - - - - -
+VERBOSE="FALSE"
+
+
 # - - - - - - - - - - - - - - - - - - - -
 # FUNCTIONS - - - - - - - - - - - - - - -
 # - - - - - - - - - - - - - - - - - - - -
@@ -39,8 +45,9 @@ PrintHelp () {
 	echo -e "*-r (--run)       | Will run the compilation result                  |"
 	echo -e "*-c (--clearall)  | Will clear the previous compilation and rebuild  |"
 	echo -e "*-t (--target=)   | Changes the target generator                     |"
+	echo -e "*-v (--verbose)   | Will use a explicit output                       |"
 	echo -e "   |--> Available: mingw                                             |"
-	echo -e "   |--> Available: vs                                             |"
+	echo -e "   |--> Available: vs                                                |"
 	echo -e "_____________________________________________________________________|"
 }
 
@@ -78,6 +85,10 @@ for i in "$@"; do
 			RUN_CONFIG=TRUE
 			shift
 			;;
+		-v|--verbose)
+			VERBOSE="true"
+			shift
+			;;
 		-h|--help)
 			PrintHelp
 			exit 0
@@ -105,10 +116,10 @@ echo -e "[SCRIPT] Generating compilation Project at "$PWD""
 
 case $BUILD_TARGET in
 	"mingw")
-		cmake -G "MinGW Makefiles" -DTARGETCONFIG="mingw" ..
+		cmake -G "MinGW Makefiles" -DVERBOSE=${VERBOSE} -DTARGETCONFIG="mingw" ..
 		;;
 	"vs")
-		cmake -G "Visual Studio 17 2022" -DTARGETCONFIG="vs" ..
+		cmake -G "Visual Studio 17 2022" -DVERBOSE=${VERBOSE} -DTARGETCONFIG="vs" ..
 		;;
 esac
 
