@@ -370,8 +370,7 @@ namespace TheBoy{
 
 			// Add to the A registor the fetch data and the carry flag
 			// and operation for a 8bit value
-			cpu->setRegisterValue(
-				REG_A,
+			cpu->setRegisterValue( REG_A,
 				(cpu->getFetchedData() + cpu->getRegisterValue(REG_A) + GETBIT(cpu->getRegisterValue(REG_F), 4)) & 0xFF
 			);
 
@@ -767,24 +766,6 @@ namespace TheBoy{
 			*/
 			bit8 val = 0x0;
 			bit8 cFlag = 0;
-
-
-			//if(~GETBIT(cpu->getRegisterValue(REG_F), 6)){
-			//	if(GETBIT(cpu->getRegisterValue(REG_F), 4) || cpu->getRegisterValue(REG_A) > 0x99) {
-			//		val += 0x60;
-			//		cFlag = 0b1;
-			//	}
-			//	if(GETBIT(cpu->getRegisterValue(REG_F), 5) || (cpu->getRegisterValue(REG_A) & 0xF) > 0x9) {
-			//		val += 0x6;
-			//	}
-			//} else {
-			//	if(GETBIT(cpu->getRegisterValue(REG_F), 4)) { val -= 0x60; }
-			//	if(GETBIT(cpu->getRegisterValue(REG_F), 5)) { val -= 0x6; }
-			//}
-
-			//cpu->setRegisterValue(REG_A, cpu->getRegisterValue(REG_A) + val);
-			//cpu->setFlags(val == 0, -1, 0, cFlag);
-
 			bit8 aReg = cpu->getRegisterValueByte(REG_A);
 			bit8 fReg = cpu->getRegisterValueByte(REG_F);
 
