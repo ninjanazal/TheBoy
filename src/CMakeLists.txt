@@ -39,9 +39,6 @@ add_subdirectory(EmulatorController)
 # - - - - - - - - - -
 add_executable (${PROJECT_NAME} ${HEADERS} ${SOURCE})
 
-if(MSVC)
-	set (TARGETCONFIG "vs")
-endif()
 
 set(SFML_DIR ${CMAKE_SOURCE_DIR}/Vendor/SFML/${TARGETCONFIG}/lib/cmake/SFML)
 set(SFML_STATIC_LIBRARIES TRUE)

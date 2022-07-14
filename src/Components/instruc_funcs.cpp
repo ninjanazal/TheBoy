@@ -765,24 +765,43 @@ namespace TheBoy{
 				Incidentally, the DAA instruction is the only thing that the n and h flags are normally ever used by,
 				unless a program pushes the flags onto the stack and pops them into another register to explicitly inspect them.
 			*/
-			bit8 val = cpu->getRegisterValue(REG_A);
+			bit8 val = 0x0;
 			bit8 cFlag = 0;
 
-			if(!GETBIT(cpu->getRegisterValue(REG_F), 6)){
-				if(GETBIT(cpu->getRegisterValue(REG_F), 4) || cpu->getRegisterValue(REG_A) > 0x99) {
-					val += 0x60;
-					cFlag = 0b1;
-				}
-				if(GETBIT(cpu->getRegisterValue(REG_F), 5) || (cpu->getRegisterValue(REG_A) & 0xF) > 0x9) {
-					val += 0x6;
-				}
-			} else {
-				if(GETBIT(cpu->getRegisterValue(REG_F), 4)) { val -= 0x60; }
-				if(GETBIT(cpu->getRegisterValue(REG_F), 5)) { val -= 0x6; }
+
+			//if(~GETBIT(cpu->getRegisterValue(REG_F), 6)){
+			//	if(GETBIT(cpu->getRegisterValue(REG_F), 4) || cpu->getRegisterValue(REG_A) > 0x99) {
+			//		val += 0x60;
+			//		cFlag = 0b1;
+			//	}
+			//	if(GETBIT(cpu->getRegisterValue(REG_F), 5) || (cpu->getRegisterValue(REG_A) & 0xF) > 0x9) {
+			//		val += 0x6;
+			//	}
+			//} else {
+			//	if(GETBIT(cpu->getRegisterValue(REG_F), 4)) { val -= 0x60; }
+			//	if(GETBIT(cpu->getRegisterValue(REG_F), 5)) { val -= 0x6; }
+			//}
+
+			//cpu->setRegisterValue(REG_A, cpu->getRegisterValue(REG_A) + val);
+			//cpu->setFlags(val == 0, -1, 0, cFlag);
+
+			bit8 aReg = cpu->getRegisterValueByte(REG_A);
+			bit8 fReg = cpu->getRegisterValueByte(REG_F);
+
+			if (GETBIT(fReg, 5) || (~GETBIT(fReg, 6) && (aReg & 0xF) > 9) )
+			{
+				val = 0x6;
 			}
 
-			cpu->setRegisterValue(REG_A, cpu->getRegisterValue(REG_A) + val);
-			cpu->setFlags(val == 0, -1, 0, cFlag);
+			if (GETBIT(fReg, 4) || (~GETBIT(fReg, 6) && aReg > 0x99) )
+			{
+				val |= 0x60;
+				cFlag = 1;
+			}
+
+			aReg += (GETBIT(fReg, 6) ? -val : val);
+			cpu->setRegisterValue(REG_A, aReg);
+			cpu->setFlags(cpu->getRegisterValue(REG_A) == 0, -1, 0, cFlag);
 		}
 
 

@@ -8,5 +8,9 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "My multi config type
 set (CMAKE_CXX_STANDARD 17)
 project (TheBoy LANGUAGES CXX)
 
+if(MSVC)
+	set (TARGETCONFIG "vs")
+endif()
+
 message("[ :: USING ${TARGETCONFIG} :: ]")
 add_subdirectory(src)
