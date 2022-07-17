@@ -135,10 +135,11 @@ namespace TheBoy{
 
 			// Only INC opCode instructions with a 0x03 termination dont update any flags
 			// EX {03, 13, 23 & 33}
-			if((cpu->getCurrentOPCode() & 0x03) != 0x03) {
+			if((cpu->getCurrentOPCode() & 0x03) == 0x03) {
+				return;
+			} 
 				// Flags check Z 0 H -
 				cpu->setFlags(val == 0, 0, (val & 0x0F) == 0, -1);
-			} 
 		}
 
 
@@ -366,18 +367,17 @@ namespace TheBoy{
 		 */
 		static void instADC(Cpu* cpu) {
 			// Holds the initial register and c flag value
-			bit16 oldRegA = cpu->getRegisterValue(REG_A);
+			bit16 RegA = cpu->getRegisterValue(REG_A);
+			bit16 cFlag = GETBIT(cpu->getRegisterValue(REG_F), 4);
 
+			bit16 calR = (RegA + cpu->getFetchedData() + static_cast<bit16>(GETBIT(cpu->getRegisterValue(REG_F), 4))) & 0xFF;
 			// Add to the A registor the fetch data and the carry flag
 			// and operation for a 8bit value
-			cpu->setRegisterValue( REG_A,
-				(cpu->getFetchedData() + cpu->getRegisterValue(REG_A) + GETBIT(cpu->getRegisterValue(REG_F), 4)) & 0xFF
-			);
+			cpu->setRegisterValue( REG_A, calR);
 
-			cpu->setFlags(
-				cpu->getRegisterValue(REG_A) == 0, 0,
-				((oldRegA & 0xF) + (cpu->getFetchedData() & 0xF) + GETBIT(cpu->getRegisterValue(REG_F), 4)) > 0xF,
-				(oldRegA + cpu->getFetchedData() + GETBIT(cpu->getRegisterValue(REG_F), 4)) > 0xFF
+			cpu->setFlags(calR == 0, 0,
+				((RegA & 0xF) + (cpu->getFetchedData() & 0xF) + static_cast<bit16>(GETBIT(cpu->getRegisterValue(REG_F), 4))) > 0xF,
+				(RegA + cpu->getFetchedData() + static_cast<bit16>(GETBIT(cpu->getRegisterValue(REG_F), 4))) > 0xFF
 			);
 		}
 
@@ -403,24 +403,22 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instSBC(Cpu* cpu) {
-			bit8 value = cpu->getFetchedData() + GETBIT(cpu->getRegisterValue(REG_F), 4);
+			int regFC = static_cast<int>(GETBIT(cpu->getRegisterValue(REG_F), 4));
+			bit16 lInstRegVal = cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL);
+			bit8 value = cpu->getFetchedData() + regFC;
 			
-			// Since values can be negative, cast to int
-			cpu->setFlags(
-				// Z flag, n flag should be set to 1
-				cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) - value == 0, 1,
-				// Half Carry flag
-				((int)cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) & 0xF) -
-						((int)cpu->getFetchedData() & 0xF) - ((int)GETBIT(cpu->getRegisterValue(REG_F), 4)) < 0,
-				// carry flag
-				((int)cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL)) -
-						((int)cpu->getFetchedData()) - ((int)GETBIT(cpu->getRegisterValue(REG_F), 4))  < 0
-			);
+			int zFlag = lInstRegVal - value == 0;
+			
+			// casting to int since values can be negative
+			int hFlag = (static_cast<int>(lInstRegVal) & 0xF) -
+				(static_cast<int>(cpu->getFetchedData()) & 0xF) - regFC < 0;
 
-			cpu->setRegisterValue(
-				cpu->getCurrInstruct()->regTypeL,
-				cpu->getRegisterValue(cpu->getCurrInstruct()->regTypeL) - value
-			);
+			int cFlag = static_cast<int>(lInstRegVal) -
+				static_cast<int>(cpu->getFetchedData()) - regFC < 0;
+
+			
+			cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, lInstRegVal - value);
+			cpu->setFlags(zFlag, 1, hFlag, cFlag);
 		}
 
 
@@ -691,10 +689,10 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instRLCA(Cpu* cpu) {
-			bit8 res = cpu->getRegisterValue(REG_A);
-			bool cFlag = (res >> 7) & 0x1;
-			res = bool(res << 1) | cFlag;
-			cpu->setRegisterValue(REG_A, res);
+			bit8 regA = cpu->getRegisterValue(REG_A);
+			bool cFlag = (regA >> 7) & 0x1;
+			regA = (regA << 1) | cFlag;
+			cpu->setRegisterValue(REG_A, regA);
 
 			cpu->setFlags(0, 0, 0, cFlag);
 		}
@@ -705,10 +703,13 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instRRCA(Cpu* cpu) {
-			bit8 res = cpu->getRegisterValue(REG_A) & 0x1;
-			cpu->setRegisterValue(REG_A, cpu->getRegisterValue(REG_A) >> 1);
-			cpu->setRegisterValue(REG_B,cpu->getRegisterValue(REG_B) | (res << 7));			
-			cpu->setFlags(0, 0, 0, (cpu->getRegisterValue(REG_A) & 0b1));
+			bit16 regAVal = cpu->getRegisterValue(REG_A);
+			bit8 cFlag = regAVal & 0x1;
+			regAVal >>= 1;
+			regAVal |= (cFlag << 7);
+
+			cpu->setRegisterValue(REG_A, regAVal);
+			cpu->setFlags(0, 0, 0, cFlag);
 		}
 
 
@@ -731,12 +732,14 @@ namespace TheBoy{
 		 * @param cpu Requester cpu pointer
 		 */
 		static void instRRA(Cpu* cpu) {
-			bit8 cFlag = cpu->getRegisterValue(REG_A) & 0x1;
-			bit8 regA = cpu->getRegisterValue(REG_A);
-			regA >>= 1;
-			regA |= (GETBIT(cpu->getRegisterValue(REG_F), 4) << 7);
+			bit8 cFlagVal = GETBIT(cpu->getRegisterValue(REG_F), 4);
+			bit8 regAVal = cpu->getRegisterValue(REG_A);
+			bit8 cFlag = regAVal & 0x1;
 
-			cpu->setRegisterValue(REG_A, regA);
+			regAVal >>= 1;
+			regAVal |= (cFlagVal << 7);
+
+			cpu->setRegisterValue(REG_A, regAVal);
 			cpu->setFlags(0, 0, 0, cFlag);
 		}
 

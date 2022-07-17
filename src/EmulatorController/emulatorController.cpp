@@ -10,8 +10,7 @@ namespace TheBoy {
 	EmulatorController::EmulatorController() { 
 		std::cout << "[Emulator] ::: controller was created" << std::endl;
 
-		debugBuffer = new char[1024] {};
-		debugMsgPointer = 0;
+		_pendingNewOut = false;
 		emu_state.reset();
 	}
 
@@ -20,7 +19,6 @@ namespace TheBoy {
 	 * @brief Destroy the Emulator Controller object
 	 */
 	EmulatorController::~EmulatorController() {
-		delete[] debugBuffer;
 	}
 
 
@@ -124,11 +122,10 @@ namespace TheBoy {
 		// Some tests marks this address for pending information
 		bit8 res = comps.bus->abRead(0xFF02);
 		if(res == 0x81){
+			_pendingNewOut = true;
 			char r = comps.bus->abRead(0xFF01);
 
-			debugBuffer[debugMsgPointer] = r;
-			debugMsgPointer++;
-
+			debugBuffer.push_back(r);
 			getBus()->abWrite(0xFF02, 0);
 		}
 	}
@@ -139,8 +136,9 @@ namespace TheBoy {
 	 */
 	void EmulatorController::debugOutput() {
 #if IOOUT
-		if(debugBuffer[0]){
-			printf("[DEBUGMSG] ::: %s\n", debugBuffer);
+		if(_pendingNewOut){
+			printf("[DEBUGMSG] ::: %s\n", debugBuffer.c_str());
+			_pendingNewOut = false;
 		}
 #endif
 	}

@@ -1,51 +1,47 @@
 # TheBoy
 GameBoy color emulator in c++  , created for a case study
 
+---
+
 ### Usefull links
 - [gddev](https://www.gbdev.io/) (Game Boy Development community)
 - [Gameboy CPU (LR35902) instruction set](https://www.pastraiser.com/cpu/gameboy/gameboy_opcodes.html)
 - [Game Boy: Complete Technical Reference by gekkio](https://gekkio.fi/files/gb-docs/gbctr.pdf)
+- [Retrio - GameBoy test Roms](https://github.com/retrio/gb-test-roms)
 ---
 
 # Dependencies
-> ## Win
-> - Bash terminar for running .sh scripts
-> - Mingw (gcc compiler): [Mingw web-site](https://www.mingw-w64.org/)
->
-> ## VScode
-> - If using vsCode, change the c_cpp_properties for the c/c++:
-> 	- Add the **`out/lib`** to the include path;
-> 	- Set the Mingw `(gcc)` compiler path;
-> 	- C/C++ configuration settings exemple
-> ---
->	```json
->	{
->	    "configurations": [
->	        {
->	            "name": "Win32",
->	            "includePath": [
->	                "${workspaceFolder}/**",
->					"${workspaceFolder}/out/include/**"
->	            ],
->	            "defines": [
->	                "_DEBUG",
->	                "UNICODE",
->	                "_UNICODE"
->	            ],
->	            "windowsSdkVersion": "10.0.19041.0",
->	            //"compilerPath": ".../Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.31.31103/bin/Hostx64/x64/cl.exe",
->	            "compilerPath": "...\\mingw64\\bin\\gcc.exe",
->	            "cStandard": "c17",
->	            "cppStandard": "c++17",
->	            //"intelliSenseMode": "windows-msvc-x64",
->				"intelliSenseMode": "gcc-x64",
->	            "configurationProvider": "ms-vscode.cmake-tools"
->	        }
->	    ],
->	    "version": 4
->	}
->	```
+ ## Windows
+ 
+ - Cmake installed;
+ With Cmake, you can either build a Visual Studio Solution using the ```BuildMe.sh``` or open the Project Folder directly
 
+---
+ ### Build .sln
+ - ***(Needed)*** Bash terminar for running .sh scripts
+ - Run the Builme script with the ```-t=vs``` parameter.
+
+
+ ### Visual Studio Cmake
+ - Open the __TheBoy__ folder on Visual Studio.
+ - This can be build directly.
+- Build Profiles should be created:
+	- Open the project CmakeSettings, right clicking on the root CMakeList, and select ```CMake Settings for TheBoy```.
+	- Add a `x64-Debug Verbose`, `x64-Debug` and `x64-Release Verbose` or more.
+	- Add the command Argument `-DVERBOSE=false` to control the output text.
+
+
+### Using Mingw
+- Run the `buildme.sh -t=mingw` to compile the project.
+
+
+## VScode (notes)
+ 
+Under the Preference settings was needed to add, ```"cmake.generator": "MinGW Makefiles" ```, and on the c_cpp_properties (using the c++ extension pack), 
+```JSON
+            "intelliSenseMode": "windows-msvc-x64",
+            "configurationProvider": "ms-vscode.cmake-tools"
+```
 
 ---
 
@@ -70,14 +66,39 @@ Use this script to gather all the information needed, compile e execute;
 	- [x] Bus functions read/write
 	- [x] Addres bus major memory values maped
 	- [x] Read/Write 16bit version functions
-- [ ] Cpu Implementation
-	- [ ] OPCode translation (150 / 256)
-	- [ ] Instruction implementation (doing)
+- [x] Cpu Implementation
+	- [x] OPCode translation
+	- [x] Instruction implementation
 	- [x] Stack implementation (Push/Pop 8&16bit)
 - [x] Ram
 	- [x] Working RAM allocation and operations
 	- [x] High RAM allocation and operations
+- [x] PPU
+	- [x] VRam viewer implementation
+- [x] IO Interface
+	- [x] Serial interface
 
+
+---
+
+## Testing State
+- CPU Instructions
+	- [x] 01-special
+	- [x] 02-interrupts
+	- [x] 03-op sp,hl
+	- [x] 04-op r,imm
+	- [x] 05-op rp
+	- [x] 06-ld r,r
+	- [x] 07-jr,jp,call,ret,rst
+	- [x] 08-misc instrs
+	- [ ] 09-op r,r
+	- [x] 10-bit ops
+	- [ ] 11-op a,(hl)
+	- [ ] cpu_instrs
+	- [ ] daa
+	- [ ] dmg-acid2
+	- [ ] instr_timing
+	- [ ] mem_timing
 
 ---
 ### ScreenShots
@@ -86,3 +107,6 @@ Use this script to gather all the information needed, compile e execute;
 
 ``` OpCode Execution (JP) ```
 ![Cartridge Header](prtSc/JumpInstructionCpuExecution.PNG)
+
+``` VRam Viewer```
+![VRam Viewer](prtSc/TestROM_Load.PNG)

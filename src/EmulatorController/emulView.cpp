@@ -37,10 +37,10 @@ namespace TheBoy {
 	 * @brief Manages the window events
 	 */
 	void EmulView::ManageEvents() {
-		sf::Event evt;
+		sf::Event* evt = new sf::Event();
 
-		while (window->pollEvent(evt)) {
-			switch (evt.type) {
+		while (window->pollEvent(*evt)) {
+			switch (evt->type) {
 			case sf::Event::Closed:
 				emulCtrl->forceEmuStop("Close event found!");
 				window->close();
@@ -50,6 +50,7 @@ namespace TheBoy {
 				break;
 			}
 		}
+		delete evt;
 	}
 
 

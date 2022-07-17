@@ -109,14 +109,15 @@ namespace TheBoy {
 
 
 		/**
-		 * @brief Marks the current writting position
-		 */
-		int debugMsgPointer;
-
-		/**
 		 * @brief Debug message buffer pointer
 		 */
-		char* debugBuffer;
+		std::string debugBuffer = "";
+
+
+		/// <summary>
+		/// Marks if has pending output from Serial Transfer (Link Cable)
+		/// </summary>
+		bool _pendingNewOut = false;
 
 
 		/**
