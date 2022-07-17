@@ -13,6 +13,6 @@ int main(int argc, char *argv[]) {
 	emulator = std::make_shared<EmulatorController>();
 
 	//! Remove this hammered path
-	emulator->Start("D:\\Projects\\TheBoy\\ROMS\\tests\\09-op r,r.gb");
+	emulator->Start("D:\\Projects\\TheBoy\\ROMS\\tests\\11-op a,(hl).gb");
 	return 0;
 }

@@ -621,7 +621,7 @@ namespace TheBoy{
 					reg_value |= cFl;
 
 					cpu->setRegisterValueByte(rType, reg_value);
-					cpu->setFlags(reg_value == 0x0, 0, 0, (rRes & 0x80));
+					cpu->setFlags(reg_value == 0x0, 0, 0, static_cast<bool>(rRes & 0x80));
 					return;
 				}
 
@@ -645,7 +645,7 @@ namespace TheBoy{
 					reg_value <<= 1;
 
 					cpu->setRegisterValueByte(rType, reg_value);
-					cpu->setFlags(reg_value == 0x0, 0, 0, (reg_value & 0x80));
+					cpu->setFlags(~reg_value, 0, 0, static_cast<bool>(reg_value & 0x80));
 					return;
 				}
 
@@ -691,7 +691,7 @@ namespace TheBoy{
 		static void instRLCA(Cpu* cpu) {
 			bit8 regA = cpu->getRegisterValue(REG_A);
 			bool cFlag = (regA >> 7) & 0x1;
-			regA = (regA << 1) | cFlag;
+			regA = (regA << 1) | static_cast<bit8>(cFlag);
 			cpu->setRegisterValue(REG_A, regA);
 
 			cpu->setFlags(0, 0, 0, cFlag);
