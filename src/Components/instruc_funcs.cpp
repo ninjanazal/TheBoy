@@ -126,7 +126,7 @@ namespace TheBoy{
 				val &= 0xFF;
 				// Write the incremented value, write uses 8bit
 				// Preventing overflow
-				cpu->requestBusWrite(cpu->getRegisterValue(REG_HL), val);
+				cpu->requestBusWrite(cpu->getRegisterValue(REG_HL), static_cast<bit8>(val));
 			} else {
 				cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, val);
 				// Redefine for check 
@@ -171,7 +171,7 @@ namespace TheBoy{
 				val = cpu->requestBusRead(cpu->getRegisterValue(REG_HL)) - 0x1;
 				// Write the incremented value, write uses 8bit
 				// Preventing overflow
-				cpu->requestBusWrite(cpu->getRegisterValue(REG_HL), val);
+				cpu->requestBusWrite(cpu->getRegisterValue(REG_HL), static_cast<bit8>(val));
 			} else {
 				cpu->setRegisterValue(cpu->getCurrInstruct()->regTypeL, val);
 				// Redefine for check 
@@ -516,7 +516,7 @@ namespace TheBoy{
 				B -> REGs
 				For the registor from x0 to x6 == B to (HL)
 								from x7 to xF == B to (HL)
-				Soo the firsts 3 bits can indicate the registor type
+				Soo the first 3 bits can indicate the registor type
 			*/
 
 			RegisterType rType = getPREFCBRegistor((OPPrf & 0b111));
@@ -544,7 +544,7 @@ namespace TheBoy{
 			bit8 POperation  = (OPPrf >> 6) & 0b11;
 
 			// Using a 8bit value since all operations occour as  8bit value
-			bit8 reg_value = cpu->getRegisterValue(rType);
+			bit8 reg_value = cpu->getRegisterValueByte(rType);
 
 
 			cpu->requestCycles(1);
@@ -645,7 +645,7 @@ namespace TheBoy{
 					reg_value <<= 1;
 
 					cpu->setRegisterValueByte(rType, reg_value);
-					cpu->setFlags(~reg_value, 0, 0, static_cast<bool>(reg_value & 0x80));
+					cpu->setFlags(reg_value == 0, 0, 0, static_cast<bool>(rRes & 0x80));
 					return;
 				}
 
@@ -653,7 +653,7 @@ namespace TheBoy{
 					// SRA OPERATION
 					// Shift right arithmetic, shift right arithmetic (b7=b7)
 					// The most significant bit stays the same
-					bit8 rRes = (int8_t)(reg_value >> 1);
+					bit8 rRes = static_cast<int8_t>(reg_value) >> 1;
 
 					cpu->setRegisterValueByte(rType, rRes);
 					cpu->setFlags(rRes == 0, 0, 0, reg_value & 0b1);
@@ -665,7 +665,7 @@ namespace TheBoy{
 					// Swaps the low nibble to the high nibble for the defined value
 					reg_value = ((reg_value & 0xF0) >> 4) | ((reg_value & 0xF) << 4);
 
-					cpu->setRegisterValue(rType, reg_value);
+					cpu->setRegisterValueByte(rType, reg_value);
 					cpu->setFlags(reg_value == 0, 0, 0, 0);
 					return;
 				}
@@ -675,7 +675,7 @@ namespace TheBoy{
 					// shift right logical (b7=0)
 					bit8 rRes = reg_value >> 1;
 
-					cpu->setRegisterValue(rType, rRes);
+					cpu->setRegisterValueByte(rType, rRes);
 					cpu->setFlags(rRes == 0, 0, 0, reg_value & 0b1);
 					return;
 				}

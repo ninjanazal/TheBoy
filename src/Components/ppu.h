@@ -14,12 +14,12 @@ namespace TheBoy {
 		bit8 tIndex;
 
 		// Defining the flags using bit-field values, 8bit flags
-		unsigned paltN_CGB : 3;
-		unsigned vRamBank : 1;
-		unsigned paltN : 1;
-		unsigned xFlip : 1;
-		unsigned yFlip : 1;
-		unsigned bgWind : 1;
+		unsigned paltN_CGB	: 3;
+		unsigned vRamBank	: 1;
+		unsigned paltN		: 1;
+		unsigned xFlip		: 1;
+		unsigned yFlip		: 1;
+		unsigned bgWind		: 1;
 	} OamElement;
 
 	class Ppu {	
@@ -117,7 +117,7 @@ namespace TheBoy {
 		/**
 		 * @brief Pointer to the available 40 OAM ram entries
 		 */
-		OamElement oam_ram[40];
+		OamElement* oam_ram;
 
 		/**
 		 * @brief Memory allocation for the video Ram

@@ -10,6 +10,7 @@ namespace TheBoy {
 	Ppu::Ppu(EmulatorController* ctrl) : emulCtrl(ctrl) {
 		std::cout << "[PPU] ::: PPU has been created" << std::endl;
 
+		oam_ram = new OamElement[40];
 		vRam = new bit8[0x2000] { };
 	}
 
