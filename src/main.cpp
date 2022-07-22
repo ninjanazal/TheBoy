@@ -13,6 +13,6 @@ int main(int argc, char *argv[]) {
 	emulator = std::make_shared<EmulatorController>();
 
 	//! Remove this hammered path
-	emulator->Start("D:\\Projects\\TheBoy\\ROMS\\tests\\mem_timing.gb");
+	emulator->Start("D:\\Projects\\TheBoy\\ROMS\\Tetris.gb");
 	return 0;
 }

@@ -49,7 +49,6 @@ namespace TheBoy {
 		 * @brief Holds the current IO Serial data
 		 */
 		bit8* seriaData;
-
 	};	
 } // namespace TheBoy
 #endif

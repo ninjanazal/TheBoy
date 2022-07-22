@@ -19,7 +19,8 @@ namespace TheBoy {
 	 * @brief Destroy the Ppu object
 	 */
 	Ppu::~Ppu() {
-		delete [] vRam;
+		delete[] vRam;
+		delete[] oam_ram;
 	}
 
 

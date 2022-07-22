@@ -56,6 +56,7 @@ namespace TheBoy {
 		if (addr == 0xFF0F){
 			return emulCtrl->getCpu()->getInterrFlags();
 		}
+
 		return 0x0;
 	}
 
