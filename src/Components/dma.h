@@ -54,23 +54,23 @@ namespace TheBoy {
 		/**
 		 * @brief Marks the current Dma State
 		 */
-		bool enabled;
+		bool enabled = false;
 
 		/**
 		 * @brief Current Byte marker
 		 */
-		bit8 currByte;
+		bit8 currByte = 0x0;
 
 		/**
 		 * @brief Current Working value
 		 */
-		bit8 currVal;
+		bit8 currVal = 0x0;
 
 
 		/**
 		 * @brief Start Delay value 
 		 */
-		bit8 s_Delay;
+		bit8 s_Delay = 2;
 
 	};
 

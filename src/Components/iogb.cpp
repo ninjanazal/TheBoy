@@ -57,6 +57,10 @@ namespace TheBoy {
 			return emulCtrl->getCpu()->getInterrFlags();
 		}
 
+		if (BETWEEN(addr, 0xFF40, 0xFF4B)) {
+			return emulCtrl->getLcd()->read(addr);
+		}
+
 		return 0x0;
 	}
 
@@ -89,9 +93,10 @@ namespace TheBoy {
 			return;
 		}
 
-		// FF46 - DMA (DMA Transfer and Start Address)
-		if (addr == 0xFF46) {
-			emulCtrl->getDma()->start(val);
+		// LCD interval
+		if (BETWEEN(addr, 0xFF40, 0xFF4B)) {
+			emulCtrl->getLcd()->write(addr, val);
+			return;
 		}
 	}
 	

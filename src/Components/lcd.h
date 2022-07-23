@@ -39,7 +39,7 @@ namespace TheBoy {
 
 	*/
 
-	typedef struct {
+	typedef struct LcdRegs {
 		/// <summary>
 		/// LcdC lcd Register
 		/// </summary>
@@ -112,8 +112,6 @@ namespace TheBoy {
 
 		// Window X coordinate
 		bit8 WX;
-
-
 	} LcdRegs;
 
 
@@ -131,9 +129,20 @@ namespace TheBoy {
 
 
 		/// <summary>
-		/// Lcd Clas Constructor
+		/// Enumeration for access the 3 to 6 bit flag on the LCDS reg value
 		/// </summary>
-		Lcd();
+		typedef enum LCDSSTATS {
+			HBLANK_STAT = (1 << 3),
+			VBLANK_STAT = (1 << 4),
+			OAM_STAT = (1 << 5),
+			LY_STAT = (1 << 6)
+		} LCDSSTATS;
+
+
+		/// <summary>
+		/// Lcd Class Constructor
+		/// </summary>
+		Lcd(EmulatorController* ctrl);
 	
 
 		/// <summary>
@@ -141,44 +150,111 @@ namespace TheBoy {
 		/// </summary>
 		~Lcd();
 
+		/// <summary>
+		/// Gets the defined value for a addres on the Lcd
+		/// </summary>
+		/// <param name="addres">Target address</param>
+		/// <returns>Value</returns>
+		bit8 read(bit16 addres);
+
+
+		/// <summary>
+		/// Writes to the defined addres value
+		/// </summary>
+		/// <param name="addres">Target address value</param>
+		/// <param name="value">Value</param>
+		void write(bit16 addres, bit8 value);
 
 		/// <summary>
 		/// Gets the bit value for the BG and Window enable/priority
 		/// </summary>
 		/// <returns>BG and Window enable/priority value</returns>
-		bit8 getLCDC_BGW_ENABLE();
+		bit8 getLCDCBgwEnable();
 
 
 		/// <summary>
 		/// Gets the bit value for the OBJ enable
 		/// </summary>
 		/// <returns>OBJ enable value</returns>
-		bit8 getLCDC_OBJ_ENABLE();
+		bit8 getLCDCObjEnable();
 
 
 		/// <summary>
 		/// Gets the obj size value 
 		/// </summary>
 		/// <returns>OBJ size value</returns>
-		bit8 getLCDC_OBJ_HEIGHT();
+		bit8 getLCDCObjHeight();
 
 
 		/// <summary>
 		/// Gets the Background map area
 		/// </summary>
 		/// <returns>BG tile map area value</returns>
-		bit16 getLCDC_BG_MAP_AREA();
+		bit16 getLCDCBgMapArea();
 
 
 		/// <summary>
 		/// Gets the background and window tile data area
 		/// </summary>
 		/// <returns>BG and Window tile data area value</returns>
-		bit16 getLCDC_BDW_DATA_AREA();
+		bit16 getLCDCBdwDataArea();
 
-		bit8 getLCDC_WIN_ENABLE();
+		/// <summary>
+		/// Gets the window enable bit value
+		/// </summary>
+		/// <returns>Window enable</returns>
+		bit8 getLCDCWindEnable();
+
+		/// <summary>
+		/// Gets the windows tile map area value
+		/// </summary>
+		/// <returns>Window tile map area value</returns>
+		bit16 getLCDCWindMapArea();
+
+				/// <summary>
+		/// Gets if the LCD and PPU are enable
+		/// </summary>
+		/// <returns>LCD and PPU enable value</returns>
+		bit8 getLCDCLcdEnable();
+
+		/// <summary>
+		/// Gets the current Lcd Mode
+		/// </summary>
+		/// <returns>LCDMODE value</returns>
+		LCDMODE getLCDSMode();
+
+		/// <summary>
+		/// Defines the current lcd mode
+		/// </summary>
+		/// <param name="mode">LCD mode value</param>
+		void setLCDSMode(LCDMODE mode);
+
+		/// <summary>
+		/// Gets the LYC Flag value
+		/// </summary>
+		/// <returns>LYC Value</returns>
+		bit8 getLCDSLycFlag();
+
+		/// <summary>
+		/// Defines the LYC flag value
+		/// </summary>
+		/// <param name="value">LYC define value</param>
+		void setLCDSLycFlag(bit8 value);
+
+		/// <summary>
+		/// Get the target stat vlaue
+		/// </summary>
+		/// <param name="stat">Target Stat value</param>
+		/// <returns>Current stat flag value</returns>
+		bit8 getLCDSStat(LCDSSTATS stat);
 
 	private:
+		/// <summary>
+		/// Pointer to the target emulator controller
+		/// </summary>
+		EmulatorController* emulCtrl;
+
+
 		/// <summary>
 		/// Lcd registors structure
 		/// </summary>
@@ -188,17 +264,32 @@ namespace TheBoy {
 		/// <summary>
 		/// Holds the defined background colors
 		/// </summary>
-		bit32* bgColorPallets = new bit32[4];
+		sf::Color* bgColorPallets;
 
 		/// <summary>
 		/// Defines the sprite1 colors
 		/// </summary>
-		bit32* spriteColors1 = new bit32[4];
+		sf::Color* spriteColors1;
 
 		/// <summary>
 		/// Defines the sprite2 colors
 		/// </summary>
-		bit32* spriteColors2 = new bit32[4];
+		sf::Color* spriteColors2;
+
+		// GameBoy color pallet representation
+		sf::Color defaultColors[4] = {
+			sf::Color::White,
+			sf::Color(210, 210, 210),
+			sf::Color(45, 45, 45),
+			sf::Color::Black
+		};
+
+		/// <summary>
+		/// Updates the target pallet colors based on defined values
+		/// </summary>
+		/// <param name="palletAddr">Pallet addres element</param>
+		/// <param name="val">Target pallet group</param>
+		void updatePallet(bit8 palletAddr, bit8 val);
 	};
 }
 #endif // !LCD_H

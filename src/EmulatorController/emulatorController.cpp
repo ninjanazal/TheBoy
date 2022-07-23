@@ -61,6 +61,7 @@ namespace TheBoy {
 		comps.dma = std::make_shared<Dma>(this);
 		comps.ram = std::make_shared<Ram>(this);
 		comps.ppu = std::make_shared<Ppu>(this);
+		comps.lcd = std::make_shared<Lcd>(this);
 
 		comps.io = std::make_shared<IO>(this);
 		comps.timer = std::make_shared<Timer>(this);
@@ -246,5 +247,16 @@ namespace TheBoy {
 			std::cout << "[Emulator] ::: Get View on a null shared!" << std::endl;
 		}
 		return comps.view;
+	}
+
+	/// <summary>
+	/// Gets the Lcd object
+	/// </summary>
+	/// <returns>Shared pointer to the inUse Lcd</returns>
+	std::shared_ptr<Lcd> EmulatorController::getLcd() {
+		if (!comps.lcd) {
+			std::cout << "[Emulator] ::: Get View on a null shared!" << std::endl;
+		}
+		return comps.lcd;
 	}
 }

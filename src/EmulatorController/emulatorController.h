@@ -10,6 +10,7 @@
 #include "ram.h"
 #include "dma.h"
 #include "ppu.h"
+#include "lcd.h"
 #include "iogb.h"
 #include "timer.h"
 
@@ -24,6 +25,7 @@ namespace TheBoy {
 	class Ram;
 	class Dma;
 	class Ppu;
+	class Lcd;
 	class IO;
 	class Timer;
 	class EmulView;
@@ -64,6 +66,11 @@ namespace TheBoy {
 		 * @brief Emulator Ppu object
 		 */
 		std::shared_ptr<Ppu> ppu;
+
+		/// <summary>
+		/// Emulator Lcd object
+		/// </summary>
+		std::shared_ptr<Lcd> lcd;
 
 		/**
 		 * @brief Emulator IO object
@@ -247,6 +254,13 @@ namespace TheBoy {
 		 * @return std::shared_ptr<EmulView> Shared pointer to the inUse ViewHandler
 		 */
 		std::shared_ptr<EmulView> getView();
+
+
+		/// <summary>
+		/// Gets the Lcd object
+		/// </summary>
+		/// <returns>Shared pointer to the inUse Lcd</returns>
+		std::shared_ptr<Lcd> getLcd();
 	};
 	
 } // namespace TheBoy
