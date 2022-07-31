@@ -560,7 +560,7 @@ namespace TheBoy{
 				// BIT OPERATION
 				// Operation evaluates if the defined bit  is set on the registor and set it on the
 				// Z Flag, if this bit is set, the z value is 0 else is 1
-				cpu->setFlags(!(reg_value & (1 << PBit)), 0, 1, -1);
+				cpu->setFlags(~(reg_value & (1 << PBit)), 0, 1, -1);
 				return;
 			case 0b10:
 				// RES OPERATION

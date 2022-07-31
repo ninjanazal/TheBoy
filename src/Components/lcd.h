@@ -264,17 +264,17 @@ namespace TheBoy {
 		/// <summary>
 		/// Holds the defined background colors
 		/// </summary>
-		sf::Color* bgColorPallets;
+		sf::Color bgColorPallets[4];
 
 		/// <summary>
 		/// Defines the sprite1 colors
 		/// </summary>
-		sf::Color* spriteColors1;
+		sf::Color spriteColors1[4];
 
 		/// <summary>
 		/// Defines the sprite2 colors
 		/// </summary>
-		sf::Color* spriteColors2;
+		sf::Color spriteColors2[4];
 
 		// GameBoy color pallet representation
 		sf::Color defaultColors[4] = {

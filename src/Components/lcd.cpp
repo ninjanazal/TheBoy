@@ -6,10 +6,9 @@ namespace TheBoy {
 	/// LCD Class Constructor 
 	/// </summary>
 	Lcd::Lcd(EmulatorController* ctrl) : emulCtrl(ctrl) {
-		bgColorPallets = new sf::Color[4];
-		spriteColors1 = new sf::Color[4];
-		spriteColors2 = new sf::Color[4];
-
+		//bgColorPallets = new sf::Color[4];
+		//spriteColors1 = new sf::Color[4];
+		//spriteColors2 = new sf::Color[4];
 		regs = new LcdRegs();
 
 		regs->lcdc = 0x91;
@@ -28,6 +27,8 @@ namespace TheBoy {
 			spriteColors1[i] = defaultColors[i];
 			spriteColors2[i] = defaultColors[i];
 		}
+		std::cout << "[LCD] ::: LCD has been created" << std::endl;
+
 	}
 
 	/// <summary>
@@ -35,9 +36,9 @@ namespace TheBoy {
 	/// </summary>
 	Lcd::~Lcd() {
 		delete regs;
-		delete[] bgColorPallets;
-		delete[] spriteColors1;
-		delete[] spriteColors2;
+		//delete[] bgColorPallets;
+		//delete[] spriteColors1;
+		//delete[] spriteColors2;
 	}
 
 	/// <summary>
