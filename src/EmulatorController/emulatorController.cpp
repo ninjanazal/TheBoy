@@ -77,6 +77,7 @@ namespace TheBoy {
 
 		std::cout << "[Emulator] ::: Cartridge was loaded!" << std::endl;
 
+		getLcd()->setLCDSMode(Lcd::LCDMODE::OAM);
 		this->_run();
 	}
 

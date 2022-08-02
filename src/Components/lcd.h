@@ -248,6 +248,24 @@ namespace TheBoy {
 		/// <returns>Current stat flag value</returns>
 		bit8 getLCDSStat(LCDSSTATS stat);
 
+
+		/// <summary>
+		/// Gets the Lcd vertical Line current value
+		/// </summary>
+		/// <returns>Vertical line current value</returns>
+		bit8 getLyValue();
+
+
+		/// <summary>
+		/// Resets the vertical line counter
+		/// </summary>
+		void resetLyValue();
+
+		/// <summary>
+		/// Increment the Vertical line counter
+		/// </summary>
+		void incrementLy();
+
 	private:
 		/// <summary>
 		/// Pointer to the target emulator controller

@@ -2,6 +2,7 @@
 #define PPU_H
 
 #include "emulatorController.h"
+#include "ppu_states.h"
 
 namespace TheBoy {
 
@@ -68,6 +69,28 @@ namespace TheBoy {
 		 */
 		~Ppu();
 
+		/// <summary>
+		/// Constant value for the total lines draw per frame
+		/// </summary>
+		static const int LinePerFrame = 154;
+
+
+		/// <summary>
+		/// Constant value for the total ticks used to draw a line (Docs refer as 456 dots)
+		/// </summary>
+		static const int TicksPerLine = 456;
+
+		/// <summary>
+		/// Vertical lcd resolution
+		/// </summary>
+		static const int yRes = 144;
+
+
+		/// <summary>
+		/// Horizontal lcd resolution
+		/// </summary>
+		static const int xRes = 160;
+
 
 		/**
 		 * @brief Ppu interation
@@ -107,6 +130,19 @@ namespace TheBoy {
 		bit8 read(bit16 addr);
 
 
+		/// <summary>
+		/// Get the current PPu Line tick count
+		/// </summary>
+		/// <returns>Line Tick count</returns>
+		bit32 getCurrentLineTicks();
+
+
+		/// <summary>
+		/// Resets the current line tick value
+		/// </summary>
+		void resetLineTicks();
+
+
 	private:
 		/**
 		 * @brief Pointer to the target emulator controller
@@ -123,6 +159,25 @@ namespace TheBoy {
 		 * @brief Memory allocation for the video Ram
 		 */
 		bit8* vRam;
+
+
+		/// <summary>
+		/// Holds current frame information
+		/// </summary>
+		bit32 cFrame;
+
+
+		/// <summary>
+		/// Current line tick counter
+		/// </summary>
+		bit32 cLineTicks;
+
+
+		/// <summary>
+		/// Output buffer
+		/// </summary>
+		bit32* buffer;
+
 	};
 } // namespace TheBoy
 #endif

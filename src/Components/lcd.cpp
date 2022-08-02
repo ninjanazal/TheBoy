@@ -6,9 +6,6 @@ namespace TheBoy {
 	/// LCD Class Constructor 
 	/// </summary>
 	Lcd::Lcd(EmulatorController* ctrl) : emulCtrl(ctrl) {
-		//bgColorPallets = new sf::Color[4];
-		//spriteColors1 = new sf::Color[4];
-		//spriteColors2 = new sf::Color[4];
 		regs = new LcdRegs();
 
 		regs->lcdc = 0x91;
@@ -36,9 +33,6 @@ namespace TheBoy {
 	/// </summary>
 	Lcd::~Lcd() {
 		delete regs;
-		//delete[] bgColorPallets;
-		//delete[] spriteColors1;
-		//delete[] spriteColors2;
 	}
 
 	/// <summary>
@@ -184,6 +178,27 @@ namespace TheBoy {
 		return static_cast<bit8>(regs->lcds & stat);
 	}
 
+	/// <summary>
+	/// Gets the Lcd vertical Line current value
+	/// </summary>
+	/// <returns>Vertical line current value</returns>
+	bit8 Lcd::getLyValue() {
+		return regs->ly;
+	}
+
+	/// <summary>
+	/// Resets the vertical line counter
+	/// </summary>
+	void Lcd::resetLyValue() {
+		regs->ly = 0;
+	}
+
+	/// <summary>
+	/// Increment the Vertical line counter
+	/// </summary>
+	void Lcd::incrementLy() {
+		regs->ly++;
+	}
 
 	void Lcd::updatePallet(bit8 palletAddr, bit8 val) {
 		sf::Color* pColor = &*bgColorPallets;

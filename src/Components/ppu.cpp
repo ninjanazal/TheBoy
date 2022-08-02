@@ -11,7 +11,14 @@ namespace TheBoy {
 		std::cout << "[PPU] ::: PPU has been created" << std::endl;
 
 		oam_ram = new OamElement[40];
-		vRam = new bit8[0x2000] { };
+		vRam = new bit8[0x2000]{ };
+
+		buffer = new bit32[yRes * xRes * sizeof(32)]{ 0 };
+
+		cFrame = 0;
+		cLineTicks = 0;
+
+		memset(oam_ram, 0, sizeof(oam_ram));
 	}
 
 
@@ -21,6 +28,7 @@ namespace TheBoy {
 	Ppu::~Ppu() {
 		delete[] vRam;
 		delete[] oam_ram;
+		delete[] buffer;
 	}
 
 
@@ -28,6 +36,30 @@ namespace TheBoy {
 	 * @brief Ppu interation
 	 */
 	void Ppu::step() {
+		cLineTicks++;
+
+		switch (emulCtrl->getLcd()->getLCDSMode())
+		{
+		case Lcd::LCDMODE::OAM:
+			PpuStates::mode_OAM(emulCtrl);
+			break;
+
+		case Lcd::LCDMODE::XFER:
+			PpuStates::mode_XFER(emulCtrl);
+			break;
+
+		case Lcd::LCDMODE::VBLANK:
+			PpuStates::mode_VBLANK(emulCtrl);
+			break;
+
+		case Lcd::LCDMODE::HBLANK:
+			PpuStates::mode_HBLANK(emulCtrl);
+			break;
+
+		default:
+			std::cout << "[PPU] ::: Failed step call, unknown state" << std::endl;
+			break;
+		}
 	}
 
 
@@ -38,12 +70,12 @@ namespace TheBoy {
 	 */
 	void Ppu::oamWrite(bit16 addr, bit8 val) {
 		// Manage offset buffer position
-		if(addr >= 0xFE00){
+		if (addr >= 0xFE00) {
 			addr -= 0xFE00;
 		}
 		// For memory location address, castring the arry to a bit8 pointer
 		// This will produce a access to the target Oam entry value
-		((bit8 *)oam_ram)[addr] = val;
+		((bit8*)oam_ram)[addr] = val;
 	}
 
 
@@ -54,12 +86,12 @@ namespace TheBoy {
 	 */
 	bit8 Ppu::oamRead(bit16 addr) {
 		// Manage offset buffer position
-		if(addr >= 0xFE00){
+		if (addr >= 0xFE00) {
 			addr -= 0xFE00;
 		}
 		// For memory location address, castring the arry to a bit8 pointer
 		// This will produce a access to the target Oam entry value
-		return ((bit8 *)oam_ram)[addr];
+		return ((bit8*)oam_ram)[addr];
 	}
 
 
@@ -85,5 +117,19 @@ namespace TheBoy {
 		return vRam[addr - 0x8000];
 	}
 
-	
+	/// <summary>
+	/// Get the current PPu Line tick count
+	/// </summary>
+	/// <returns>Line Tick count</returns>
+	bit32 Ppu::getCurrentLineTicks() {
+		return cLineTicks;
+	}
+
+	/// <summary>
+	/// Resets the current line tick value
+	/// </summary>
+	void Ppu::resetLineTicks() {
+		cLineTicks = 0;
+	}
+
 } // namespace TheBoy
