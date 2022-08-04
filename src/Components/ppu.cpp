@@ -132,4 +132,19 @@ namespace TheBoy {
 		cLineTicks = 0;
 	}
 
+	/// <summary>
+	/// Gets the current Ppu Frame coutne
+	/// </summary>
+	/// <returns>Current Frame count</returns>
+	bit32 Ppu::getCurrentFrame() {
+		return cFrame;
+	}
+
+	/// <summary>
+	/// Iterates the current frame value
+	/// </summary>
+	void Ppu::incrementCurrentFrame() {
+		cFrame++;
+	}
+
 } // namespace TheBoy

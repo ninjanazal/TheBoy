@@ -30,6 +30,25 @@ namespace TheBoy {
 		}
 
 		void mode_HBLANK(EmulatorController* ctrl) {
+			if (ctrl->getPpu()->getCurrentLineTicks() >= Ppu::TicksPerLine) {
+				vertLineIncrement(ctrl);
+
+				if (ctrl->getLcd()->getLyValue() == Ppu::yRes) {
+					ctrl->getLcd()->setLCDSMode(Lcd::LCDMODE::VBLANK);
+
+					ctrl->getCpu()->requestInterrupt(InterruptFuncs::InterruptType::INTR_VBLANK);
+
+					if (ctrl->getLcd()->getLCDSStat(Lcd::LCDSSTATS::VBLANK_STAT)) {
+						ctrl->getCpu()->requestInterrupt(InterruptFuncs::InterruptType::INTR_STAT);
+					}
+					ctrl->getPpu()->incrementCurrentFrame();
+				} 
+				else {
+					ctrl->getLcd()->setLCDSMode(Lcd::LCDMODE::OAM);
+				}
+
+				ctrl->getPpu()->resetLineTicks();
+			}
 		}
 
 
@@ -40,6 +59,17 @@ namespace TheBoy {
 		/// <param name="ctrl">Reference to the current emulator controller</param>
 		void vertLineIncrement(EmulatorController* ctrl) {
 			ctrl->getLcd()->incrementLy();
+
+			if (ctrl->getLcd()->getLyValue() == ctrl->getLcd()->getLyCompValue()) {
+				ctrl->getLcd()->setLCDSLycFlag(1);
+
+				if (ctrl->getLcd()->getLCDSStat(Lcd::LCDSSTATS::LY_STAT)) {
+					ctrl->getCpu()->requestInterrupt(InterruptFuncs::InterruptType::INTR_STAT);
+				}
+			}
+			else {
+				ctrl->getLcd()->setLCDSLycFlag(0);
+			}
 		}
 	}
 }

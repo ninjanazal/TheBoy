@@ -266,6 +266,13 @@ namespace TheBoy {
 		/// </summary>
 		void incrementLy();
 
+
+		/// <summary>
+		/// Gets the current LyCompare value
+		/// </summary>
+		/// <returns>LyCompare value</returns>
+		bit8 getLyCompValue();
+
 	private:
 		/// <summary>
 		/// Pointer to the target emulator controller

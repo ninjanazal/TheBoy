@@ -200,6 +200,14 @@ namespace TheBoy {
 		regs->ly++;
 	}
 
+	/// <summary>
+	/// Gets the current LyCompare value
+	/// </summary>
+	/// <returns>LyCompare value</returns>
+	bit8 Lcd::getLyCompValue() {
+		return regs->lyComp;
+	}
+
 	void Lcd::updatePallet(bit8 palletAddr, bit8 val) {
 		sf::Color* pColor = &*bgColorPallets;
 		

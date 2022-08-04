@@ -143,6 +143,18 @@ namespace TheBoy {
 		void resetLineTicks();
 
 
+		/// <summary>
+		/// Gets the current Ppu Frame coutne
+		/// </summary>
+		/// <returns>Current Frame count</returns>
+		bit32 getCurrentFrame();
+
+
+		/// <summary>
+		/// Iterates the current frame value
+		/// </summary>
+		void incrementCurrentFrame();
+
 	private:
 		/**
 		 * @brief Pointer to the target emulator controller
