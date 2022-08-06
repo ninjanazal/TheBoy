@@ -3,19 +3,30 @@
 
 namespace TheBoy {
 	namespace PpuStates {
-
+		/// <summary>
+		/// OAM Scan (Mode 2), this will scan for 80 pixels
+		/// </summary>
+		/// <param name="ctrl">Reference to the Target emulatorController</param>
 		void mode_OAM(EmulatorController* ctrl) {
 			if (ctrl->getPpu()->getCurrentLineTicks() >= 80) {
 				ctrl->getLcd()->setLCDSMode(Lcd::LCDMODE::XFER);
 			}
 		}
 
+		/// <summary>
+		/// Drawing Pixels (Mode 3), this will iterate for at least 172 after the Mode 2
+		/// </summary>
+		/// <param name="ctrl">Reference to the Target emulatorController</param>
 		void mode_XFER(EmulatorController* ctrl) {
 			if (ctrl->getPpu()->getCurrentLineTicks() >= (80 + 172)) {
 				ctrl->getLcd()->setLCDSMode(Lcd::LCDMODE::HBLANK);
 			}
 		}
 
+		/// <summary>
+		/// Vertical Blank (Mode 1), this will iterate for all the 154 display lines
+		/// </summary>
+		/// <param name="ctrl">Reference to the Target emulatorController</param>
 		void mode_VBLANK(EmulatorController* ctrl) {
 			if (ctrl->getPpu()->getCurrentLineTicks() >= Ppu::TicksPerLine) {
 				 vertLineIncrement(ctrl);
@@ -29,6 +40,10 @@ namespace TheBoy {
 			}
 		}
 
+		/// <summary>
+		/// Horizontal Blank (Mode 0), this will iterate for all the horizontal lines
+		/// </summary>
+		/// <param name="ctrl"Reference to the Target emulatorController></param>
 		void mode_HBLANK(EmulatorController* ctrl) {
 			if (ctrl->getPpu()->getCurrentLineTicks() >= Ppu::TicksPerLine) {
 				vertLineIncrement(ctrl);
@@ -50,8 +65,6 @@ namespace TheBoy {
 				ctrl->getPpu()->resetLineTicks();
 			}
 		}
-
-
 
 		/// <summary>
 		/// Holds the vertical line increment action

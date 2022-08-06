@@ -1,8 +1,8 @@
 #include "ppu.h"
+#include <cstring>
 
 
 namespace TheBoy {
-
 	/**
 	 * @brief Construct a new Ppu object
 	 * @param ctrl Current emulator controller reference
@@ -38,8 +38,7 @@ namespace TheBoy {
 	void Ppu::step() {
 		cLineTicks++;
 
-		switch (emulCtrl->getLcd()->getLCDSMode())
-		{
+		switch (emulCtrl->getLcd()->getLCDSMode()) {
 		case Lcd::LCDMODE::OAM:
 			PpuStates::mode_OAM(emulCtrl);
 			break;
@@ -145,6 +144,15 @@ namespace TheBoy {
 	/// </summary>
 	void Ppu::incrementCurrentFrame() {
 		cFrame++;
+	}
+
+
+	/// <summary>
+	/// Gets the defined target frame Time
+	/// </summary>
+	/// <returns>Defined Frame time value</returns>
+	bit32 Ppu::getTargetFrameTime() {
+		return targetFrameTime;
 	}
 
 } // namespace TheBoy

@@ -11,7 +11,7 @@ namespace TheBoy {
 	/// </summary>
 	namespace PpuStates {
 		/*
-		* One frame:
+		One frame:
 			70224 dots
 			@ 59.7 fps
 
@@ -26,34 +26,34 @@ namespace TheBoy {
 		Mode 0
 			Horizontal blank
 			87–204 dots	
-		
+
 		*/
 
 
 		/// <summary>
 		/// OAM Scan (Mode 2), this will scan for 80 pixels
 		/// </summary>
-		/// <param name="ppu"></param>
+		/// <param name="ctrl">Reference to the Target emulatorController</param>
 		void mode_OAM(EmulatorController* ctrl);
 
 
 		/// <summary>
 		/// Drawing Pixels (Mode 3), this will iterate for at least 172 after the Mode 2
 		/// </summary>
-		/// <param name="ctrl"></param>
+		/// <param name="ctrl">Reference to the Target emulatorController</param>
 		void mode_XFER(EmulatorController* ctrl);
 
 
 		/// <summary>
 		/// Vertical Blank (Mode 1), this will iterate for all the 154 display lines
 		/// </summary>
-		/// <param name="ctrl"></param>
+		/// <param name="ctrl">Reference to the Target emulatorController</param>
 		void mode_VBLANK(EmulatorController* ctrl);
 
 		/// <summary>
-		/// 
+		/// Horizontal Blank (Mode 0), this will iterate for all the horizontal lines
 		/// </summary>
-		/// <param name="ctrl"></param>
+		/// <param name="ctrl"Reference to the Target emulatorController></param>
 		void mode_HBLANK(EmulatorController* ctrl);
 
 		/// <summary>

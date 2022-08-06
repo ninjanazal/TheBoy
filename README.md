@@ -23,6 +23,7 @@ GameBoy color emulator in c++  , created for a case study
 
 
  ### Visual Studio Cmake
+ - Remove the `out` folder if present.
  - Open the __TheBoy__ folder on Visual Studio.
  - This can be build directly.
 - Build Profiles should be created:

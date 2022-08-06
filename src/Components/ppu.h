@@ -64,6 +64,7 @@ namespace TheBoy {
 		 */
 		Ppu(EmulatorController* ctrl);
 
+
 		/**
 		 * @brief Destroy the Ppu object
 		 */
@@ -155,6 +156,14 @@ namespace TheBoy {
 		/// </summary>
 		void incrementCurrentFrame();
 
+
+		/// <summary>
+		/// Gets the defined target frame Time
+		/// </summary>
+		/// <returns>Defined Frame time value</returns>
+		bit32 getTargetFrameTime();
+
+
 	private:
 		/**
 		 * @brief Pointer to the target emulator controller
@@ -186,10 +195,31 @@ namespace TheBoy {
 
 
 		/// <summary>
-		/// Output buffer
+		/// Output prixel buffer
 		/// </summary>
 		bit32* buffer;
 
+
+		/// <summary>
+		/// Target Frame time, default is the 60 frames per second in ms
+		/// Looking for a 1000 ms total divided by the frame target
+		/// </summary>
+		bit32 targetFrameTime = 1000 / 60;
+
+
+		/// <summary>
+		/// Holds the previous frame time stamp
+		/// </summary>
+		long prevFrameTime = 0;
+
+
+		/// <summary>
+		/// Holds the initial frame time stamp
+		/// </summary>
+		long initTimer = 0;
+
+
+		long frameCounter = 0;
 	};
 } // namespace TheBoy
 #endif

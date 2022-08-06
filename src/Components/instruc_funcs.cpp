@@ -201,7 +201,7 @@ namespace TheBoy{
 				}
 				else{
 					// for 8bit writes
-					cpu->requestBusWrite(cpu->getMemoryDest(), cpu->getFetchedData());
+					cpu->requestBusWrite(cpu->getMemoryDest(), static_cast<bit8>(cpu->getFetchedData()));
 				}
 
 				cpu->requestCycles(1);
@@ -249,7 +249,7 @@ namespace TheBoy{
 				// Loads to the highRam, the value on the defined register, since the fetch for this operation is a 8Bit
 				// value and to be setted on the high RAM range, a 0xFF00 or operation is need 
 				cpu->requestBusWrite(cpu->getMemoryDest(), 
-					cpu->getRegisterValue(REG_A)
+					static_cast<bit8>(cpu->getRegisterValue(REG_A))
 				);
 			}
 			cpu->requestCycles(1);
@@ -772,13 +772,11 @@ namespace TheBoy{
 			bit8 aReg = cpu->getRegisterValueByte(REG_A);
 			bit8 fReg = cpu->getRegisterValueByte(REG_F);
 
-			if (GETBIT(fReg, 5) || (~GETBIT(fReg, 6) && (aReg & 0xF) > 9) )
-			{
+			if (GETBIT(fReg, 5) || (~GETBIT(fReg, 6) && (aReg & 0xF) > 9) ) {
 				val = 0x6;
 			}
 
-			if (GETBIT(fReg, 4) || (~GETBIT(fReg, 6) && aReg > 0x99) )
-			{
+			if (GETBIT(fReg, 4) || (~GETBIT(fReg, 6) && aReg > 0x99) ) {
 				val |= 0x60;
 				cFlag = 1;
 			}
@@ -799,7 +797,6 @@ namespace TheBoy{
 			cpu->setFlags(-1, 1, 1, -1);
 		}
 
-
 		/**
 		 * @brief On a Instruction SCF resolver
 		 * @param cpu Requester cpu pointer
@@ -808,7 +805,6 @@ namespace TheBoy{
 			cpu->setFlags(-1, 0, 0, 1);
 		}
 
-
 		/**
 		 * @brief On a Instruction CFF resolver
 		 * @param cpu Requester cpu pointer
@@ -816,7 +812,6 @@ namespace TheBoy{
 		static void instCCF(Cpu* cpu) {
 			cpu->setFlags(-1, 0, 0, GETBIT(cpu->getRegisterValue(REG_F), 4) ^ 0x1);
 		}
-
 
 		/**
 		 * @brief Evaluates a flag condition check
@@ -838,7 +833,6 @@ namespace TheBoy{
 			return false;
 		}
 
-
 		/**
 		 * @brief Generic Jump instruction, this can be used on the JP instruction and the Call isntruction
 		 * Since this is the same as JP but updates the Program Counter register
@@ -857,8 +851,6 @@ namespace TheBoy{
 				cpu->requestCycles(1);
 			}
 		}
-
-
 
 		/**
 		 * @brief Defines Instruction type to the resolvers
@@ -900,7 +892,6 @@ namespace TheBoy{
 			/*INST_SCF*/ 	instSCF,
 			/*INST_CCF*/ 	instCCF
 		};
-		
 
 		/**
 		 * @brief Get the Instruct Process function to a given instruction type
@@ -910,8 +901,6 @@ namespace TheBoy{
 		INST_FUNC getInstructProcess(InstructType type){
 			return instructResolvers[type];
 		}
-
-
 
 	} // namespace CpuFuncs
 } // namespace TheBoy

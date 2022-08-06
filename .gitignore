@@ -401,7 +401,7 @@ FodyWeavers.xsd
 #SFML/
 
 ROMS/*.*
-CmakeSettings.json
+#CmakeSettings.json
 
 [Bb]uild/
 
