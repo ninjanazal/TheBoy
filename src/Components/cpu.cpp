@@ -8,6 +8,7 @@ namespace TheBoy {
 	Cpu::Cpu(EmulatorController* ctrl) : emuCtrl(ctrl) {
 		regs = std::make_shared<Registers>();
 		reset();
+		startTime = std::chrono::high_resolution_clock::now();
 		std::cout << "[CPU] ::: Cpu has been created!" << std::endl;
 	}
 
@@ -43,8 +44,8 @@ namespace TheBoy {
 	/**
 	 * @brief Defines the cpu iteration
 	 */
-	void Cpu::step(){
-		if(!cpuHLT){
+	void Cpu::step() {
+		if (!cpuHLT) {
 #if VERBOSE
 			bit16 tempPc = regs->PC;
 #endif
@@ -52,7 +53,7 @@ namespace TheBoy {
 			fetch_inst();
 			requestCycles(1);
 			fetch_data();
-		
+
 #if VERBOSE
 			printf(
 				"[CPU] ::: [%08lX] Regs State { A: %2.2X F: %2.2X BC: %2.2X %2.2X DE: %2.2X %2.2X HL: %2.2X %2.2X SP: %4.4X PC %4.4X }\n",
@@ -70,18 +71,18 @@ namespace TheBoy {
 
 			requestCycles(1);
 
-			if(interruptFlags) {
+			if (interruptFlags) {
 				cpuHLT = false;
 			}
 
 		}
 
-		if(interruptMasterState) {
+		if (interruptMasterState) {
 			InterruptFuncs::handle_interrupt(this);
 			enablingIntMaster = false;
 		}
 
-		if(enablingIntMaster){
+		if (enablingIntMaster) {
 			interruptMasterState = true;
 		}
 	}
@@ -92,7 +93,7 @@ namespace TheBoy {
 	 * @param regType Defined register to get
 	 * @return bit16 Data on the setted register
 	 */
-	bit16 Cpu::getRegisterValue(RegisterType regType){
+	bit16 Cpu::getRegisterValue(RegisterType regType) {
 		switch (regType) {
 		case REG_A: return regs->A;
 		case REG_F: return regs->F;
@@ -102,15 +103,15 @@ namespace TheBoy {
 		case REG_E: return regs->E;
 		case REG_H: return regs->H;
 		case REG_L: return regs->L;
-		
+
 		case REG_SP: return regs->SP;
 		case REG_PC: return regs->PC;
 
-		case REG_AF: return TheBoy::reverse16(*((bit16 *)&regs->A));
-		case REG_BC: return TheBoy::reverse16(*((bit16 *)&regs->B));
-		case REG_DE: return TheBoy::reverse16(*((bit16 *)&regs->D));
-		case REG_HL: return TheBoy::reverse16(*((bit16 *)&regs->H));
-	
+		case REG_AF: return TheBoy::reverse16(*((bit16*)&regs->A));
+		case REG_BC: return TheBoy::reverse16(*((bit16*)&regs->B));
+		case REG_DE: return TheBoy::reverse16(*((bit16*)&regs->D));
+		case REG_HL: return TheBoy::reverse16(*((bit16*)&regs->H));
+
 		default: return 0x0;
 		}
 	}
@@ -121,7 +122,7 @@ namespace TheBoy {
 	 * @param type Registor type to be set
 	 * @param value Value to be set
 	 */
-	void Cpu::setRegisterValue(RegisterType regType, bit16 value){
+	void Cpu::setRegisterValue(RegisterType regType, bit16 value) {
 		switch (regType) {
 		case REG_A: regs->A = value & 0xFF;	return;
 		case REG_F: regs->F = value & 0xFF; return;
@@ -131,20 +132,20 @@ namespace TheBoy {
 		case REG_E: regs->E = value & 0xFF; return;
 		case REG_H: regs->H = value & 0xFF; return;
 		case REG_L: regs->L = value & 0xFF; return;
-		
+
 		case REG_SP: regs->SP = value; return;
 		case REG_PC: regs->PC = value; return;
 
-		case REG_AF: *((bit16 *)&regs->A) = TheBoy::reverse16(value); return;
-		case REG_BC: *((bit16 *)&regs->B) = TheBoy::reverse16(value); return;
-		case REG_DE: *((bit16 *)&regs->D) = TheBoy::reverse16(value); return;
-		case REG_HL: *((bit16 *)&regs->H) = TheBoy::reverse16(value); return;
+		case REG_AF: *((bit16*)&regs->A) = TheBoy::reverse16(value); return;
+		case REG_BC: *((bit16*)&regs->B) = TheBoy::reverse16(value); return;
+		case REG_DE: *((bit16*)&regs->D) = TheBoy::reverse16(value); return;
+		case REG_HL: *((bit16*)&regs->H) = TheBoy::reverse16(value); return;
 		}
 	}
 
 
 	/**
-	 * @brief Get the Register Value Byte object 
+	 * @brief Get the Register Value Byte object
 	 * @param regType Defined register to get
 	 * @return bit8 Data on the setted register
 	 */
@@ -179,7 +180,7 @@ namespace TheBoy {
 		case REG_E: regs->E = value & 0xFF; break;
 		case REG_H: regs->H = value & 0xFF; break;
 		case REG_L: regs->L = value & 0xFF; break;
-		case REG_HL: 
+		case REG_HL:
 			requestBusWrite(getRegisterValue(REG_HL), value);
 			break;
 		}
@@ -215,10 +216,10 @@ namespace TheBoy {
 	 * @brief Gets the current Z flag value
 	 * @return bit8 Current z value
 	 */
-	bit8 Cpu::getZFlag(){
+	bit8 Cpu::getZFlag() {
 		return (GETBIT(regs->F, 7));
 	}
-	
+
 
 	/**
 	 * @brief Gets the current C flag value
@@ -245,12 +246,12 @@ namespace TheBoy {
 	 * @param h Half Carry flag
 	 * @param c Carry flag
 	 */
-	void Cpu::setFlags(bit8 z, bit8 n, bit8 h, bit8 c){
+	void Cpu::setFlags(bit8 z, bit8 n, bit8 h, bit8 c) {
 		using namespace CpuFuncs;
-		if(z != 0xFF) { SETBIT(regs->F, 7, z); }
-		if(n != 0xFF) { SETBIT(regs->F, 6, n); }
-		if(h != 0xFF) { SETBIT(regs->F, 5, h); }
-		if(c != 0xFF) { SETBIT(regs->F, 4, c); }
+		if (z != 0xFF) { SETBIT(regs->F, 7, z); }
+		if (n != 0xFF) { SETBIT(regs->F, 6, n); }
+		if (h != 0xFF) { SETBIT(regs->F, 5, h); }
+		if (c != 0xFF) { SETBIT(regs->F, 4, c); }
 	}
 
 
@@ -267,7 +268,7 @@ namespace TheBoy {
 	 * @brief Get the Fetched Data value
 	 * @return bit16 Fetched data value
 	 */
-	bit16 Cpu::getFetchedData(){
+	bit16 Cpu::getFetchedData() {
 		return intMem.fetchData;
 	}
 
@@ -276,7 +277,7 @@ namespace TheBoy {
 	 * @brief Gets if the internal memory marks that fetched is memoryLoc
 	 * @return true/false Is memory location
 	 */
-	bool Cpu::getDestenyIsMem(){
+	bool Cpu::getDestenyIsMem() {
 		return intMem.destIsMem;
 	}
 
@@ -284,7 +285,7 @@ namespace TheBoy {
 	 * @brief Get the Memory Dest internal memory value
 	 * @return bit16 Memory destination
 	 */
-	bit16 Cpu::getMemoryDest(){
+	bit16 Cpu::getMemoryDest() {
 		return intMem.memDest;
 	}
 
@@ -309,9 +310,9 @@ namespace TheBoy {
 	/**
 	 * @brief Writes to a defined address
 	 * @param addr Target address to be written
-	 * @param val Value to be setted on the address 
+	 * @param val Value to be setted on the address
 	 */
-	void Cpu::requestBusWrite(bit16 addr, bit8 val){
+	void Cpu::requestBusWrite(bit16 addr, bit8 val) {
 		emuCtrl->getBus()->abWrite(addr, val);
 	}
 
@@ -319,7 +320,7 @@ namespace TheBoy {
 	/**
 	 * @brief Requests Writes to a defined address
 	 * @param addr Target address to be written
-	 * @param val 16bit Value to be setted on the address 
+	 * @param val 16bit Value to be setted on the address
 	 */
 	void Cpu::requestBusWrite16(bit16 addr, bit16 val) {
 		emuCtrl->getBus()->abWrite16(addr, val);
@@ -340,7 +341,7 @@ namespace TheBoy {
 	 * @brief Get the Cpu IE Register value
 	 * @return bit8 Current IE register value
 	 */
-	bit8 Cpu::getCpuIERegister(){
+	bit8 Cpu::getCpuIERegister() {
 		return interruptEnable;
 	}
 
@@ -358,7 +359,7 @@ namespace TheBoy {
 	 * @brief Push a 8bit data to the next stack pointer location, decrement the sp val
 	 * @param data Data to be pushed
 	 */
-	void Cpu::push(bit8 data){
+	void Cpu::push(bit8 data) {
 		regs->SP--;
 		requestBusWrite(regs->SP, data);
 	}
@@ -439,7 +440,7 @@ namespace TheBoy {
 	 * @brief Requests a interrupt by type on the current Cpu
 	 * @param iType Iterrupt type
 	 */
-	void Cpu::requestInterrupt(InterruptFuncs::InterruptType iType){
+	void Cpu::requestInterrupt(InterruptFuncs::InterruptType iType) {
 		interruptFlags |= iType;
 	}
 
@@ -475,16 +476,17 @@ namespace TheBoy {
 	void Cpu::fetch_inst() {
 		currOpcode = emuCtrl->getBus()->abRead(regs->PC);
 		currInstruct = TheBoy::getByOpcode(currOpcode);
-		
-		char* bfr(new char[64] {});
-		if(currInstruct == nullptr){
+
+		char* bfr(new char[64]{});
+		if (currInstruct == nullptr) {
 			sprintf_s(bfr, 64, "-> Opcode %2.2X failed to load", currOpcode);
-		} else {
+		}
+		else {
 			sprintf_s(bfr, 64, "-> Opcode %2.2X", currOpcode);
 		}
 
 		//emuCtrl->getView()->setCurrOperation(bfr);
-		delete[] bfr;	
+		delete[] bfr;
 
 		regs->PC++;
 	}
@@ -530,7 +532,7 @@ namespace TheBoy {
 			bit16 low = requestBusRead(regs->PC);
 			requestCycles(1);
 			regs->PC++;
-			
+
 			bit16 high = requestBusRead(regs->PC);
 			requestCycles(1);
 
@@ -544,7 +546,7 @@ namespace TheBoy {
 			requestCycles(1);
 			regs->PC++;
 			return;
-		
+
 
 		case OPMODE_AR_R:	// Memory operation on registor adress and registor
 			intMem.fetchData = getRegisterValue(currInstruct->regTypeR);
@@ -557,14 +559,14 @@ Load to the address specified by the 8-bit C register, data from the 8-bit A reg
 address is obtained by setting the most significant byte to 0xFF and the least significant byte to the value of C,
 so the possible range is 0xFF00-0xFFFF.
 			*/
-			if(currInstruct->regTypeL == REG_C){
+			if (currInstruct->regTypeL == REG_C) {
 				intMem.memDest |= 0xFF00;
 			}
 			return;
 
 
 		case OPMODE_R_AR: {	// Memory operation on a registor and a  memory registor address
-			bit16 address = getRegisterValue(currInstruct->regTypeR); 
+			bit16 address = getRegisterValue(currInstruct->regTypeR);
 
 			/*
 			For register C
@@ -572,7 +574,7 @@ Load to the address specified by the 8-bit C register, data from the 8-bit A reg
 address is obtained by setting the most significant byte to 0xFF and the least significant byte to the value of C,
 so the possible range is 0xFF00-0xFFFF.
 			*/
-			if(currInstruct->regTypeR == REG_C){
+			if (currInstruct->regTypeR == REG_C) {
 				address |= 0xFF00;
 			}
 			intMem.fetchData = requestBusRead(address);
@@ -581,7 +583,7 @@ so the possible range is 0xFF00-0xFFFF.
 		}
 
 		case OPMODE_R_HLI:	// memory operation on a registor and the HL register, incrementing
-			intMem.fetchData =  requestBusRead(getRegisterValue(currInstruct->regTypeR));
+			intMem.fetchData = requestBusRead(getRegisterValue(currInstruct->regTypeR));
 
 			requestCycles(1);
 			setRegisterValue(REG_HL, getRegisterValue(REG_HL) + 0x1);
@@ -633,7 +635,7 @@ so the possible range is 0xFF00-0xFFFF.
 			requestCycles(1);
 			return;
 		}
-		
+
 
 		case OPMODE_A8_R:	// Memory operation on 8bit address to registor
 			intMem.memDest = requestBusRead(regs->PC) | 0xFF00; // 8bit address value
@@ -650,11 +652,11 @@ so the possible range is 0xFF00-0xFFFF.
 			return;
 
 
-		case OPMODE_A16_R:{	// Memory operation on registor to 16bit address
+		case OPMODE_A16_R: {	// Memory operation on registor to 16bit address
 			bit16 low = requestBusRead(regs->PC);
 			requestCycles(1);
 			regs->PC++;
-			
+
 			bit16 high = requestBusRead(regs->PC);
 			requestCycles(1);
 
@@ -683,7 +685,7 @@ so the possible range is 0xFF00-0xFFFF.
 
 
 		default:			// If none, this is a unknow operation mode
-			char* m(new char[128] {});
+			char* m(new char[128]{});
 			sprintf_s(m, 128, "[CPU] ::: Unknown Operation mode on the instruction [OPCODE: %2.2X]\n", currOpcode);
 			emuCtrl->forceEmuStop(m);
 			delete[] m;
@@ -691,18 +693,38 @@ so the possible range is 0xFF00-0xFFFF.
 		}
 	}
 
-		/**
-	 * @brief Defines the execution process for the instruction with the data
-	 */
+	/**
+ * @brief Defines the execution process for the instruction with the data
+ */
 	void Cpu::executeInst() {
 		CpuFuncs::INST_FUNC exe = CpuFuncs::getInstructProcess(currInstruct->insType);
-		if(!exe || currInstruct->insType == INST_NONE){
-			char* m(new char[128] {});
+		if (!exe || currInstruct->insType == INST_NONE) {
+			char* m(new char[128]{});
 			sprintf_s(m, 128, "[CPU] ::: Unknown execution function for [OPCODE: %2.2X]\n", currOpcode);
 			emuCtrl->forceEmuStop(m);
 			delete[] m;
 			return;
 		}
 		exe(this);
+	}
+
+
+	/// <summary>
+	/// Gets the current Cpu execution tick value
+	/// </summary>
+	/// <returns>Execution tick value</returns>
+	bit32 Cpu::getTicks() {
+		std::chrono::time_point current = std::chrono::high_resolution_clock::now();
+		return static_cast<bit32>(
+			std::chrono::duration_cast<std::chrono::milliseconds>(current - startTime).count()
+			);
+	}
+
+	/// <summary>
+	/// Sleeps the cpu thread for a defined ms value
+	/// </summary>
+	/// <param name="msVal">Sleep ms value</param>
+	void Cpu::sleepCpu(bit32 msVal) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(msVal));
 	}
 }

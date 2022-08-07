@@ -47,6 +47,13 @@ namespace TheBoy {
 		void setCartChecksum(const char* inf);
 
 
+		/// <summary>
+		/// Defines the Ppu frame count on
+		/// </summary>
+		/// <param name="inf"></param>
+		void setPpuFrameCount(const char* inf);
+
+
 	private:
 	#pragma region Properties
 		/**
@@ -87,7 +94,7 @@ namespace TheBoy {
 		/**
 		 * @brief Array with the debug text elements
 		 */
-		std::shared_ptr<sf::Text> wText[6];
+		std::shared_ptr<sf::Text> wText[7];
 
 
 

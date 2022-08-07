@@ -5,7 +5,7 @@
 #include "interrupt.h"
 #include "addressbus.h"
 #include "instruc_funcs.h"
-
+#include <chrono>
 
 namespace TheBoy {
 	class EmulatorController;
@@ -294,6 +294,20 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		/// <param name="opCodeStr">Pointer to target opCode summary string</param>
 		void getCpuSummary(char* cpuStr, char* opCodeStr);
 
+
+		/// <summary>
+		/// Gets the current Cpu execution tick value
+		/// </summary>
+		/// <returns>Execution tick value</returns>
+		bit32 getTicks();
+
+
+		/// <summary>
+		/// Sleeps the cpu thread for a defined ms value
+		/// </summary>
+		/// <param name="msVal">Sleep ms value</param>
+		void sleepCpu(bit32 msVal);
+
 	private:
 		/**
 		 * @brief Pointer to the emulator controller
@@ -305,6 +319,13 @@ As shown above, most registers can be accessed either as one 16-bit register,
 		 * @brief Shared pointer to the registers values
 		 */
 		std::shared_ptr<Registers> regs;
+
+
+		/// <summary>
+		/// Marks the starting time stamp
+		/// </summary>
+		std::chrono::high_resolution_clock::time_point startTime;
+
 
 		/**
 		 * @brief Defined and declared instruction memory map

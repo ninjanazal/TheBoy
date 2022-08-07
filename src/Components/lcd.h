@@ -96,7 +96,7 @@ namespace TheBoy {
 		/// corresponding palette.They work exactly like BGP, except that the lower two bits are
 		///  ignored because color index 0 is transparent for OBJs.
 		/// </summary>
-		bit8* objPallets = new bit8[2];
+		bit8 objPallets[2] { 0 };
 
 		/// <summary>
 		/// FF4A - WY (Window Y Position) (R/W), FF4B - WX (Window X Position + 7) (R/W)
@@ -164,6 +164,12 @@ namespace TheBoy {
 		/// <param name="addres">Target address value</param>
 		/// <param name="value">Value</param>
 		void write(bit16 addres, bit8 value);
+
+		/// <summary>
+		/// Gets a pointer to the LCD registors
+		/// </summary>
+		/// <returns>Pointer to the current registors</returns>
+		LcdRegs* getLcdRegistors();
 
 		/// <summary>
 		/// Gets the bit value for the BG and Window enable/priority
@@ -283,7 +289,7 @@ namespace TheBoy {
 		/// <summary>
 		/// Lcd registors structure
 		/// </summary>
-		LcdRegs* regs;
+		LcdRegs regs;
 
 
 		/// <summary>

@@ -102,6 +102,7 @@ namespace TheBoy {
 			for(int n = 0; n < 4; n++) {
 				emu_state.ticks++;
 				comps.timer->tick();
+				comps.ppu->step();
 			}
 		comps.dma->step();
 		}

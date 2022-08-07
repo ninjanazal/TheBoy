@@ -92,6 +92,15 @@ namespace TheBoy {
 	}
 
 
+	/// <summary>
+	/// Defines the Ppu frame count on change
+	/// </summary>
+	/// <param name="inf"></param>
+	void EmulView::setPpuFrameCount(const char* inf) {
+		wText[6]->setString(inf);
+	}
+
+
 	/**
 	 * @brief Set the Registors Vals on screen
 	 * @param regs Target CPU registors

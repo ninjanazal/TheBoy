@@ -10,6 +10,12 @@ namespace TheBoy {
 		void mode_OAM(EmulatorController* ctrl) {
 			if (ctrl->getPpu()->getCurrentLineTicks() >= 80) {
 				ctrl->getLcd()->setLCDSMode(Lcd::LCDMODE::XFER);
+
+				ctrl->getPpu()->getFifo()->currState = FIFOSTATE::FF_TILE;
+				ctrl->getPpu()->getFifo()->lineX = 0;
+				ctrl->getPpu()->getFifo()->fetchedX = 0;
+				ctrl->getPpu()->getFifo()->pushedX = 0;
+				ctrl->getPpu()->getFifo()->fifoX = 0;
 			}
 		}
 
@@ -18,8 +24,14 @@ namespace TheBoy {
 		/// </summary>
 		/// <param name="ctrl">Reference to the Target emulatorController</param>
 		void mode_XFER(EmulatorController* ctrl) {
-			if (ctrl->getPpu()->getCurrentLineTicks() >= (80 + 172)) {
+			// Pipeline process
+			if (ctrl->getPpu()->getFifo()->pushedX >= Ppu::xRes) {
+				// pipeline fifo reset
 				ctrl->getLcd()->setLCDSMode(Lcd::LCDMODE::HBLANK);
+
+				if (ctrl->getLcd()->getLCDSStat(Lcd::LCDSSTATS::HBLANK_STAT)) {
+					ctrl->getCpu()->requestInterrupt(InterruptFuncs::InterruptType::INTR_STAT);
+				}
 			}
 		}
 
@@ -29,7 +41,7 @@ namespace TheBoy {
 		/// <param name="ctrl">Reference to the Target emulatorController</param>
 		void mode_VBLANK(EmulatorController* ctrl) {
 			if (ctrl->getPpu()->getCurrentLineTicks() >= Ppu::TicksPerLine) {
-				 vertLineIncrement(ctrl);
+				vertLineIncrement(ctrl);
 
 				if (ctrl->getLcd()->getLyValue() >= Ppu::LinePerFrame) {
 					ctrl->getLcd()->setLCDSMode(Lcd::LCDMODE::OAM);
@@ -57,7 +69,30 @@ namespace TheBoy {
 						ctrl->getCpu()->requestInterrupt(InterruptFuncs::InterruptType::INTR_STAT);
 					}
 					ctrl->getPpu()->incrementCurrentFrame();
-				} 
+
+					// Fps Counting
+					bit32 currTick = ctrl->getCpu()->getTicks();
+					bit32 frameTime = currTick - ctrl->getPpu()->getPreviousFrameTime();
+
+					if (frameTime < ctrl->getPpu()->getTargetFrameTime()) {
+						ctrl->getCpu()->sleepCpu(ctrl->getPpu()->getTargetFrameTime() - frameTime);
+					}
+
+					if (currTick - ctrl->getPpu()->getInitialTimer() >= 1000) {
+						char* msgBuffer(new char[64]{});
+						sprintf_s(msgBuffer, 64, 
+							"-> Ppu Frames: %d", ctrl->getPpu()->getFrameCount());
+
+						ctrl->getView()->setPpuFrameCount(msgBuffer);
+						delete[] msgBuffer;
+
+						ctrl->getPpu()->setInitialTimer(currTick);
+						ctrl->getPpu()->resetFrameCount();
+					}
+
+					ctrl->getPpu()->addFrameCount(1);
+					ctrl->getPpu()->updateFrameTime();
+				}
 				else {
 					ctrl->getLcd()->setLCDSMode(Lcd::LCDMODE::OAM);
 				}

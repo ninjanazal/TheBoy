@@ -556,12 +556,13 @@ namespace TheBoy{
 
 			// For the BIT, RES and SET operations, OPCode 0xX~ (X >= 4) -> POperations 01 and bigger
 			switch (POperation) {
-			case 0b01:
+			case 0b01: {
 				// BIT OPERATION
 				// Operation evaluates if the defined bit  is set on the registor and set it on the
 				// Z Flag, if this bit is set, the z value is 0 else is 1
-				cpu->setFlags(~(reg_value & (1 << PBit)), 0, 1, -1);
+				cpu->setFlags(!(reg_value & (1 << PBit)), 0, 1, -1);
 				return;
+			}
 			case 0b10:
 				// RES OPERATION
 				// This operation resets the defined bit

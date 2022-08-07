@@ -10,15 +10,18 @@ namespace TheBoy {
 	Ppu::Ppu(EmulatorController* ctrl) : emulCtrl(ctrl) {
 		std::cout << "[PPU] ::: PPU has been created" << std::endl;
 
-		oam_ram = new OamElement[40];
+		oam_ram = new OamElement[40] { 0 };
 		vRam = new bit8[0x2000]{ };
 
 		buffer = new bit32[yRes * xRes * sizeof(32)]{ 0 };
 
 		cFrame = 0;
 		cLineTicks = 0;
+		
+		//memset(oam_ram, 0, sizeof(oam_ram));
 
-		memset(oam_ram, 0, sizeof(oam_ram));
+		fifo = new FIFO_DATA();
+		fifo->init();
 	}
 
 
@@ -29,16 +32,25 @@ namespace TheBoy {
 		delete[] vRam;
 		delete[] oam_ram;
 		delete[] buffer;
+		delete fifo;
 	}
 
+	/// <summary>
+	/// Gets a pointer to the PPU FIFO data
+	/// </summary>
+	/// <returns>FIFO pointer</returns>
+	FIFO_DATA* Ppu::getFifo() {
+		return fifo;
+	}
 
 	/**
 	 * @brief Ppu interation
 	 */
 	void Ppu::step() {
 		cLineTicks++;
+		Lcd::LCDMODE curr = emulCtrl->getLcd()->getLCDSMode();
 
-		switch (emulCtrl->getLcd()->getLCDSMode()) {
+		switch (curr) {
 		case Lcd::LCDMODE::OAM:
 			PpuStates::mode_OAM(emulCtrl);
 			break;
@@ -153,6 +165,70 @@ namespace TheBoy {
 	/// <returns>Defined Frame time value</returns>
 	bit32 Ppu::getTargetFrameTime() {
 		return targetFrameTime;
+	}
+
+
+	/// <summary>
+	/// Gets the last frame time value
+	/// </summary>
+	/// <returns>Last frame time value</returns>
+	long Ppu::getPreviousFrameTime() {
+		return prevFrameTime;
+	}
+
+	/// <summary>
+	/// Initial frame group time stamp
+	/// </summary>
+	/// <returns>Initial frame group time</returns>
+	long Ppu::getInitialTimer() {
+		return  initTimer;
+	}
+
+	/// <summary>
+	/// Defines the initial frame group time stamp
+	/// </summary>
+	/// <param name="val">Target frame group stamp</param>
+	void Ppu::setInitialTimer(bit32 val) {
+		initTimer = val;
+	}
+
+	/// <summary>
+	/// Updates the Frame time to the current tick value
+	/// </summary>
+	void Ppu::updateFrameTime() {
+		prevFrameTime = static_cast<long>(emulCtrl->getCpu()->getTicks());
+	}
+
+	/// <summary>
+	/// Gets the current frameCount value
+	/// </summary>
+	/// <returns>Frame count value</returns>
+	long Ppu::getFrameCount() {
+		return frameCounter;
+	}
+
+	/// <summary>
+	/// Resets the internal frame counter
+	/// </summary>
+	void Ppu::resetFrameCount() {
+		frameCounter = 0;
+	}
+
+	/// <summary>
+	/// Add a defined amount of frames to the counter
+	/// </summary>
+	/// <param name="val">Increment amount</param>
+	void Ppu::addFrameCount(bit8 val) {
+		frameCounter += val;
+	}
+
+	/// <summary>
+	/// Defines the video buffer value on a defined position
+	/// </summary>
+	/// <param name="position">Target position</param>
+	/// <param name="val">Defined value</param>
+	void Ppu::setBufferValue(bit32 position, bit32 val) {
+		buffer[position] = val;
 	}
 
 } // namespace TheBoy

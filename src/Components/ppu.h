@@ -3,6 +3,8 @@
 
 #include "emulatorController.h"
 #include "ppu_states.h"
+#include "FIFOData.h"
+#include "PixelPipeline.h"
 
 namespace TheBoy {
 
@@ -22,6 +24,7 @@ namespace TheBoy {
 		unsigned yFlip		: 1;
 		unsigned bgWind		: 1;
 	} OamElement;
+
 
 	class Ppu {	
 		/*
@@ -92,6 +95,12 @@ namespace TheBoy {
 		/// </summary>
 		static const int xRes = 160;
 
+
+		/// <summary>
+		/// Gets a pointer to the PPU FIFO data
+		/// </summary>
+		/// <returns>FIFO pointer</returns>
+		FIFO_DATA* getFifo();
 
 		/**
 		 * @brief Ppu interation
@@ -164,6 +173,56 @@ namespace TheBoy {
 		bit32 getTargetFrameTime();
 
 
+		/// <summary>
+		/// Gets the last frame time value
+		/// </summary>
+		/// <returns>Last frame time value</returns>
+		long getPreviousFrameTime();
+
+
+		/// <summary>
+		/// Initial frame group time stamp
+		/// </summary>
+		/// <returns>Initial frame group time</returns>
+		long getInitialTimer();
+
+		/// <summary>
+		/// Defines the initial frame group time stamp
+		/// </summary>
+		/// <param name="val">Target frame group stamp</param>
+		void setInitialTimer(bit32 val);
+
+
+		/// <summary>
+		/// Updates the Frame time to the current tick value
+		/// </summary>
+		void updateFrameTime();
+
+		/// <summary>
+		/// Gets the current frameCount value
+		/// </summary>
+		/// <returns>Frame count value</returns>
+		long getFrameCount();
+		
+		/// <summary>
+		/// Resets the internal frame counter
+		/// </summary>
+		void resetFrameCount();
+
+		/// <summary>
+		/// Add a defined amount of frames to the counter
+		/// </summary>
+		/// <param name="val">Increment amount</param>
+		void addFrameCount(bit8 val);
+
+
+		/// <summary>
+		/// Defines the video buffer value on a defined position
+		/// </summary>
+		/// <param name="position">Target position</param>
+		/// <param name="val">Defined value</param>
+		void setBufferValue(bit32 position, bit32 val);
+
 	private:
 		/**
 		 * @brief Pointer to the target emulator controller
@@ -175,6 +234,12 @@ namespace TheBoy {
 		 * @brief Pointer to the available 40 OAM ram entries
 		 */
 		OamElement* oam_ram;
+
+
+		/// <summary>
+		/// Ppu Fifo data
+		/// </summary>
+		FIFO_DATA* fifo;
 
 		/**
 		 * @brief Memory allocation for the video Ram
@@ -219,6 +284,9 @@ namespace TheBoy {
 		long initTimer = 0;
 
 
+		/// <summary>
+		/// Holds the total frames on the current second
+		/// </summary>
 		long frameCounter = 0;
 	};
 } // namespace TheBoy

@@ -6,18 +6,18 @@ namespace TheBoy {
 	/// LCD Class Constructor 
 	/// </summary>
 	Lcd::Lcd(EmulatorController* ctrl) : emulCtrl(ctrl) {
-		regs = new LcdRegs();
+		regs = LcdRegs();
 
-		regs->lcdc = 0x91;
-		regs->scrollX = 0;
-		regs->scrollY = 0;
-		regs->ly = 0;
-		regs->lyComp = 0;
-		regs->backPallet = 0xFC;
-		regs->objPallets[0] = 0xFF;
-		regs->objPallets[1] = 0xFF;
-		regs->WX = 0;
-		regs->WY = 0;
+		regs.lcdc = 0x91;
+		regs.scrollX = 0;
+		regs.scrollY = 0;
+		regs.ly = 0;
+		regs.lyComp = 0;
+		regs.backPallet = 0xFC;
+		regs.objPallets[0] = 0xFF;
+		regs.objPallets[1] = 0xFF;
+		regs.WX = 0;
+		regs.WY = 0;
 
 		for (int i = 0; i < 4; i++) {
 			bgColorPallets[i] = defaultColors[i];
@@ -25,14 +25,13 @@ namespace TheBoy {
 			spriteColors2[i] = defaultColors[i];
 		}
 		std::cout << "[LCD] ::: LCD has been created" << std::endl;
-
 	}
 
 	/// <summary>
 	/// Lcd Clas Destructor
 	/// </summary>
 	Lcd::~Lcd() {
-		delete regs;
+		//delete regs;
 	}
 
 	/// <summary>
@@ -71,13 +70,20 @@ namespace TheBoy {
 		}
 	}
 
+	/// <summary>
+	/// Gets a pointer to the LCD registors
+	/// </summary>
+	/// <returns>Pointer to the current registors</returns>
+	LcdRegs* Lcd::getLcdRegistors() {
+		return &regs;
+	}
 
 	/// <summary>
 	/// Gets the bit value for the BG and Window enable/priority
 	/// </summary>
 	/// <returns>BG and Window enable/priority value</returns>
 	bit8 Lcd::getLCDCBgwEnable() {
-		return static_cast<bit8>(GETBIT(regs->lcdc, 0));
+		return static_cast<bit8>(GETBIT(regs.lcdc, 0));
 	}
 
 	/// <summary>
@@ -85,7 +91,7 @@ namespace TheBoy {
 	/// </summary>
 	/// <returns>OBJ enable value</returns>
 	bit8 Lcd::getLCDCObjEnable() {
-		return static_cast<bit8>(GETBIT(regs->lcdc, 1));
+		return static_cast<bit8>(GETBIT(regs.lcdc, 1));
 	}
 
 	/// <summary>
@@ -93,7 +99,7 @@ namespace TheBoy {
 	/// </summary>
 	/// <returns>OBJ size value</returns>
 	bit8 Lcd::getLCDCObjHeight() {
-		return GETBIT(regs->lcdc, 2) ? 0x10 : 0x8;
+		return GETBIT(regs.lcdc, 2) ? 0x10 : 0x8;
 	}
 
 	/// <summary>
@@ -101,7 +107,7 @@ namespace TheBoy {
 	/// </summary>
 	/// <returns>BG tile map area value</returns>
 	bit16 Lcd::getLCDCBgMapArea() {
-		return GETBIT(regs->lcdc, 3) ? 0x9C00 : 0x9800;
+		return GETBIT(regs.lcdc, 3) ? 0x9C00 : 0x9800;
 	}
 
 	/// <summary>
@@ -109,7 +115,7 @@ namespace TheBoy {
 	/// </summary>
 	/// <returns>BG and Window tile data area value</returns>
 	bit16 Lcd::getLCDCBdwDataArea() {
-		return GETBIT(regs->lcdc, 4) ? 0x8000 : 0x8800;
+		return GETBIT(regs.lcdc, 4) ? 0x8000 : 0x8800;
 	}
 
 	/// <summary>
@@ -117,7 +123,7 @@ namespace TheBoy {
 	/// </summary>
 	/// <returns>Window enable</returns>
 	bit8 Lcd::getLCDCWindEnable() {
-		return static_cast<bit8>(GETBIT(regs->lcdc, 5));
+		return static_cast<bit8>(GETBIT(regs.lcdc, 5));
 	}
 
 	/// <summary>
@@ -125,7 +131,7 @@ namespace TheBoy {
 	/// </summary>
 	/// <returns>Window tile map area value</returns>
 	bit16 Lcd::getLCDCWindMapArea() {
-		return GETBIT(regs->lcdc, 6) ? 0x9C00 : 0x9800;
+		return GETBIT(regs.lcdc, 6) ? 0x9C00 : 0x9800;
 	}
 
 	/// <summary>
@@ -133,7 +139,7 @@ namespace TheBoy {
 	/// </summary>
 	/// <returns>LCD and PPU enable value</returns>
 	bit8 Lcd::getLCDCLcdEnable() {
-		return static_cast<bit8>(GETBIT(regs->lcdc, 7));
+		return static_cast<bit8>(GETBIT(regs.lcdc, 7));
 	}
 
 	/// <summary>
@@ -141,7 +147,7 @@ namespace TheBoy {
 	/// </summary>
 	/// <returns>LCDMODE value</returns>
 	Lcd::LCDMODE Lcd::getLCDSMode() {
-		return static_cast<Lcd::LCDMODE>(regs->lcds & 0b11);
+		return static_cast<Lcd::LCDMODE>(regs.lcds & 0b11);
 	}
 
 	/// <summary>
@@ -149,8 +155,8 @@ namespace TheBoy {
 	/// </summary>
 	/// <param name="mode">LCD mode value</param>
 	void Lcd::setLCDSMode(Lcd::LCDMODE mode) {
-		regs->lcds &= ~0b11;
-		regs->lcds |= mode;
+		regs.lcds &= ~0b11;
+		regs.lcds |= static_cast<bit8>(mode);
 	}
 
 	/// <summary>
@@ -158,7 +164,7 @@ namespace TheBoy {
 	/// </summary>
 	/// <returns>LYC Value</returns>
 	bit8 Lcd::getLCDSLycFlag() {
-		return static_cast<bit8>(GETBIT(regs->lcds, 2));
+		return static_cast<bit8>(GETBIT(regs.lcds, 2));
 	}
 
 	/// <summary>
@@ -166,7 +172,7 @@ namespace TheBoy {
 	/// </summary>
 	/// <param name="value">LYC define value</param>
 	void Lcd::setLCDSLycFlag(bit8 value) {
-		SETBIT(regs->lcds, 2, value);
+		SETBIT(regs.lcds, 2, value);
 	}
 
 	/// <summary>
@@ -175,7 +181,7 @@ namespace TheBoy {
 	/// <param name="stat">Target Stat value</param>
 	/// <returns>Current stat flag value</returns>
 	bit8 Lcd::getLCDSStat(Lcd::LCDSSTATS stat) {
-		return static_cast<bit8>(regs->lcds & stat);
+		return static_cast<bit8>(regs.lcds & stat);
 	}
 
 	/// <summary>
@@ -183,21 +189,21 @@ namespace TheBoy {
 	/// </summary>
 	/// <returns>Vertical line current value</returns>
 	bit8 Lcd::getLyValue() {
-		return regs->ly;
+		return regs.ly;
 	}
 
 	/// <summary>
 	/// Resets the vertical line counter
 	/// </summary>
 	void Lcd::resetLyValue() {
-		regs->ly = 0;
+		regs.ly = 0;
 	}
 
 	/// <summary>
 	/// Increment the Vertical line counter
 	/// </summary>
 	void Lcd::incrementLy() {
-		regs->ly++;
+		regs.ly++;
 	}
 
 	/// <summary>
@@ -205,7 +211,7 @@ namespace TheBoy {
 	/// </summary>
 	/// <returns>LyCompare value</returns>
 	bit8 Lcd::getLyCompValue() {
-		return regs->lyComp;
+		return regs.lyComp;
 	}
 
 	void Lcd::updatePallet(bit8 palletAddr, bit8 val) {
