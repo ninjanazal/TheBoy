@@ -214,8 +214,25 @@ namespace TheBoy {
 		return regs.lyComp;
 	}
 
+	/// <summary>
+	/// Gets the Lcd Color by index
+	/// </summary>
+	/// <param name="index">Target index</param>
+	/// <returns>Defined index Color</returns>
+	bit32 Lcd::getColorByIndex(bit8 index) {
+		if ((sizeof(defaultColors) / sizeof(defaultColors[0])) > index) {
+			return defaultColors[index];
+		}
+		return 0x0;
+	}
+
+	/// <summary>
+	/// Updates the target pallet colors based on defined values
+	/// </summary>
+	/// <param name="palletAddr">Pallet addres element</param>
+	/// <param name="val">Target pallet group</param>
 	void Lcd::updatePallet(bit8 palletAddr, bit8 val) {
-		sf::Color* pColor = &*bgColorPallets;
+		bit32* pColor = &*bgColorPallets;
 		
 		switch (val)
 		{

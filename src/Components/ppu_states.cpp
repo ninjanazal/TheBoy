@@ -24,9 +24,9 @@ namespace TheBoy {
 		/// </summary>
 		/// <param name="ctrl">Reference to the Target emulatorController</param>
 		void mode_XFER(EmulatorController* ctrl) {
-			// Pipeline process
+			PixelPipe::PipelineStep(ctrl);
 			if (ctrl->getPpu()->getFifo()->pushedX >= Ppu::xRes) {
-				// pipeline fifo reset
+				PixelPipe::PipelineFiFoReset(ctrl);
 				ctrl->getLcd()->setLCDSMode(Lcd::LCDMODE::HBLANK);
 
 				if (ctrl->getLcd()->getLCDSStat(Lcd::LCDSSTATS::HBLANK_STAT)) {

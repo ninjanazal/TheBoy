@@ -279,6 +279,14 @@ namespace TheBoy {
 		/// <returns>LyCompare value</returns>
 		bit8 getLyCompValue();
 
+
+		/// <summary>
+		/// Gets the Lcd Color by index
+		/// </summary>
+		/// <param name="index">Target index</param>
+		/// <returns>Defined index Color</returns>
+		bit32 getColorByIndex(bit8 index);
+
 	private:
 		/// <summary>
 		/// Pointer to the target emulator controller
@@ -295,24 +303,24 @@ namespace TheBoy {
 		/// <summary>
 		/// Holds the defined background colors
 		/// </summary>
-		sf::Color bgColorPallets[4];
+		bit32 bgColorPallets[4];
 
 		/// <summary>
 		/// Defines the sprite1 colors
 		/// </summary>
-		sf::Color spriteColors1[4];
+		bit32 spriteColors1[4];
 
 		/// <summary>
 		/// Defines the sprite2 colors
 		/// </summary>
-		sf::Color spriteColors2[4];
+		bit32 spriteColors2[4];
 
 		// GameBoy color pallet representation
-		sf::Color defaultColors[4] = {
-			sf::Color::White,
-			sf::Color(210, 210, 210),
-			sf::Color(45, 45, 45),
-			sf::Color::Black
+		unsigned long defaultColors[4] = {
+			0xFFFFFFFF,
+			0xFFAAAAAA,
+			0xFF555555,
+			0xFF000000
 		};
 
 		/// <summary>
