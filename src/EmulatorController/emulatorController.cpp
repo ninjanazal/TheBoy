@@ -55,8 +55,6 @@ namespace TheBoy {
 	 * @param size Window size
 	 */
 	void EmulatorController::Start(const char* rom_path) {
-		comps.view = std::make_shared<EmulView>(this);
-
 		comps.bus = std::make_shared<AddressBus>(this);
 		comps.dma = std::make_shared<Dma>(this);
 		comps.ram = std::make_shared<Ram>(this);
@@ -70,6 +68,9 @@ namespace TheBoy {
 		comps.cpu = std::make_shared<Cpu>(this);
 
 		comps.cart = std::make_shared<Cartridge>(this, rom_path);
+
+		comps.view = std::make_shared<EmulView>(this);
+
 		if(!comps.cart->loadCartridgeFromFile()){
 			std::cout << "[Emulator] ::: Fail to load cartridge!" << std::endl;
 			return;

@@ -231,4 +231,12 @@ namespace TheBoy {
 		buffer[position] = val;
 	}
 
+	/// <summary>
+	/// Gets the pointer to the current ppu buffer
+	/// </summary>
+	/// <returns>Ppu buffer pointer</returns>
+	bit32* Ppu::getPpuBuffer() {
+		return buffer;
+	}
+
 } // namespace TheBoy

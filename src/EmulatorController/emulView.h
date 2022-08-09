@@ -142,11 +142,11 @@ namespace TheBoy {
 
 
 		// GameBoy color pallet representation
-		sf::Color gbPallet[4] = {
-			sf::Color::White,
-			sf::Color(210, 210, 210),
-			sf::Color(45, 45, 45),
-			sf::Color::Black
+		bit32 gbPallet[4] = {
+			0xFFFFFFFF,
+			0xACACACFF,
+			0x555555FF,
+			0x000000FF
 		};
 
 	#pragma endregion
@@ -181,6 +181,12 @@ namespace TheBoy {
 		 * @param tileId Current tile iD
 		 */
 		void addTileToDebug(bit16 addr, int tileId);
+
+
+		/// <summary>
+		/// Creates the output view
+		/// </summary>
+		void buildOutView();
 };	
 } // namespace TheBoy
 #endif

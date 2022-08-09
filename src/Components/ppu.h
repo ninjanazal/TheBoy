@@ -223,6 +223,13 @@ namespace TheBoy {
 		/// <param name="val">Defined value</param>
 		void setBufferValue(bit32 position, bit32 val);
 
+
+		/// <summary>
+		/// Gets the pointer to the current ppu buffer
+		/// </summary>
+		/// <returns>Ppu buffer pointer</returns>
+		bit32* getPpuBuffer();
+
 	private:
 		/**
 		 * @brief Pointer to the target emulator controller

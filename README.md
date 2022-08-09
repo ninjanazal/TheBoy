@@ -76,8 +76,12 @@ Use this script to gather all the information needed, compile e execute;
 	- [x] High RAM allocation and operations
 - [x] PPU
 	- [x] VRam viewer implementation
+	- [ ] Pixel Pipeline
+	- [x] PixelFiFo
 - [x] IO Interface
 	- [x] Serial interface
+- [ ] Main OutPut
+	- [x] Initial preview
 
 
 ---
@@ -111,3 +115,6 @@ Use this script to gather all the information needed, compile e execute;
 
 ``` VRam Viewer```
 ![VRam Viewer](prtSc/TestROM_Load.PNG)
+
+``` LCD View```
+![LCD View](prtSc/LcdDisplay_initial.PNG)
