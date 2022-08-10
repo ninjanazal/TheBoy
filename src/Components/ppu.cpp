@@ -114,7 +114,6 @@ namespace TheBoy {
 	void Ppu::write(bit16 addr, bit8 val) {
 		// Tile data is stored in VRAM in the memory area at $8000-$97FF;
 		vRam[addr - 0x8000] = val;
-
 	}
 
 

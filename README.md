@@ -118,3 +118,4 @@ Use this script to gather all the information needed, compile e execute;
 
 ``` LCD View```
 ![LCD View](prtSc/LcdDisplay_initial.PNG)
+![Dr. Mario](prtSc/Background_Draw_Dr_Mario.PNG)

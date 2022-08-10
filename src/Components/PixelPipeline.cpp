@@ -54,10 +54,10 @@ namespace TheBoy {
 		/// <param name="ctrl">Target Emulator controller</param>
 		void PipelineFetch(EmulatorController* ctrl) {
 			switch (ctrl->getPpu()->getFifo()->currState) {
-				/*
-				This step determines which background/window tile to fetch pixels from.
-				By default the tilemap used is the one at $9800 but certain conditions can change that.
-				*/
+			/*
+			This step determines which background/window tile to fetch pixels from.
+			By default the tilemap used is the one at $9800 but certain conditions can change that.
+			*/
 			case FIFOSTATE::FF_TILE: {
 				if (ctrl->getLcd()->getLCDCBgwEnable())
 				{
@@ -80,13 +80,13 @@ namespace TheBoy {
 				break;
 			}
 
-								   /*
-								   Check LCDC.4 for which tilemap to use.
-								   At this step CGB also needs to check which VRAM bank to use and check if the
-								   tile is flipped vertically. Once the tilemap, VRAM and vertical flip is calculated
-								   the tile data is retrieved from VRAM. However, if the PPU’s access to VRAM is blocked
-								   then the tile data is read as $FF.
-								   */
+			/*
+			*	Check LCDC.4 for which tilemap to use.
+			*	At this step CGB also needs to check which VRAM bank to use and check if the
+			*	tile is flipped vertically. Once the tilemap, VRAM and vertical flip is calculated
+			*	the tile data is retrieved from VRAM. However, if the PPU’s access to VRAM is blocked
+			*	then the tile data is read as $FF.
+			*/
 			case FIFOSTATE::FF_DATA_LOW: {
 				ctrl->getPpu()->getFifo()->bg_fetched[1] =
 					ctrl->getCpu()->requestBusRead(ctrl->getLcd()->getLCDCBdwDataArea() +
@@ -96,10 +96,10 @@ namespace TheBoy {
 				break;
 			}
 
-									   /*
-									   Same as Get Tile Data Low except the tile address is incremented by 1.
-									   The tile data retrieved in this step will be used in the push steps.
-									   */
+			/*
+			Same as Get Tile Data Low except the tile address is incremented by 1.
+			The tile data retrieved in this step will be used in the push steps.
+			*/
 			case FIFOSTATE::FF_DATA_HIGH: {
 				ctrl->getPpu()->getFifo()->bg_fetched[2] =
 					ctrl->getCpu()->requestBusRead(ctrl->getLcd()->getLCDCBdwDataArea() +
@@ -108,9 +108,10 @@ namespace TheBoy {
 				ctrl->getPpu()->getFifo()->currState = FIFOSTATE::FF_SLEEP;
 				break;
 			}
-										/*
-										Do nothing.
-										*/
+
+			/*
+			Do nothing.
+			*/
 			case FIFOSTATE::FF_SLEEP:
 				ctrl->getPpu()->getFifo()->currState = FIFOSTATE::FF_PUSH;
 				break;
@@ -186,10 +187,10 @@ namespace TheBoy {
 			for (int i = 0; i < 8; i++)
 			{
 				int bit = 7 - i;
-				bit8 lo = (ctrl->getPpu()->getFifo()->bg_fetched[1] & (1 << bit));
-				bit8 hi = (ctrl->getPpu()->getFifo()->bg_fetched[2] & (1 << bit)) << 1;
+				bit8 hi = static_cast<bool>(ctrl->getPpu()->getFifo()->bg_fetched[1] & (1 << bit));
+				bit8 lo = static_cast<bool>(ctrl->getPpu()->getFifo()->bg_fetched[2] & (1 << bit)) << 1;
 
-				bit32 col = ctrl->getLcd()->getColorByIndex((lo | hi));
+				bit32 col = ctrl->getLcd()->getColorByIndex((hi | lo));
 
 				if (x >= 0) {
 					FifoPush(ctrl, col);

@@ -248,6 +248,7 @@ namespace TheBoy {
 		/// </summary>
 		FIFO_DATA* fifo;
 
+
 		/**
 		 * @brief Memory allocation for the video Ram
 		 */
@@ -265,12 +266,10 @@ namespace TheBoy {
 		/// </summary>
 		bit32 cLineTicks;
 
-
 		/// <summary>
 		/// Output prixel buffer
 		/// </summary>
 		bit32* buffer;
-
 
 		/// <summary>
 		/// Target Frame time, default is the 60 frames per second in ms

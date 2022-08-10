@@ -657,7 +657,7 @@ namespace TheBoy{
 					bit8 rRes = static_cast<int8_t>(reg_value) >> 1;
 
 					cpu->setRegisterValueByte(rType, rRes);
-					cpu->setFlags(rRes == 0, 0, 0, reg_value & 0b1);
+					cpu->setFlags(rRes == 0, 0, 0, static_cast<bool>(reg_value & 0b1));
 					return;
 				}
 
