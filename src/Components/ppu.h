@@ -26,6 +26,16 @@ namespace TheBoy {
 	} OamElement;
 
 
+	/// <summary>
+	/// Defines the OAM line linked list
+	/// keep in mind, only 10 sprites can be presented per line
+	/// </summary>
+	typedef struct OamLineElement {
+		OamElement elm;
+		OamLineElement* next;
+	}OamLineElement;
+
+
 	class Ppu {	
 		/*
 		VRAM Sprite Attribute Table (OAM)
@@ -230,6 +240,77 @@ namespace TheBoy {
 		/// <returns>Ppu buffer pointer</returns>
 		bit32* getPpuBuffer();
 
+
+		/// <summary>
+		/// Defines the lineSprite counter
+		/// </summary>
+		/// <param name="val">New lineSprite counter value</param>
+		void setLineSpriteCounter(bit8 val);
+
+
+		/// <summary>
+		/// Gets the current line sprite counter value
+		/// </summary>
+		/// <returns>Current line sprite counter</returns>
+		bit8 getLineSpriteCounter();
+
+		/// <summary>
+		/// Incrementes the line sprite counter and returns
+		/// </summary>
+		/// <returns>incremented sprite counter</returns>
+		bit8 incrementAndGetLineCounter();
+
+
+		/// <summary>
+		/// Clears the lineElement link value
+		/// </summary>
+		void clearLineSpritePointer();
+
+
+		/// <summary>
+		/// Gets the current lineSprite pointer
+		/// </summary>
+		/// <returns>Line Sprite pointer</returns>
+		OamLineElement* getLineSpritePointer();
+
+
+		/// <summary>
+		/// Defines the Line sprite pointer
+		/// </summary>
+		/// <param name="pointer">New line sprite pointer</param>
+		void setLineSpritePointer(OamLineElement* pointer);
+
+
+		/// <summary>
+		/// Gets the oam ram entry by id
+		/// </summary>
+		/// <param name="id">Lookup id</param>
+		/// <returns>Element</returns>
+		OamElement* getOamRamElementId(bit8 id);
+
+
+		/// <summary>
+		/// Gets the LineSprite object data by id
+		/// </summary>
+		/// <param name="id">Target Id</param>
+		/// <returns>Pointer to te LineElement data object</returns>
+		OamLineElement* getLineSpriteById(bit8 id);
+
+
+		/// <summary>
+		/// Gets the current fetch entry counter value
+		/// </summary>
+		/// <returns>Fetched Entry counter value</returns>
+		bit8 getFetchedEntryCounter();
+
+
+		/// <summary>
+		/// Gets a fetched entry object by id
+		/// </summary>
+		/// <param name="id">Target id</param>
+		/// <returns>Return Element</returns>
+		OamElement getFetchedEntryById(bit8 id);
+
 	private:
 		/**
 		 * @brief Pointer to the target emulator controller
@@ -241,6 +322,36 @@ namespace TheBoy {
 		 * @brief Pointer to the available 40 OAM ram entries
 		 */
 		OamElement* oam_ram;
+
+
+		/// <summary>
+		/// Holds the sprite line counter
+		/// </summary>
+		bit8 lineSpriteCount;
+
+
+		/// <summary>
+		/// Pointer to the Entry OamLine Element
+		/// </summary>
+		OamLineElement* lSprites = nullptr;
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		OamLineElement lSpriteData[10];
+
+
+		/// <summary>
+		/// Fetch entry counter
+		/// </summary>
+		bit8 fetchedEntryCounter;
+
+
+		/// <summary>
+		/// Fetched entries holder
+		/// </summary>
+		OamElement fetchedEntries[3] { 0 };
 
 
 		/// <summary>
@@ -266,10 +377,12 @@ namespace TheBoy {
 		/// </summary>
 		bit32 cLineTicks;
 
+
 		/// <summary>
 		/// Output prixel buffer
 		/// </summary>
 		bit32* buffer;
+
 
 		/// <summary>
 		/// Target Frame time, default is the 60 frames per second in ms

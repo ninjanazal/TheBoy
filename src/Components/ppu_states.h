@@ -61,6 +61,14 @@ namespace TheBoy {
 		/// </summary>
 		/// <param name="ctrl">Reference to the current emulator controller</param>
 		void vertLineIncrement(EmulatorController* ctrl);
+
+
+		/// <summary>
+		/// Loads the Sprites for the target line
+		/// </summary>
+		/// <param name="ctrl">Reference to the current emulator controller</param>
+		void loadLineSpt(EmulatorController* ctrl);
+	
 	}
 }
 

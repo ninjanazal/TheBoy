@@ -187,10 +187,21 @@ namespace TheBoy {
 			for (int i = 0; i < 8; i++)
 			{
 				int bit = 7 - i;
-				bit8 hi = static_cast<bool>(ctrl->getPpu()->getFifo()->bg_fetched[1] & (1 << bit));
-				bit8 lo = static_cast<bool>(ctrl->getPpu()->getFifo()->bg_fetched[2] & (1 << bit)) << 1;
+				bit8 lo = static_cast<bool>(ctrl->getPpu()->getFifo()->bg_fetched[1] & (1 << bit));
+				bit8 hi = static_cast<bool>(ctrl->getPpu()->getFifo()->bg_fetched[2] & (1 << bit)) << 1;
 
 				bit32 col = ctrl->getLcd()->getColorByIndex((hi | lo));
+
+				// Background not enabled
+				if (!ctrl->getLcd()->getLCDCBgwEnable()) {
+					col = ctrl->getLcd()->getBgColorByIndex(0);
+				}
+
+				// Sprites enabled
+				if (ctrl->getLcd()->getLCDCObjEnable()) {
+					// fetch the sprite prixels
+					PipelineFetchSprite(ctrl, bit, col, ((hi | lo)));
+				}
 
 				if (x >= 0) {
 					FifoPush(ctrl, col);
@@ -210,6 +221,36 @@ namespace TheBoy {
 				FifoPop(ctrl);
 			}
 			ctrl->getPpu()->getFifo()->pixelFifo.head = nullptr;
+		}
+
+		/// <summary>
+		/// Fetch the sprite pixel colors
+		/// </summary>
+		/// <param name="ctrl">Target Emulator controller</param>
+		/// <param name="bit">Current Tile bit</param>
+		/// <param name="col">Background calculated color</param>
+		/// <param name="bgCol">Bg palette calculated id</param>
+		/// <returns></returns>
+		bit32 PipelineFetchSprite(EmulatorController* ctrl, int bit, bit32 col, bit8 bgCol) {
+			for (int i = 0; i < ctrl->getPpu()->getFetchedEntryCounter(); i++) {
+				int spX = (ctrl->getPpu()->getFetchedEntryById(i).x - 8) + 
+					((ctrl->getLcd()->getLcdRegistors()->scrollX % 8));
+
+				if (spX + 8 < ctrl->getPpu()->getFifo()->fifoX) {
+					// Pixel point passed
+					continue;
+				}
+
+				int offset = ctrl->getPpu()->getFifo()->fifoX - spX;
+				//Out of bounds
+				if (offset < 0 || offset > 7) {
+					continue;
+				}
+				// if sprite is flipped
+				bit = ctrl->getPpu()->getFetchedEntryById(i).xFlip ? offset : (7 - offset);
+				
+			}
+			return col;
 		}
 	}
 }

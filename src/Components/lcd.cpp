@@ -249,4 +249,13 @@ namespace TheBoy {
 		pColor[2] = defaultColors[(palletAddr >> 4) & 0b11];
 		pColor[3] = defaultColors[(palletAddr >> 6) & 0b11];
 	}
+
+	/// <summary>
+	/// Gets a color from the background group by index
+	/// </summary>
+	/// <param name="index">Target index</param>
+	/// <returns>Indexed color</returns>
+	bit32 Lcd::getBgColorByIndex(bit8 index) {
+		return bgColorPallets[index];
+	}
 }

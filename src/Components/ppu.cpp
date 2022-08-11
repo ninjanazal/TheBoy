@@ -22,6 +22,9 @@ namespace TheBoy {
 
 		fifo = new FIFO_DATA();
 		fifo->init();
+
+		lineSpriteCount = 0;
+		fetchedEntryCounter = 0;
 	}
 
 
@@ -236,6 +239,89 @@ namespace TheBoy {
 	/// <returns>Ppu buffer pointer</returns>
 	bit32* Ppu::getPpuBuffer() {
 		return buffer;
+	}
+
+	/// <summary>
+	/// Defines the lineSprite counter
+	/// </summary>
+	/// <param name="val">New lineSprite counter value</param>
+	void Ppu::setLineSpriteCounter(bit8 val) {
+		lineSpriteCount = val;
+	}
+
+	/// <summary>
+	/// Gets the current line sprite counter value
+	/// </summary>
+	/// <returns>Current line sprite counter</returns>
+	bit8 Ppu::getLineSpriteCounter() {
+		return lineSpriteCount;
+	}
+
+	/// <summary>
+	/// Incrementes the line sprite counter and returns
+	/// </summary>
+	/// <returns>incremented sprite counter</returns>
+	bit8 Ppu::incrementAndGetLineCounter() {
+		return ++lineSpriteCount;
+	}
+
+	/// <summary>
+	/// Clears the lineElement link value
+	/// </summary>
+	void Ppu::clearLineSpritePointer() {
+		lSprites = nullptr;
+	}
+
+
+	/// <summary>
+	/// Gets the current lineSprite pointer
+	/// </summary>
+	/// <returns>Line Sprite pointer</returns>
+	OamLineElement* Ppu::getLineSpritePointer() {
+		return lSprites;
+	}
+
+	/// <summary>
+	/// Defines the Line sprite pointer
+	/// </summary>
+	/// <param name="pointer">New line sprite pointer</param>
+	void Ppu::setLineSpritePointer(OamLineElement* pointer) {
+		lSprites = pointer;
+	}
+
+	/// <summary>
+	/// Gets the oam ram entry by id
+	/// </summary>
+	/// <param name="id">Lookup id</param>
+	/// <returns>Element</returns>
+	OamElement* Ppu::getOamRamElementId(bit8 id) {
+		return &(oam_ram[id]);
+	}
+
+	/// <summary>
+	/// Gets the LineSprite object data by id
+	/// </summary>
+	/// <param name="id">Target Id</param>
+	/// <returns>Pointer to te LineElement data object</returns>
+	OamLineElement* Ppu::getLineSpriteById(bit8 id) {
+		return &lSpriteData[id];
+	}
+
+	/// <summary>
+	/// Gets the current fetch entry counter value
+	/// </summary>
+	/// <returns>Fetched Entry counter value</returns>
+	bit8 Ppu::getFetchedEntryCounter() {
+		return fetchedEntryCounter;
+	}
+
+	/// <summary>
+	/// Gets a fetched entry object by id
+	/// </summary>
+	/// <param name="id">Target id</param>
+	/// <returns>Return Element</returns>
+	OamElement Ppu::getFetchedEntryById(bit8 id) {
+		return fetchedEntries[id];
 	}
 
 } // namespace TheBoy

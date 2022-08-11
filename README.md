@@ -100,7 +100,7 @@ Use this script to gather all the information needed, compile e execute;
 	- [x] 10-bit ops
 	- [x] 11-op a,(hl)
 	- [x] cpu_instrs
-	- [ ] daa
+	- [x] daa
 	- [ ] dmg-acid2
 	- [ ] instr_timing
 	- [ ] mem_timing

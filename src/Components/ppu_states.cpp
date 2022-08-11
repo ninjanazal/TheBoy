@@ -17,6 +17,13 @@ namespace TheBoy {
 				ctrl->getPpu()->getFifo()->pushedX = 0;
 				ctrl->getPpu()->getFifo()->fifoX = 0;
 			}
+
+			if (ctrl->getPpu()->getCurrentLineTicks() == 1) {
+				ctrl->getPpu()->clearLineSpritePointer();
+				ctrl->getPpu()->setLineSpriteCounter(0);
+
+				loadLineSpt(ctrl);
+			}
 		}
 
 		/// <summary>
@@ -118,6 +125,71 @@ namespace TheBoy {
 			else {
 				ctrl->getLcd()->setLCDSLycFlag(0);
 			}
+		}
+
+		/// <summary>
+		/// Loads the Sprites for the target line
+		/// </summary>
+		/// <param name="ctrl">Reference to the current emulator controller</param>
+		void loadLineSpt(EmulatorController* ctrl) {
+			int cY = ctrl->getLcd()->getLyValue();
+			bit8 sptHeight = ctrl->getLcd()->getLCDCObjHeight();
+
+			// reset array
+			for (int i = 0; i < 40; i++)
+			{
+				OamElement* entry = ctrl->getPpu()->getOamRamElementId(i);
+				// If x == 0, this is not visible
+				if (!entry->x) {
+					continue;
+				}
+
+				// Maximum sprites per line reached
+				if (ctrl->getPpu()->getLineSpriteCounter() >= 10) {
+					break;
+				}
+
+				// On the current line sprite
+				if ((entry->y <= cY + 16) && (entry->y + sptHeight > (cY + 16))) {
+					OamLineElement* e = ctrl->getPpu()->getLineSpriteById(
+						ctrl->getPpu()->incrementAndGetLineCounter());
+
+					if (entry != NULL) {
+						e->elm = *entry;
+						e->next = nullptr;
+					}
+
+					if (ctrl->getPpu()->getLineSpritePointer() == nullptr ||
+						ctrl->getPpu()->getLineSpritePointer()->elm.x > entry->x) {
+						e->next = ctrl->getPpu()->getLineSpritePointer();
+						ctrl->getPpu()->setLineSpritePointer(e);
+					}
+
+					// Sort the sprites
+					OamLineElement* left = ctrl->getPpu()->getLineSpritePointer();
+					OamLineElement* prev = left;
+
+					while (left)
+					{
+						if (left->elm.x > entry->x) {
+							//Should for fist 
+							prev->next = e;
+							if (e) {
+								e->next = left;
+							}
+							break;
+						}
+
+						if (!left->next) {
+							left->next = e;
+						}
+
+						prev = left;
+						left = left->next;
+					}
+				}
+			}
+
 		}
 	}
 }

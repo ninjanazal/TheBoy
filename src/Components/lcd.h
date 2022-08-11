@@ -287,6 +287,14 @@ namespace TheBoy {
 		/// <returns>Defined index Color</returns>
 		bit32 getColorByIndex(bit8 index);
 
+
+		/// <summary>
+		/// Gets a color from the background group by index
+		/// </summary>
+		/// <param name="index">Target index</param>
+		/// <returns>Indexed color</returns>
+		bit32 getBgColorByIndex(bit8 index);
+
 	private:
 		/// <summary>
 		/// Pointer to the target emulator controller

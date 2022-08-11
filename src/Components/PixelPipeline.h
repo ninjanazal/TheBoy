@@ -57,6 +57,17 @@ namespace TheBoy {
 		/// </summary>
 		/// <param name="ctrl">Target Emulator controller</param>
 		void PipelineFiFoReset(EmulatorController* ctrl);
+
+
+		/// <summary>
+		/// Fetch the sprite pixel colors
+		/// </summary>
+		/// <param name="ctrl">Target Emulator controller</param>
+		/// <param name="bit">Current Tile bit</param>
+		/// <param name="col">Background calculated color</param>
+		/// <param name="bgCol">Bg palette calculated id</param>
+		/// <returns></returns>
+		bit32 PipelineFetchSprite(EmulatorController* ctrl, int bit, bit32 col, bit8 bgCol);
 	}
 
 }
