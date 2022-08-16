@@ -258,4 +258,22 @@ namespace TheBoy {
 	bit32 Lcd::getBgColorByIndex(bit8 index) {
 		return bgColorPallets[index];
 	}
+
+	/// <summary>
+	/// Gets the sprite color by id from the first set
+	/// </summary>
+	/// <param name="id">Target color id</param>
+	/// <returns>Defined color</returns>
+	bit32 Lcd::getSpriteColorOneById(bit8 id) {
+		return spriteColors1[id];
+	}
+
+	/// <summary>
+	/// Gets the sprite color by id from the second set
+	/// </summary>
+	/// <param name="id">Target color id</param>
+	/// <returns>Defined color</returns>
+	bit32 Lcd::getSpriteColorTwoById(bit8 id) {
+		return spriteColors2[id];
+	}
 }

@@ -68,6 +68,15 @@ namespace TheBoy {
 		/// <param name="bgCol">Bg palette calculated id</param>
 		/// <returns></returns>
 		bit32 PipelineFetchSprite(EmulatorController* ctrl, int bit, bit32 col, bit8 bgCol);
+
+
+		/// <summary>
+		/// Loads the defined sprite tile to memory
+		/// </summary>
+		/// <param name="ctrl">Target Emulator controller</param>
+		void PipelineLoadSpriteTile(EmulatorController* ctrl);
+
+		void PipelineLoadSpriteData(EmulatorController* ctrl, bit8 offset);
 	}
 
 }

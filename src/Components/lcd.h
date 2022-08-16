@@ -295,6 +295,21 @@ namespace TheBoy {
 		/// <returns>Indexed color</returns>
 		bit32 getBgColorByIndex(bit8 index);
 
+		/// <summary>
+		/// Gets the sprite color by id from the first set
+		/// </summary>
+		/// <param name="id">Target color id</param>
+		/// <returns>Defined color</returns>
+		bit32 getSpriteColorOneById(bit8 id);
+
+
+		/// <summary>
+		/// Gets the sprite color by id from the second set
+		/// </summary>
+		/// <param name="id">Target color id</param>
+		/// <returns>Defined color</returns>
+		bit32 getSpriteColorTwoById(bit8 id);
+
 	private:
 		/// <summary>
 		/// Pointer to the target emulator controller

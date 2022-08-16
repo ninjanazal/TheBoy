@@ -316,6 +316,20 @@ namespace TheBoy {
 	}
 
 	/// <summary>
+	/// Defines the new fetch entry counter value
+	/// </summary>
+	/// <param name="val">New value</param>
+	void Ppu::setFetchedEntryCounter(bit8 val) {
+		fetchedEntryCounter = val;
+	}
+
+	bit8 Ppu::incrementAndGetFetchedCounter() {
+		return ++fetchedEntryCounter;
+	}
+
+
+
+	/// <summary>
 	/// Gets a fetched entry object by id
 	/// </summary>
 	/// <param name="id">Target id</param>
@@ -324,4 +338,12 @@ namespace TheBoy {
 		return fetchedEntries[id];
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="id"></param>
+	/// <param name="elm"></param>
+	void Ppu::setFetchedEntryById(bit8 id, OamElement elm) {
+		fetchedEntries[id] = elm;
+	}
 } // namespace TheBoy

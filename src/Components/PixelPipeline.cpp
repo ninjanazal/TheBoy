@@ -54,11 +54,13 @@ namespace TheBoy {
 		/// <param name="ctrl">Target Emulator controller</param>
 		void PipelineFetch(EmulatorController* ctrl) {
 			switch (ctrl->getPpu()->getFifo()->currState) {
-			/*
-			This step determines which background/window tile to fetch pixels from.
-			By default the tilemap used is the one at $9800 but certain conditions can change that.
-			*/
+				/*
+				This step determines which background/window tile to fetch pixels from.
+				By default the tilemap used is the one at $9800 but certain conditions can change that.
+				*/
 			case FIFOSTATE::FF_TILE: {
+				ctrl->getPpu()->setFetchedEntryCounter(0);
+
 				if (ctrl->getLcd()->getLCDCBgwEnable())
 				{
 					// Loading 8 pixels per iteration
@@ -72,6 +74,10 @@ namespace TheBoy {
 					if (ctrl->getLcd()->getLCDCBdwDataArea() == 0x8800) {
 						ctrl->getPpu()->getFifo()->bg_fetched[0] += 128;
 					}
+				}
+
+				if (ctrl->getLcd()->getLCDCObjEnable() && ctrl->getPpu()->getLineSpritePointer()) {
+					PipelineLoadSpriteTile(ctrl);
 				}
 
 				ctrl->getPpu()->getFifo()->currState = FIFOSTATE::FF_DATA_LOW;
@@ -92,6 +98,8 @@ namespace TheBoy {
 					ctrl->getCpu()->requestBusRead(ctrl->getLcd()->getLCDCBdwDataArea() +
 						(ctrl->getPpu()->getFifo()->bg_fetched[0] * 16) + ctrl->getPpu()->getFifo()->tileY
 					);
+
+
 				ctrl->getPpu()->getFifo()->currState = FIFOSTATE::FF_DATA_HIGH;
 				break;
 			}
@@ -109,9 +117,9 @@ namespace TheBoy {
 				break;
 			}
 
-			/*
-			Do nothing.
-			*/
+										/*
+										Do nothing.
+										*/
 			case FIFOSTATE::FF_SLEEP:
 				ctrl->getPpu()->getFifo()->currState = FIFOSTATE::FF_PUSH;
 				break;
@@ -233,7 +241,7 @@ namespace TheBoy {
 		/// <returns></returns>
 		bit32 PipelineFetchSprite(EmulatorController* ctrl, int bit, bit32 col, bit8 bgCol) {
 			for (int i = 0; i < ctrl->getPpu()->getFetchedEntryCounter(); i++) {
-				int spX = (ctrl->getPpu()->getFetchedEntryById(i).x - 8) + 
+				int spX = (ctrl->getPpu()->getFetchedEntryById(i).x - 8) +
 					((ctrl->getLcd()->getLcdRegistors()->scrollX % 8));
 
 				if (spX + 8 < ctrl->getPpu()->getFifo()->fifoX) {
@@ -248,9 +256,72 @@ namespace TheBoy {
 				}
 				// if sprite is flipped
 				bit = ctrl->getPpu()->getFetchedEntryById(i).xFlip ? offset : (7 - offset);
-				
+
+				bit8 lo = static_cast<bool>(ctrl->getPpu()->getFifo()->fetch_data[i * 2] & (1 << bit));
+				bit8 hi = static_cast<bool>(ctrl->getPpu()->getFifo()->fetch_data[(i * 2) + 1] & (1 << bit) << 1);
+
+				bool bgPriority = ctrl->getPpu()->getFetchedEntryById(i).bgWind;
+
+				// If the pixel is transparent
+				if (!(lo | hi)) {
+					continue;
+				}
+
+				if (!bgPriority || bgCol == 0) {
+					col = (ctrl->getPpu()->getFetchedEntryById(i).paltN) ?
+						ctrl->getLcd()->getSpriteColorTwoById((lo | hi)) :
+						ctrl->getLcd()->getSpriteColorOneById((lo | hi));
+
+					if (lo | hi) {
+						break;
+					}
+				}
 			}
 			return col;
+		}
+
+		/// <summary>
+		/// Loads the defined sprite tile to memory
+		/// </summary>
+		/// <param name="ctrl">Target Emulator controller</param>
+		void PipelineLoadSpriteTile(EmulatorController* ctrl) {
+			OamLineElement* lineS = ctrl->getPpu()->getLineSpritePointer();
+
+			while (lineS)
+			{
+				int spX = (lineS->elm.x - 8) + (ctrl->getLcd()->getLcdRegistors()->scrollX % 8);
+				if ((spX >= ctrl->getPpu()->getFifo()->fetchedX && spX < ctrl->getPpu()->getFifo()->fetchedX + 8) ||
+					((spX + 8) >= ctrl->getPpu()->getFifo()->fetchedX && (spX + 8) < ctrl->getPpu()->getFifo()->fetchedX + 8)) {
+					ctrl->getPpu()->setFetchedEntryById(
+						ctrl->getPpu()->incrementAndGetFetchedCounter(), lineS->elm);
+				}
+
+				lineS = lineS->next;
+
+				// Ended linked list or sprite limit reached
+				if (!lineS || ctrl->getPpu()->getFetchedEntryCounter() >= 3) {
+					break;
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Loads the sprite from the data, using offset
+		/// </summary>
+		/// <param name="offset">Target Emulator controller</param>
+		void PipelineLoadSpriteData(EmulatorController* ctrl, bit8 offset) {
+			int currLy = ctrl->getLcd()->getLyValue();
+			bit8 spriteH = ctrl->getLcd()->getLCDCObjHeight();
+
+			for (int i = 0; i < ctrl->getPpu()->getFetchedEntryCounter(); i++) {
+				bit8 tileY = ((currLy + 16) - ctrl->getPpu()->getFetchedEntryById(i).y * 2);
+
+				if (ctrl->getPpu()->getFetchedEntryById(i).yFlip) {
+					// flipped vertical
+					tileY = ((spriteH * 2) - 2) - tileY;
+				}
+			}
 		}
 	}
 }

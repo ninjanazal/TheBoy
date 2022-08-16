@@ -305,11 +305,33 @@ namespace TheBoy {
 
 
 		/// <summary>
+		/// Defines the new fetch entry counter value
+		/// </summary>
+		/// <param name="val">New value</param>
+		void setFetchedEntryCounter(bit8 val);
+
+		/// <summary>
+		/// Increment and return the current fetched entry counter
+		/// </summary>
+		/// <returns>Current entry counter value</returns>
+		bit8 incrementAndGetFetchedCounter();
+
+
+		/// <summary>
 		/// Gets a fetched entry object by id
 		/// </summary>
 		/// <param name="id">Target id</param>
 		/// <returns>Return Element</returns>
 		OamElement getFetchedEntryById(bit8 id);
+
+
+		/// <summary>
+		/// Defines the fetched Entry id slot to the element
+		/// </summary>
+		/// <param name="id">Target id slot</param>
+		/// <param name="elm">Target element</param>
+		void setFetchedEntryById(bit8 id, OamElement elm);
+
 
 	private:
 		/**
