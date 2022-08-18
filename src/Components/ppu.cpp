@@ -20,6 +20,9 @@ namespace TheBoy {
 		
 		//memset(oam_ram, 0, sizeof(oam_ram));
 
+		lineSpriteCount = 0;
+		fetchedEntryCounter = 0;
+
 		fifo = new FIFO_DATA();
 		fifo->init();
 
@@ -262,14 +265,14 @@ namespace TheBoy {
 	/// </summary>
 	/// <returns>incremented sprite counter</returns>
 	bit8 Ppu::incrementAndGetLineCounter() {
-		return ++lineSpriteCount;
+		return lineSpriteCount++;
 	}
 
 	/// <summary>
 	/// Clears the lineElement link value
 	/// </summary>
 	void Ppu::clearLineSpritePointer() {
-		lSprites = nullptr;
+		lSprites = NULL;
 	}
 
 
@@ -294,8 +297,8 @@ namespace TheBoy {
 	/// </summary>
 	/// <param name="id">Lookup id</param>
 	/// <returns>Element</returns>
-	OamElement* Ppu::getOamRamElementId(bit8 id) {
-		return &(oam_ram[id]);
+	OamElement Ppu::getOamRamElementId(bit8 id) {
+		return oam_ram[id];
 	}
 
 	/// <summary>
@@ -304,7 +307,7 @@ namespace TheBoy {
 	/// <param name="id">Target Id</param>
 	/// <returns>Pointer to te LineElement data object</returns>
 	OamLineElement* Ppu::getLineSpriteById(bit8 id) {
-		return &lSpriteData[id];
+		return &(lSpriteData[id]);
 	}
 
 	/// <summary>

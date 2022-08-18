@@ -21,11 +21,11 @@ namespace TheBoy {
 		
 		Mode 3
 			Drawing pixels
-			172–289 dots
+			172ï¿½289 dots
 		
 		Mode 0
 			Horizontal blank
-			87–204 dots	
+			87ï¿½204 dots	
 
 		*/
 

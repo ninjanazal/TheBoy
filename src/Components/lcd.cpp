@@ -64,9 +64,13 @@ namespace TheBoy {
 			updatePallet(value, 0);
 		}
 		// FF48 - OBP0 (OBJ Palette 0 Data) (R/W)
-		else if (addres == 0xFF48 || addres == 0xFF49) {
+		else if (addres == 0xFF48) {
 			// Since the last 2 bits should be ignored, transparent
 			updatePallet((value & 0b11111100), 1);
+		}
+		else if (addres == 0xFF49) {
+			updatePallet((value & 0b11111100), 2);
+
 		}
 	}
 

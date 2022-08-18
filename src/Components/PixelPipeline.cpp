@@ -76,7 +76,7 @@ namespace TheBoy {
 					}
 				}
 
-				if (ctrl->getLcd()->getLCDCObjEnable() && ctrl->getPpu()->getLineSpritePointer()) {
+				if (ctrl->getLcd()->getLCDCObjEnable() && ctrl->getPpu()->getLineSpritePointer() != NULL) {
 					PipelineLoadSpriteTile(ctrl);
 				}
 
@@ -198,7 +198,7 @@ namespace TheBoy {
 				bit8 lo = static_cast<bool>(ctrl->getPpu()->getFifo()->bg_fetched[1] & (1 << bit));
 				bit8 hi = static_cast<bool>(ctrl->getPpu()->getFifo()->bg_fetched[2] & (1 << bit)) << 1;
 
-				bit32 col = ctrl->getLcd()->getColorByIndex((hi | lo));
+				bit32 col = ctrl->getLcd()->getColorByIndex((lo | hi));
 
 				// Background not enabled
 				if (!ctrl->getLcd()->getLCDCBgwEnable()) {
@@ -287,7 +287,7 @@ namespace TheBoy {
 		void PipelineLoadSpriteTile(EmulatorController* ctrl) {
 			OamLineElement* lineS = ctrl->getPpu()->getLineSpritePointer();
 
-			while (lineS)
+			while (lineS != NULL)
 			{
 				int spX = (lineS->elm.x - 8) + (ctrl->getLcd()->getLcdRegistors()->scrollX % 8);
 				if ((spX >= ctrl->getPpu()->getFifo()->fetchedX && spX < ctrl->getPpu()->getFifo()->fetchedX + 8) ||
@@ -299,7 +299,7 @@ namespace TheBoy {
 				lineS = lineS->next;
 
 				// Ended linked list or sprite limit reached
-				if (!lineS || ctrl->getPpu()->getFetchedEntryCounter() >= 3) {
+				if (lineS == NULL || ctrl->getPpu()->getFetchedEntryCounter() >= 3) {
 					break;
 				}
 			}

@@ -25,16 +25,14 @@ namespace TheBoy {
 		unsigned bgWind		: 1;
 	} OamElement;
 
-
 	/// <summary>
 	/// Defines the OAM line linked list
 	/// keep in mind, only 10 sprites can be presented per line
 	/// </summary>
 	typedef struct OamLineElement {
 		OamElement elm;
-		OamLineElement* next;
+		OamLineElement* next = NULL;
 	}OamLineElement;
-
 
 	class Ppu {	
 		/*
@@ -286,7 +284,7 @@ namespace TheBoy {
 		/// </summary>
 		/// <param name="id">Lookup id</param>
 		/// <returns>Element</returns>
-		OamElement* getOamRamElementId(bit8 id);
+		OamElement getOamRamElementId(bit8 id);
 
 
 		/// <summary>
@@ -355,7 +353,7 @@ namespace TheBoy {
 		/// <summary>
 		/// Pointer to the Entry OamLine Element
 		/// </summary>
-		OamLineElement* lSprites = nullptr;
+		OamLineElement* lSprites = NULL;
 
 
 		/// <summary>

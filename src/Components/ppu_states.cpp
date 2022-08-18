@@ -86,8 +86,8 @@ namespace TheBoy {
 					}
 
 					if (currTick - ctrl->getPpu()->getInitialTimer() >= 1000) {
-						char* msgBuffer(new char[64]{});
-						sprintf_s(msgBuffer, 64, 
+						char* msgBuffer(new char[64] {});
+						sprintf_s(msgBuffer, 64,
 							"-> Ppu Frames: %d", ctrl->getPpu()->getFrameCount());
 
 						ctrl->getView()->setPpuFrameCount(msgBuffer);
@@ -138,9 +138,9 @@ namespace TheBoy {
 			// reset array
 			for (int i = 0; i < 40; i++)
 			{
-				OamElement* entry = ctrl->getPpu()->getOamRamElementId(i);
+				OamElement e = ctrl->getPpu()->getOamRamElementId(i);
 				// If x == 0, this is not visible
-				if (!entry->x) {
+				if (!e.x) {
 					continue;
 				}
 
@@ -150,38 +150,34 @@ namespace TheBoy {
 				}
 
 				// On the current line sprite
-				if ((entry->y <= cY + 16) && (entry->y + sptHeight > (cY + 16))) {
-					OamLineElement* e = ctrl->getPpu()->getLineSpriteById(
+				if ((e.y <= cY + 16) && (e.y + sptHeight > (cY + 16))) {
+					OamLineElement* entry = ctrl->getPpu()->getLineSpriteById(
 						ctrl->getPpu()->incrementAndGetLineCounter());
 
-					if (entry != NULL) {
-						e->elm = *entry;
-						e->next = nullptr;
-					}
+					entry->elm = e;
+					entry->next = NULL;
 
-					if (ctrl->getPpu()->getLineSpritePointer() == nullptr ||
-						ctrl->getPpu()->getLineSpritePointer()->elm.x > entry->x) {
-						e->next = ctrl->getPpu()->getLineSpritePointer();
-						ctrl->getPpu()->setLineSpritePointer(e);
+					if (ctrl->getPpu()->getLineSpritePointer() == NULL ||
+							ctrl->getPpu()->getLineSpritePointer()->elm.x > e.x) {
+						entry->next = ctrl->getPpu()->getLineSpritePointer();
+						ctrl->getPpu()->setLineSpritePointer(entry);
+						continue;
 					}
 
 					// Sort the sprites
 					OamLineElement* left = ctrl->getPpu()->getLineSpritePointer();
 					OamLineElement* prev = left;
 
-					while (left)
-					{
-						if (left->elm.x > entry->x) {
+					while (left != NULL) {
+						if (left->elm.x > e.x) {
 							//Should for fist 
-							prev->next = e;
-							if (e) {
-								e->next = left;
-							}
+							prev->next = entry;
+							entry->next = left;
 							break;
 						}
 
-						if (!left->next) {
-							left->next = e;
+						if (left->next != NULL) {
+							left->next = entry;
 						}
 
 						prev = left;
