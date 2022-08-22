@@ -326,6 +326,11 @@ namespace TheBoy {
 		fetchedEntryCounter = val;
 	}
 
+
+	/// <summary>
+	/// Increment and return the current fetched entry counter
+	/// </summary>
+	/// <returns>Current entry counter value</returns>
 	bit8 Ppu::incrementAndGetFetchedCounter() {
 		return ++fetchedEntryCounter;
 	}

@@ -76,50 +76,51 @@ namespace TheBoy {
 					}
 				}
 
-				if (ctrl->getLcd()->getLCDCObjEnable() && ctrl->getPpu()->getLineSpritePointer() != NULL) {
+				if (ctrl->getLcd()->getLCDCObjEnable() && (ctrl->getPpu()->getLineSpritePointer() != NULL)) {
 					PipelineLoadSpriteTile(ctrl);
 				}
 
 				ctrl->getPpu()->getFifo()->currState = FIFOSTATE::FF_DATA_LOW;
 				ctrl->getPpu()->getFifo()->fetchedX += 8;
 
-				break;
-			}
+			} break;
 
-			/*
-			*	Check LCDC.4 for which tilemap to use.
-			*	At this step CGB also needs to check which VRAM bank to use and check if the
-			*	tile is flipped vertically. Once the tilemap, VRAM and vertical flip is calculated
-			*	the tile data is retrieved from VRAM. However, if the PPU’s access to VRAM is blocked
-			*	then the tile data is read as $FF.
-			*/
+				/*
+				*	Check LCDC.4 for which tilemap to use.
+				*	At this step CGB also needs to check which VRAM bank to use and check if the
+				*	tile is flipped vertically. Once the tilemap, VRAM and vertical flip is calculated
+				*	the tile data is retrieved from VRAM. However, if the PPU’s access to VRAM is blocked
+				*	then the tile data is read as $FF.
+				*/
 			case FIFOSTATE::FF_DATA_LOW: {
 				ctrl->getPpu()->getFifo()->bg_fetched[1] =
 					ctrl->getCpu()->requestBusRead(ctrl->getLcd()->getLCDCBdwDataArea() +
 						(ctrl->getPpu()->getFifo()->bg_fetched[0] * 16) + ctrl->getPpu()->getFifo()->tileY
 					);
 
-
+				PipelineLoadSpriteData(ctrl, 0);
 				ctrl->getPpu()->getFifo()->currState = FIFOSTATE::FF_DATA_HIGH;
-				break;
-			}
 
-			/*
-			Same as Get Tile Data Low except the tile address is incremented by 1.
-			The tile data retrieved in this step will be used in the push steps.
-			*/
+			} break;
+
+				/*
+				Same as Get Tile Data Low except the tile address is incremented by 1.
+				The tile data retrieved in this step will be used in the push steps.
+				*/
 			case FIFOSTATE::FF_DATA_HIGH: {
 				ctrl->getPpu()->getFifo()->bg_fetched[2] =
 					ctrl->getCpu()->requestBusRead(ctrl->getLcd()->getLCDCBdwDataArea() +
 						(ctrl->getPpu()->getFifo()->bg_fetched[0] * 16) + ctrl->getPpu()->getFifo()->tileY + 1
 					);
-				ctrl->getPpu()->getFifo()->currState = FIFOSTATE::FF_SLEEP;
-				break;
-			}
 
-										/*
-										Do nothing.
-										*/
+				PipelineLoadSpriteData(ctrl, 1);
+				ctrl->getPpu()->getFifo()->currState = FIFOSTATE::FF_SLEEP;
+
+			}break;
+
+				/*
+				Do nothing.
+				*/
 			case FIFOSTATE::FF_SLEEP:
 				ctrl->getPpu()->getFifo()->currState = FIFOSTATE::FF_PUSH;
 				break;
@@ -134,8 +135,8 @@ namespace TheBoy {
 				if (PipelineFiFoAdd(ctrl)) {
 					ctrl->getPpu()->getFifo()->currState = FIFOSTATE::FF_TILE;
 				}
-				break;
-			}
+
+			}break;
 			}
 		}
 
@@ -208,7 +209,7 @@ namespace TheBoy {
 				// Sprites enabled
 				if (ctrl->getLcd()->getLCDCObjEnable()) {
 					// fetch the sprite prixels
-					PipelineFetchSprite(ctrl, bit, col, ((hi | lo)));
+					col = PipelineFetchSprite(ctrl, bit, col, lo | hi);
 				}
 
 				if (x >= 0) {
@@ -228,7 +229,7 @@ namespace TheBoy {
 			{
 				FifoPop(ctrl);
 			}
-			ctrl->getPpu()->getFifo()->pixelFifo.head = nullptr;
+			ctrl->getPpu()->getFifo()->pixelFifo.head = 0;
 		}
 
 		/// <summary>
@@ -240,9 +241,9 @@ namespace TheBoy {
 		/// <param name="bgCol">Bg palette calculated id</param>
 		/// <returns></returns>
 		bit32 PipelineFetchSprite(EmulatorController* ctrl, int bit, bit32 col, bit8 bgCol) {
-			for (int i = 0; i < ctrl->getPpu()->getFetchedEntryCounter(); i++) {
+			for (bit8 i = 0; i < ctrl->getPpu()->getFetchedEntryCounter(); i++) {
 				int spX = (ctrl->getPpu()->getFetchedEntryById(i).x - 8) +
-					((ctrl->getLcd()->getLcdRegistors()->scrollX % 8));
+					(ctrl->getLcd()->getLcdRegistors()->scrollX % 8);
 
 				if (spX + 8 < ctrl->getPpu()->getFifo()->fifoX) {
 					// Pixel point passed
@@ -258,7 +259,7 @@ namespace TheBoy {
 				bit = ctrl->getPpu()->getFetchedEntryById(i).xFlip ? offset : (7 - offset);
 
 				bit8 lo = static_cast<bool>(ctrl->getPpu()->getFifo()->fetch_data[i * 2] & (1 << bit));
-				bit8 hi = static_cast<bool>(ctrl->getPpu()->getFifo()->fetch_data[(i * 2) + 1] & (1 << bit) << 1);
+				bit8 hi = static_cast<bool>(ctrl->getPpu()->getFifo()->fetch_data[(i * 2) + 1] & (1 << bit)) << 1;
 
 				bool bgPriority = ctrl->getPpu()->getFetchedEntryById(i).bgWind;
 
@@ -269,8 +270,7 @@ namespace TheBoy {
 
 				if (!bgPriority || bgCol == 0) {
 					col = (ctrl->getPpu()->getFetchedEntryById(i).paltN) ?
-						ctrl->getLcd()->getSpriteColorTwoById((lo | hi)) :
-						ctrl->getLcd()->getSpriteColorOneById((lo | hi));
+						ctrl->getLcd()->getSpriteColorTwoById(lo | hi) : ctrl->getLcd()->getSpriteColorOneById(lo | hi);
 
 					if (lo | hi) {
 						break;
@@ -315,12 +315,22 @@ namespace TheBoy {
 			bit8 spriteH = ctrl->getLcd()->getLCDCObjHeight();
 
 			for (int i = 0; i < ctrl->getPpu()->getFetchedEntryCounter(); i++) {
-				bit8 tileY = ((currLy + 16) - ctrl->getPpu()->getFetchedEntryById(i).y * 2);
+				bit8 tileY = ((currLy + 16) - ctrl->getPpu()->getFetchedEntryById(i).y) * 2;
 
 				if (ctrl->getPpu()->getFetchedEntryById(i).yFlip) {
 					// flipped vertical
 					tileY = ((spriteH * 2) - 2) - tileY;
 				}
+
+				bit8 tileId = ctrl->getPpu()->getFetchedEntryById(i).tIndex;
+
+				// Removing last bit if size is 16 ???
+				if (spriteH == 16) {
+					tileId &= ~(1);
+				}
+
+				ctrl->getPpu()->getFifo()->fetch_data[(i * 2) + offset] =
+					ctrl->getCpu()->requestBusRead(0x8000 + (tileId * 16) + tileY + offset);
 			}
 		}
 	}
