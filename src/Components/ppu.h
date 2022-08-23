@@ -331,6 +331,11 @@ namespace TheBoy {
 		void setFetchedEntryById(bit8 id, OamElement elm);
 
 
+		/// <summary>
+		/// Resets the sprite line data array
+		/// </summary>
+		void resetLineData();
+
 	private:
 		/**
 		 * @brief Pointer to the target emulator controller
@@ -359,7 +364,7 @@ namespace TheBoy {
 		/// <summary>
 		/// 
 		/// </summary>
-		OamLineElement lSpriteData[10];
+		OamLineElement lSpriteData[10] { 0 };
 
 
 		/// <summary>

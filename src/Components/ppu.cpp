@@ -54,9 +54,8 @@ namespace TheBoy {
 	 */
 	void Ppu::step() {
 		cLineTicks++;
-		Lcd::LCDMODE curr = emulCtrl->getLcd()->getLCDSMode();
 
-		switch (curr) {
+		switch (emulCtrl->getLcd()->getLCDSMode()) {
 		case Lcd::LCDMODE::OAM:
 			PpuStates::mode_OAM(emulCtrl);
 			break;
@@ -310,6 +309,7 @@ namespace TheBoy {
 		return &(lSpriteData[id]);
 	}
 
+
 	/// <summary>
 	/// Gets the current fetch entry counter value
 	/// </summary>
@@ -332,9 +332,8 @@ namespace TheBoy {
 	/// </summary>
 	/// <returns>Current entry counter value</returns>
 	bit8 Ppu::incrementAndGetFetchedCounter() {
-		return ++fetchedEntryCounter;
+		return fetchedEntryCounter++;
 	}
-
 
 
 	/// <summary>
@@ -353,5 +352,12 @@ namespace TheBoy {
 	/// <param name="elm"></param>
 	void Ppu::setFetchedEntryById(bit8 id, OamElement elm) {
 		fetchedEntries[id] = elm;
+	}
+
+	/// <summary>
+	/// Resets the sprite line data array
+	/// </summary>
+	void Ppu::resetLineData() {
+		memset(lSpriteData, 0, sizeof(lSpriteData));
 	}
 } // namespace TheBoy

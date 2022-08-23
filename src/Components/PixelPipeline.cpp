@@ -11,11 +11,11 @@ namespace TheBoy {
 		/// <param name="value">Push value</param>
 		void FifoPush(EmulatorController* ctrl, bit32 value) {
 			FIFO_Value* next = new FIFO_Value();
-			next->next = nullptr;
+			next->next = NULL;
 			next->color = value;
 
 			// Initial entry, set the head and tail to the created next
-			if (!ctrl->getPpu()->getFifo()->pixelFifo.head) {
+			if (ctrl->getPpu()->getFifo()->pixelFifo.head == NULL) {
 				ctrl->getPpu()->getFifo()->pixelFifo.head = ctrl->getPpu()->getFifo()->pixelFifo.tail = next;
 			}
 			else {
@@ -229,7 +229,7 @@ namespace TheBoy {
 			{
 				FifoPop(ctrl);
 			}
-			ctrl->getPpu()->getFifo()->pixelFifo.head = 0;
+			ctrl->getPpu()->getFifo()->pixelFifo.head = NULL;
 		}
 
 		/// <summary>
@@ -245,7 +245,7 @@ namespace TheBoy {
 				int spX = (ctrl->getPpu()->getFetchedEntryById(i).x - 8) +
 					(ctrl->getLcd()->getLcdRegistors()->scrollX % 8);
 
-				if (spX + 8 < ctrl->getPpu()->getFifo()->fifoX) {
+				if ((spX + 8) < ctrl->getPpu()->getFifo()->fifoX) {
 					// Pixel point passed
 					continue;
 				}
@@ -259,7 +259,7 @@ namespace TheBoy {
 				bit = ctrl->getPpu()->getFetchedEntryById(i).xFlip ? offset : (7 - offset);
 
 				bit8 lo = static_cast<bool>(ctrl->getPpu()->getFifo()->fetch_data[i * 2] & (1 << bit));
-				bit8 hi = static_cast<bool>(ctrl->getPpu()->getFifo()->fetch_data[(i * 2) + 1] & (1 << bit)) << 1;
+				bit8 hi = static_cast<bool>((ctrl->getPpu()->getFifo()->fetch_data[(i * 2) + 1] & (1 << bit))) << 1;
 
 				bool bgPriority = ctrl->getPpu()->getFetchedEntryById(i).bgWind;
 

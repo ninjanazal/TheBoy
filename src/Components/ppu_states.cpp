@@ -32,6 +32,7 @@ namespace TheBoy {
 		/// <param name="ctrl">Reference to the Target emulatorController</param>
 		void mode_XFER(EmulatorController* ctrl) {
 			PixelPipe::PipelineStep(ctrl);
+
 			if (ctrl->getPpu()->getFifo()->pushedX >= Ppu::xRes) {
 				PixelPipe::PipelineFiFoReset(ctrl);
 				ctrl->getLcd()->setLCDSMode(Lcd::LCDMODE::HBLANK);
@@ -67,7 +68,7 @@ namespace TheBoy {
 			if (ctrl->getPpu()->getCurrentLineTicks() >= Ppu::TicksPerLine) {
 				vertLineIncrement(ctrl);
 
-				if (ctrl->getLcd()->getLyValue() == Ppu::yRes) {
+				if (ctrl->getLcd()->getLyValue() >= Ppu::yRes) {
 					ctrl->getLcd()->setLCDSMode(Lcd::LCDMODE::VBLANK);
 
 					ctrl->getCpu()->requestInterrupt(InterruptFuncs::InterruptType::INTR_VBLANK);
@@ -136,6 +137,7 @@ namespace TheBoy {
 			bit8 sptHeight = ctrl->getLcd()->getLCDCObjHeight();
 
 			// reset array
+			ctrl->getPpu()->resetLineData();
 			for (int i = 0; i < 40; i++)
 			{
 				OamElement e = ctrl->getPpu()->getOamRamElementId(i);
@@ -150,7 +152,7 @@ namespace TheBoy {
 				}
 
 				// On the current line sprite
-				if ((e.y <= cY + 16) && (e.y + sptHeight > (cY + 16))) {
+				if (e.y <= (cY + 16) && (e.y + sptHeight) > (cY + 16)) {
 					OamLineElement* entry = ctrl->getPpu()->getLineSpriteById(
 						ctrl->getPpu()->incrementAndGetLineCounter());
 
@@ -176,8 +178,9 @@ namespace TheBoy {
 							break;
 						}
 
-						if (left->next != NULL) {
+						if (left->next == NULL) {
 							left->next = entry;
+							break;
 						}
 
 						prev = left;

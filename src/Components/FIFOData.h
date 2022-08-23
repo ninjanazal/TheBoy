@@ -33,7 +33,7 @@ The order of the steps are as follows:
 	/// Linked element representing the fetch information
 	/// </summary>
 	typedef struct FIFO_Value {
-		FIFO_Value* next = nullptr;
+		FIFO_Value* next = NULL;
 		bit32 color;
 	} FIFO_Value;
 
@@ -72,7 +72,7 @@ The order of the steps are as follows:
 			pushedX = 0;
 			fetchedX = 0;
 			pixelFifo.size = 0;
-			pixelFifo.head = pixelFifo.tail = nullptr;
+			pixelFifo.head = pixelFifo.tail = NULL;
 			currState = FIFOSTATE::FF_TILE;
 		}
 	} FIFO_DATA;
