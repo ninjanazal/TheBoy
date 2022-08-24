@@ -341,7 +341,7 @@ namespace TheBoy {
 		// GameBoy color pallet representation
 		unsigned long defaultColors[4] = {
 			0xFFFFFFFF,
-			0xACACACFF,
+			0xAAAAAAFF,
 			0x555555FF,
 			0x000000FF
 		};

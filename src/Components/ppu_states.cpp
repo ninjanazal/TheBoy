@@ -138,6 +138,7 @@ namespace TheBoy {
 
 			// reset array
 			ctrl->getPpu()->resetLineData();
+
 			for (int i = 0; i < 40; i++)
 			{
 				OamElement e = ctrl->getPpu()->getOamRamElementId(i);
@@ -152,7 +153,7 @@ namespace TheBoy {
 				}
 
 				// On the current line sprite
-				if (e.y <= (cY + 16) && (e.y + sptHeight) > (cY + 16)) {
+				if (e.y <= cY + 16 && e.y + sptHeight > cY + 16) {
 					OamLineElement* entry = ctrl->getPpu()->getLineSpriteById(
 						ctrl->getPpu()->incrementAndGetLineCounter());
 

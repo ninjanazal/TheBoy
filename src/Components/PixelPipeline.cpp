@@ -76,7 +76,7 @@ namespace TheBoy {
 					}
 				}
 
-				if (ctrl->getLcd()->getLCDCObjEnable() && (ctrl->getPpu()->getLineSpritePointer() != NULL)) {
+				if (ctrl->getLcd()->getLCDCObjEnable() && ctrl->getPpu()->getLineSpritePointer() != NULL) {
 					PipelineLoadSpriteTile(ctrl);
 				}
 
@@ -148,7 +148,7 @@ namespace TheBoy {
 			if (ctrl->getPpu()->getFifo()->pixelFifo.size > 8) {
 				bit32 pData = FifoPop(ctrl);
 
-				if (ctrl->getPpu()->getFifo()->lineX >= (ctrl->getLcd()->getLcdRegistors()->scrollX % 8)) {
+				if (ctrl->getPpu()->getFifo()->lineX >= ctrl->getLcd()->getLcdRegistors()->scrollX % 8) {
 					ctrl->getPpu()->setBufferValue(
 						ctrl->getPpu()->getFifo()->pushedX + (ctrl->getLcd()->getLyValue() * Ppu::xRes),
 						pData
@@ -193,6 +193,7 @@ namespace TheBoy {
 
 			int x = ctrl->getPpu()->getFifo()->fetchedX -
 				(8 - (ctrl->getLcd()->getLcdRegistors()->scrollX % 8));
+
 			for (int i = 0; i < 8; i++)
 			{
 				int bit = 7 - i;
@@ -241,11 +242,11 @@ namespace TheBoy {
 		/// <param name="bgCol">Bg palette calculated id</param>
 		/// <returns></returns>
 		bit32 PipelineFetchSprite(EmulatorController* ctrl, int bit, bit32 col, bit8 bgCol) {
-			for (bit8 i = 0; i < ctrl->getPpu()->getFetchedEntryCounter(); i++) {
+			for (int i = 0; i < ctrl->getPpu()->getFetchedEntryCounter(); i++) {
 				int spX = (ctrl->getPpu()->getFetchedEntryById(i).x - 8) +
 					(ctrl->getLcd()->getLcdRegistors()->scrollX % 8);
 
-				if ((spX + 8) < ctrl->getPpu()->getFifo()->fifoX) {
+				if (spX + 8 < ctrl->getPpu()->getFifo()->fifoX) {
 					// Pixel point passed
 					continue;
 				}
@@ -269,8 +270,9 @@ namespace TheBoy {
 				}
 
 				if (!bgPriority || bgCol == 0) {
-					col = (ctrl->getPpu()->getFetchedEntryById(i).paltN) ?
-						ctrl->getLcd()->getSpriteColorTwoById(lo | hi) : ctrl->getLcd()->getSpriteColorOneById(lo | hi);
+					col = ctrl->getPpu()->getFetchedEntryById(i).paltN ?
+						ctrl->getLcd()->getSpriteColorTwoById(static_cast<bit8>(lo | hi)) :
+						ctrl->getLcd()->getSpriteColorOneById(static_cast<bit8>(lo | hi));
 
 					if (lo | hi) {
 						break;
@@ -290,10 +292,11 @@ namespace TheBoy {
 			while (lineS != NULL)
 			{
 				int spX = (lineS->elm.x - 8) + (ctrl->getLcd()->getLcdRegistors()->scrollX % 8);
+
 				if ((spX >= ctrl->getPpu()->getFifo()->fetchedX && spX < ctrl->getPpu()->getFifo()->fetchedX + 8) ||
-					((spX + 8) >= ctrl->getPpu()->getFifo()->fetchedX && (spX + 8) < ctrl->getPpu()->getFifo()->fetchedX + 8)) {
-					ctrl->getPpu()->setFetchedEntryById(
-						ctrl->getPpu()->incrementAndGetFetchedCounter(), lineS->elm);
+					((spX + 8) >= ctrl->getPpu()->getFifo()->fetchedX && (spX + 8) < ctrl->getPpu()->getFifo()->fetchedX + 8))
+				{
+					ctrl->getPpu()->setFetchedEntryById(ctrl->getPpu()->incrementAndGetFetchedCounter(), lineS->elm);
 				}
 
 				lineS = lineS->next;

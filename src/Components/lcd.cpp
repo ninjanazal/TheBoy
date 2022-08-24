@@ -224,10 +224,7 @@ namespace TheBoy {
 	/// <param name="index">Target index</param>
 	/// <returns>Defined index Color</returns>
 	bit32 Lcd::getColorByIndex(bit8 index) {
-		if ((sizeof(defaultColors) / sizeof(defaultColors[0])) > index) {
-			return defaultColors[index];
-		}
-		return 0x0;
+		return defaultColors[index];
 	}
 
 	/// <summary>
@@ -236,15 +233,15 @@ namespace TheBoy {
 	/// <param name="palletAddr">Pallet addres element</param>
 	/// <param name="val">Target pallet group</param>
 	void Lcd::updatePallet(bit8 palletAddr, bit8 val) {
-		bit32* pColor = &*bgColorPallets;
+		bit32* pColor = bgColorPallets;
 		
 		switch (val)
 		{
 		case 1:
-			pColor = &*spriteColors1;
+			pColor = spriteColors1;
 			break;
 		case 2:
-			pColor = &*spriteColors2;
+			pColor = spriteColors2;
 			break;
 		}
 		// Defined color by the value setted
