@@ -17,12 +17,12 @@ namespace TheBoy {
 		bit8 tIndex;
 
 		// Defining the flags using bit-field values, 8bit flags
-		unsigned paltN_CGB	: 3;
-		unsigned vRamBank	: 1;
-		unsigned paltN		: 1;
-		unsigned xFlip		: 1;
-		unsigned yFlip		: 1;
-		unsigned bgWind		: 1;
+		bit8 paltN_CGB	: 3;
+		bit8 vRamBank	: 1;
+		bit8 paltN		: 1;
+		bit8 xFlip		: 1;
+		bit8 yFlip		: 1;
+		bit8 bgWind		: 1;
 	} OamElement;
 
 	/// <summary>
@@ -364,7 +364,7 @@ namespace TheBoy {
 		/// <summary>
 		/// 
 		/// </summary>
-		OamLineElement lSpriteData[10] { 0 };
+		OamLineElement lSpriteData[10];
 
 
 		/// <summary>
@@ -376,7 +376,7 @@ namespace TheBoy {
 		/// <summary>
 		/// Fetched entries holder
 		/// </summary>
-		OamElement fetchedEntries[3] { 0 };
+		OamElement fetchedEntries[3];
 
 
 		/// <summary>
