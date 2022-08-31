@@ -336,6 +336,25 @@ namespace TheBoy {
 		/// </summary>
 		void resetLineData();
 
+
+		/// <summary>
+		/// Increments the window line counter value
+		/// </summary>
+		void incrementWindowLine();
+
+
+		/// <summary>
+		/// Resets the window line counter
+		/// </summary>
+		void resetWindowLine();
+
+
+		/// <summary>
+		/// Gets the current window line counter value
+		/// </summary>
+		/// <returns>Current window line value</returns>
+		bit8 getWindowLine();
+
 	private:
 		/**
 		 * @brief Pointer to the target emulator controller
@@ -414,6 +433,11 @@ namespace TheBoy {
 		/// Looking for a 1000 ms total divided by the frame target
 		/// </summary>
 		bit32 targetFrameTime = 1000 / 60;
+
+		/// <summary>
+		/// Current window line draw
+		/// </summary>
+		bit8 windowL;
 
 
 		/// <summary>

@@ -10,14 +10,14 @@ namespace TheBoy {
 	Ppu::Ppu(EmulatorController* ctrl) : emulCtrl(ctrl) {
 		std::cout << "[PPU] ::: PPU has been created" << std::endl;
 
-		oam_ram = new OamElement[40] { 0 };
+		oam_ram = new OamElement[40]{ 0 };
 		vRam = new bit8[0x2000]{ };
 
 		buffer = new bit32[yRes * xRes * sizeof(32)]{ 0 };
 
 		cFrame = 0;
 		cLineTicks = 0;
-		
+
 		//memset(oam_ram, 0, sizeof(oam_ram));
 
 		lineSpriteCount = 0;
@@ -28,6 +28,7 @@ namespace TheBoy {
 
 		lineSpriteCount = 0;
 		fetchedEntryCounter = 0;
+		windowL = 0;
 	}
 
 
@@ -360,4 +361,20 @@ namespace TheBoy {
 	void Ppu::resetLineData() {
 		memset(lSpriteData, 0, sizeof(lSpriteData));
 	}
+
+	/// <summary>
+	/// Increments the window line counter value
+	/// </summary>
+	void Ppu::incrementWindowLine() { windowL++; }
+
+	/// <summary>
+	/// Resets the window line counter
+	/// </summary>
+	void Ppu::resetWindowLine() { windowL = 0; }
+
+	/// <summary>
+	/// Gets the current window line counter value
+	/// </summary>
+	/// <returns>Current window line value</returns>
+	bit8 Ppu::getWindowLine() { return windowL;  }
 } // namespace TheBoy

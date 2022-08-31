@@ -76,9 +76,27 @@ namespace TheBoy {
 		/// <param name="ctrl">Target Emulator controller</param>
 		void PipelineLoadSpriteTile(EmulatorController* ctrl);
 
+
+		/// <summary>
+		/// Loads the sprite from the data, using offset
+		/// </summary>
+		/// <param name="ctrl">Target Emulator controller</param>
+		/// <param name="offset">Offest data value</param>
 		void PipelineLoadSpriteData(EmulatorController* ctrl, bit8 offset);
+
+
+		/// <summary>
+		/// Evaluates if the game window is visible on the current draw
+		/// </summary>
+		/// <param name="ctrl">Target Emulator controller</param>
+		bool PipelineWindowVisible(EmulatorController* ctrl);
+
+
+		/// <summary>
+		/// Loads the current window tile
+		/// </summary>
+		/// <param name="ctrl">Target Emulator controller</param>
+		void PipelineLoadWindowTile(EmulatorController* ctrl);
 	}
-
 }
-
 #endif // !PIXELPIPELINE_H

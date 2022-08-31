@@ -71,9 +71,11 @@ namespace TheBoy {
 					);
 
 
-					if (ctrl->getLcd()->getLCDCBdwDataArea() == 0x8800) {
+					if (ctrl->getLcd()->getLCDCBgwDataArea() == 0x8800) {
 						ctrl->getPpu()->getFifo()->bg_fetched[0] += 128;
 					}
+
+					PipelineLoadWindowTile(ctrl);
 				}
 
 				if (ctrl->getLcd()->getLCDCObjEnable() && ctrl->getPpu()->getLineSpritePointer() != NULL) {
@@ -94,7 +96,7 @@ namespace TheBoy {
 				*/
 			case FIFOSTATE::FF_DATA_LOW: {
 				ctrl->getPpu()->getFifo()->bg_fetched[1] =
-					ctrl->getCpu()->requestBusRead(ctrl->getLcd()->getLCDCBdwDataArea() +
+					ctrl->getCpu()->requestBusRead(ctrl->getLcd()->getLCDCBgwDataArea() +
 						(ctrl->getPpu()->getFifo()->bg_fetched[0] * 16) + ctrl->getPpu()->getFifo()->tileY
 					);
 
@@ -109,7 +111,7 @@ namespace TheBoy {
 				*/
 			case FIFOSTATE::FF_DATA_HIGH: {
 				ctrl->getPpu()->getFifo()->bg_fetched[2] =
-					ctrl->getCpu()->requestBusRead(ctrl->getLcd()->getLCDCBdwDataArea() +
+					ctrl->getCpu()->requestBusRead(ctrl->getLcd()->getLCDCBgwDataArea() +
 						(ctrl->getPpu()->getFifo()->bg_fetched[0] * 16) + ctrl->getPpu()->getFifo()->tileY + 1
 					);
 
@@ -312,7 +314,8 @@ namespace TheBoy {
 		/// <summary>
 		/// Loads the sprite from the data, using offset
 		/// </summary>
-		/// <param name="offset">Target Emulator controller</param>
+		/// <param name="ctrl">Target Emulator controller</param>
+		/// <param name="offset">Offest data value</param>
 		void PipelineLoadSpriteData(EmulatorController* ctrl, bit8 offset) {
 			int currLy = ctrl->getLcd()->getLyValue();
 			bit8 spriteH = ctrl->getLcd()->getLCDCObjHeight();
@@ -334,6 +337,50 @@ namespace TheBoy {
 
 				ctrl->getPpu()->getFifo()->fetch_data[(i * 2) + offset] =
 					ctrl->getCpu()->requestBusRead(0x8000 + (tileId * 16) + tileY + offset);
+			}
+		}
+
+		/// <summary>
+		/// Evaluates if the game window is visible on the current draw
+		/// </summary>
+		/// <param name="ctrl">Target Emulator controller</param>
+		bool PipelineWindowVisible(EmulatorController* ctrl) {
+			// Check if the window is on the visible screen
+			return (ctrl->getLcd()->getLCDCWindEnable() &&
+				ctrl->getLcd()->getLcdRegistors()->WX >= 0 &&
+				ctrl->getLcd()->getLcdRegistors()->WX <= 166 &&
+				ctrl->getLcd()->getLcdRegistors()->WY >= 0 &&
+				ctrl->getLcd()->getLcdRegistors()->WY < Ppu::yRes);
+		}
+
+
+		/// <summary>
+		/// Loads the current window tile
+		/// </summary>
+		/// <param name="ctrl">Target Emulator controller</param>
+		void PipelineLoadWindowTile(EmulatorController* ctrl) {
+			if (!PipelineWindowVisible(ctrl)) { return; }
+
+			bit8 wY = ctrl->getLcd()->getLcdRegistors()->WY;
+
+			if (ctrl->getPpu()->getFifo()->fetchedX + 7 >= ctrl->getLcd()->getLcdRegistors()->WX &&
+				ctrl->getPpu()->getFifo()->fetchedX + 7 < ctrl->getLcd()->getLcdRegistors()->WX + Ppu::yRes + 14)
+			{
+				if (ctrl->getLcd()->getLyValue() >= wY && ctrl->getLcd()->getLyValue() < (wY + Ppu::xRes))
+				{
+					bit8 wTileY = ctrl->getPpu()->getWindowLine() / 8;
+					ctrl->getPpu()->getFifo()->bg_fetched[0] = ctrl->getCpu()->requestBusRead(
+						ctrl->getLcd()->getLCDCWindMapArea() +
+						((ctrl->getPpu()->getFifo()->fetchedX + 7 - ctrl->getLcd()->getLcdRegistors()->WX) / 8) +
+						(wTileY * 32)
+					);
+
+
+					if (ctrl->getLcd()->getLCDCBgwDataArea() == 0x8800)
+					{ 
+						ctrl->getPpu()->getFifo()->bg_fetched[0] += 128;
+					}
+				}
 			}
 		}
 	}

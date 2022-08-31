@@ -54,6 +54,7 @@ namespace TheBoy {
 				if (ctrl->getLcd()->getLyValue() >= Ppu::LinePerFrame) {
 					ctrl->getLcd()->setLCDSMode(Lcd::LCDMODE::OAM);
 					ctrl->getLcd()->resetLyValue();
+					ctrl->getPpu()->resetWindowLine();
 				}
 
 				ctrl->getPpu()->resetLineTicks();
@@ -114,6 +115,14 @@ namespace TheBoy {
 		/// </summary>
 		/// <param name="ctrl">Reference to the current emulator controller</param>
 		void vertLineIncrement(EmulatorController* ctrl) {
+			// Window visible
+			if (PixelPipe::PipelineWindowVisible(ctrl) &&
+				ctrl->getLcd()->getLyValue() >= ctrl->getLcd()->getLcdRegistors()->WY &&
+				ctrl->getLcd()->getLyValue() < ctrl->getLcd()->getLcdRegistors()->WY + Ppu::yRes)
+			{
+				ctrl->getPpu()->incrementWindowLine();
+			}
+
 			ctrl->getLcd()->incrementLy();
 
 			if (ctrl->getLcd()->getLyValue() == ctrl->getLcd()->getLyCompValue()) {
@@ -161,7 +170,7 @@ namespace TheBoy {
 					entry->next = NULL;
 
 					if (ctrl->getPpu()->getLineSpritePointer() == NULL ||
-							ctrl->getPpu()->getLineSpritePointer()->elm.x > e.x) {
+						ctrl->getPpu()->getLineSpritePointer()->elm.x > e.x) {
 						entry->next = ctrl->getPpu()->getLineSpritePointer();
 						ctrl->getPpu()->setLineSpritePointer(entry);
 						continue;

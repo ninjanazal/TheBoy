@@ -203,7 +203,7 @@ namespace TheBoy {
 		/// Gets the background and window tile data area
 		/// </summary>
 		/// <returns>BG and Window tile data area value</returns>
-		bit16 getLCDCBdwDataArea();
+		bit16 getLCDCBgwDataArea();
 
 		/// <summary>
 		/// Gets the window enable bit value

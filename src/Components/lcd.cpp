@@ -118,7 +118,7 @@ namespace TheBoy {
 	/// Gets the background and window tile data area
 	/// </summary>
 	/// <returns>BG and Window tile data area value</returns>
-	bit16 Lcd::getLCDCBdwDataArea() {
+	bit16 Lcd::getLCDCBgwDataArea() {
 		return GETBIT(regs.lcdc, 4) ? 0x8000 : 0x8800;
 	}
 
