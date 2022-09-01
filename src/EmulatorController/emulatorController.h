@@ -13,6 +13,7 @@
 #include "lcd.h"
 #include "iogb.h"
 #include "timer.h"
+#include "inputController.h"
 
 #include "emulView.h"
 
@@ -29,6 +30,7 @@ namespace TheBoy {
 	class IO;
 	class Timer;
 	class EmulView;
+	class InputController;
 
 	
 	/**

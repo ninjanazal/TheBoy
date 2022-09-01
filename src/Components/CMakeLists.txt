@@ -16,6 +16,8 @@ set( SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/dma.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/ppu_states.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/PixelPipeline.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/inputController.cpp
+
 	
 	PARENT_SCOPE
 )
@@ -36,6 +38,7 @@ set ( HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/ppu_states.h
 	${CMAKE_CURRENT_SOURCE_DIR}/FIFOData.h
 	${CMAKE_CURRENT_SOURCE_DIR}/PixelPipeline.h
+	${CMAKE_CURRENT_SOURCE_DIR}/inputController.h
 
 	PARENT_SCOPE
 )
