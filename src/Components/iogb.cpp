@@ -39,6 +39,13 @@ namespace TheBoy {
 			Bit 0 - Shift Clock (0=External Clock, 1=Internal Clock)
 		*/
 
+		/*
+		* FF00 - P1/JOYP - Joypad (R/W)
+		*/
+		if (addr == 0xFF00) {
+			return emulCtrl->getInput()->getOutput();
+		}
+
 		if(addr == 0xFF01) {
 			return seriaData[0];
 		}
@@ -70,7 +77,12 @@ namespace TheBoy {
 	 * @param addr Target Write addres
 	 * @param val value to be written
 	 */
-	void IO::write(bit16 addr, bit8 val) {	
+	void IO::write(bit16 addr, bit8 val) {
+		if (addr == 0xFF00) {
+			emulCtrl->getInput()->setSelection(val);
+			return;
+		}
+
 		if(addr == 0xFF01){
 			seriaData[0] = val;
 			return;

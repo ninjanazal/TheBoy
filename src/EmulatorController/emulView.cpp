@@ -14,6 +14,8 @@ namespace TheBoy {
 			sf::Style::Titlebar | sf::Style::Titlebar | sf::Style::Close
 			);
 
+		viewInput = new InputStates();
+
 		window->setFramerateLimit(30);
 		mainLoad();
 
@@ -46,6 +48,30 @@ namespace TheBoy {
 				window->close();
 				return;
 
+			case sf::Event::KeyPressed:
+			case sf::Event::KeyReleased: {
+				switch (evt->key.code)
+				{
+				case sf::Keyboard::A: {
+					viewInput->a = evt->type == sf::Event::KeyPressed; break; }
+				case sf::Keyboard::Z: {
+					viewInput->b = evt->type == sf::Event::KeyPressed; break; }
+				case sf::Keyboard::Return: {
+					viewInput->start = evt->type == sf::Event::KeyPressed; break; }
+				case sf::Keyboard::BackSpace: {
+					viewInput->select = evt->type == sf::Event::KeyPressed; break; }
+				case sf::Keyboard::Up: {
+					viewInput->up = evt->type == sf::Event::KeyPressed; break; }
+				case sf::Keyboard::Down: {
+					viewInput->down = evt->type == sf::Event::KeyPressed; break; }
+				case sf::Keyboard::Left: {
+					viewInput->left = evt->type == sf::Event::KeyPressed; break; }
+				case sf::Keyboard::Right: {
+					viewInput->right = evt->type == sf::Event::KeyPressed; break; }
+				default:break;
+				}
+				return;
+			}
 			default:
 				break;
 			}
@@ -107,8 +133,8 @@ namespace TheBoy {
 	 * @param regs Target CPU registors
 	*/
 	void EmulView::setRegistorsVals() {
-		char* regBuffer(new char[256]{ });
-		char* opBuffer(new char[64]{ });
+		char* regBuffer(new char[256] {});
+		char* opBuffer(new char[64] {});
 
 		emulCtrl->getCpu()->getCpuSummary(regBuffer, opBuffer);
 
@@ -269,5 +295,13 @@ namespace TheBoy {
 			}
 		}
 		tView->update(*iView.get());
+	}
+
+	/// <summary>
+	/// Get the registed input
+	/// </summary>
+	/// <returns>Registed input values</returns>
+	InputStates* EmulView::getInputState() {
+		return viewInput;
 	}
 } // namespace TheBoy

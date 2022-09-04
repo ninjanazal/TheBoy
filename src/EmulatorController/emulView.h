@@ -6,8 +6,9 @@
 #include "cpu.h"
 
 namespace TheBoy {
+	struct InputStates;
 
-	class EmulView {	
+	class EmulView {
 	public:
 		/**
 		 * @brief Construct a new Emul View object
@@ -26,7 +27,7 @@ namespace TheBoy {
 		 * @brief Manages the window events
 		 */
 		void ManageEvents();
-	
+
 
 		/**
 		 * @brief Updates the current window
@@ -53,9 +54,14 @@ namespace TheBoy {
 		/// <param name="inf"></param>
 		void setPpuFrameCount(const char* inf);
 
+		/// <summary>
+		/// Get the registed input
+		/// </summary>
+		/// <returns>Registed input values</returns>
+		InputStates* getInputState();
 
 	private:
-	#pragma region Properties
+#pragma region Properties
 		/**
 		 * @brief Pointer to the target emulator controller
 		 */
@@ -99,7 +105,7 @@ namespace TheBoy {
 
 
 		/**
-		 * @brief Buffer holding the current 
+		 * @brief Buffer holding the current
 		 */
 		sf::Uint8* viewPixels;
 
@@ -149,7 +155,12 @@ namespace TheBoy {
 			0x000000FF
 		};
 
-	#pragma endregion
+		/// <summary>
+		/// Internal input view values
+		/// </summary>
+		InputStates* viewInput;
+
+#pragma endregion
 
 		/**
 		 * @brief Loads all the needed objects to memory
@@ -187,6 +198,6 @@ namespace TheBoy {
 		/// Creates the output view
 		/// </summary>
 		void buildOutView();
-};	
+	};
 } // namespace TheBoy
 #endif

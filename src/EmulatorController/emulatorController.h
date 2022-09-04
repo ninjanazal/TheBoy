@@ -90,6 +90,12 @@ namespace TheBoy {
 		 */
 		std::shared_ptr<EmulView> view;
 
+
+		/// <summary>
+		/// Current emulator input controller
+		/// </summary>
+		std::shared_ptr<InputController> inputCtrl;
+
 	} EmulatorComponents;
 	
 
@@ -140,6 +146,11 @@ namespace TheBoy {
 		 */
 		void debugOutput();
 
+
+		/// <summary>
+		/// Gather the input information
+		/// </summary>
+		void gatherInput();
 
 	private:
 
@@ -263,6 +274,12 @@ namespace TheBoy {
 		/// </summary>
 		/// <returns>Shared pointer to the inUse Lcd</returns>
 		std::shared_ptr<Lcd> getLcd();
+
+		/// <summary>
+		/// Gets the input controller pointer
+		/// </summary>
+		/// <returns>Shared pointer to the inUse Input controller</returns>
+		std::shared_ptr<InputController> getInput();
 	};
 	
 } // namespace TheBoy

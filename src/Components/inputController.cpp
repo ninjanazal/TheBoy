@@ -64,11 +64,7 @@ namespace TheBoy
 			if (states->right) { out &= ~(1 << 0); }
 			if (states->up) { out &= ~(1 << 2); }
 			if (states->down) { out &= ~(1 << 3); }
-
-
-
 		}
-
 		return out;
 	}
 }

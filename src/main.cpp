@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 
 	//! Remove this hammered path
 	emulator->Start("D:\\Projects\\TheBoy\\ROMS\\tests\\dmg-acid2.gb");
-	//emulator->Start("D:\\Projects\\TheBoy\\ROMS\\Dr. Mario.gb");
+	//emulator->Start("D:\\Projects\\TheBoy\\ROMS\\Tetris.gb");
 
 	return 0;
 }

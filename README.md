@@ -76,12 +76,14 @@ Use this script to gather all the information needed, compile e execute;
 	- [x] High RAM allocation and operations
 - [x] PPU
 	- [x] VRam viewer implementation
-	- [ ] Pixel Pipeline
+	- [x] Pixel Pipeline
 	- [x] PixelFiFo
 - [x] IO Interface
 	- [x] Serial interface
 - [ ] Main OutPut
 	- [x] Initial preview
+- [x] Input Implementation
+
 
 
 ---
@@ -101,7 +103,7 @@ Use this script to gather all the information needed, compile e execute;
 	- [x] 11-op a,(hl)
 	- [x] cpu_instrs
 	- [x] daa
-	- [ ] dmg-acid2
+	- [x] dmg-acid2
 	- [ ] instr_timing
 	- [ ] mem_timing
 
@@ -121,3 +123,4 @@ Use this script to gather all the information needed, compile e execute;
 ![Dr. Mario](prtSc/Background_Draw_Dr_Mario.PNG)
 
 ![SpriteDraw](prtSc/Sprite_Draw_DMG-ACID2Test.PNG)
+![Input & full PixelPipeline](prtSc/PPuPipe%20and%20Input.PNG)
