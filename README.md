@@ -124,3 +124,4 @@ Use this script to gather all the information needed, compile e execute;
 
 ![SpriteDraw](prtSc/Sprite_Draw_DMG-ACID2Test.PNG)
 ![Input & full PixelPipeline](prtSc/PPuPipe%20and%20Input.PNG)
+![Save & Load](prtSc/saveLoad_zelda.gif)
