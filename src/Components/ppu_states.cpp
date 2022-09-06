@@ -97,6 +97,11 @@ namespace TheBoy {
 
 						ctrl->getPpu()->setInitialTimer(currTick);
 						ctrl->getPpu()->resetFrameCount();
+
+						// 
+						if (ctrl->getCartridge()->needSave()) {
+							ctrl->getCartridge()->batterySave();
+						}
 					}
 
 					ctrl->getPpu()->addFrameCount(1);

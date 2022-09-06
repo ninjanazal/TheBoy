@@ -52,10 +52,12 @@ namespace TheBoy {
 	/// <param name="value">Value</param>
 	void Lcd::write(bit16 addres, bit8 value) {
 		bit8 offSet = (addres - 0xFF40);
-		((bit8*)&regs)[offSet] = value;
+		bit8* p = (bit8*)&regs;
+		p[offSet] = value;
+		//((bit8*)&regs)[offSet] = value;
 
 		// On DMA Address
-		if (offSet == 0x6) {
+		if (offSet == 6) {
 			emulCtrl->getDma()->start(value);
 		}
 
@@ -245,10 +247,10 @@ namespace TheBoy {
 			break;
 		}
 		// Defined color by the value setted
-		pColor[0] = defaultColors[palletAddr & 0b11];
-		pColor[1] = defaultColors[(palletAddr >> 2) & 0b11];
-		pColor[2] = defaultColors[(palletAddr >> 4) & 0b11];
-		pColor[3] = defaultColors[(palletAddr >> 6) & 0b11];
+		pColor[0] = defaultColors[static_cast<int>(palletAddr & 0b11)];
+		pColor[1] = defaultColors[static_cast<int>((palletAddr >> 2) & 0b11)];
+		pColor[2] = defaultColors[static_cast<int>((palletAddr >> 4) & 0b11)];
+		pColor[3] = defaultColors[static_cast<int>((palletAddr >> 6) & 0b11)];
 	}
 
 	/// <summary>

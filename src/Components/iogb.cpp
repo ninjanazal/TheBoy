@@ -94,7 +94,7 @@ namespace TheBoy {
 		}
 	
 		// Timer IO access
-		if(BETWEEN(addr, 0xFF04, 0xFF07)){
+		if(static_cast<bool>(BETWEEN(addr, 0xFF04, 0xFF07))){
 			emulCtrl->getTimer()->write(addr, val);
 			return;
 		}
@@ -105,8 +105,12 @@ namespace TheBoy {
 			return;
 		}
 
+		if (static_cast<bool>(BETWEEN(addr, 0xFF10, 0xFF3F))) {
+			//ignore sound
+			return;
+		}
 		// LCD interval
-		if (BETWEEN(addr, 0xFF40, 0xFF4B)) {
+		if (static_cast<bool>(BETWEEN(addr, 0xFF40, 0xFF4B))) {
 			emulCtrl->getLcd()->write(addr, val);
 			return;
 		}

@@ -27,12 +27,12 @@ namespace TheBoy {
 		bit8 h_checksum;	// header checksumn		(0x014D)
 		bit16 checksum;		// Global Checksum		(0x014E -> 0x014F)
 	} CartridgeState;
-	
+
 
 	/**
 	 * @brief Holds the cartridge logic information and definitions
 	 */
-	class Cartridge	{
+	class Cartridge {
 	public:
 		/**
 		 * @brief Construct a new Cartridge object
@@ -72,7 +72,7 @@ namespace TheBoy {
 
 		/**
 		 * @brief Gets if the current cartridge is using a new layout
-		 * @return true Is using the new layout 
+		 * @return true Is using the new layout
 		 * @return false Is using the old layout
 		 */
 		bool isNewTypeCartridge();
@@ -93,11 +93,32 @@ namespace TheBoy {
 		 */
 		void write(bit16 addr, bit8 val);
 
+		/// <summary>
+		/// Get if the cart has a battery
+		/// </summary>
+		bool cartHasBattery();
+
+		/// <summary>
+		/// Get if it needs to be saved
+		/// </summary>
+		bool needSave();
+
+		/// <summary>
+		/// Loads data from the battery mem
+		/// </summary>
+		void batteryLoad();
+
+
+		/// <summary>
+		/// Saves data to the battery mem
+		/// </summary>
+		void batterySave();
+
 	private:
 		/**
 		 * @brief Pointer to the target emulator controller
 		 */
-		///
+		 ///
 		EmulatorController* emulCtrl;
 
 		/**
@@ -110,11 +131,11 @@ namespace TheBoy {
 		 */
 		bit32 rom_size = 0;
 
-		
+
 		/**
 		 * @brief Pointer to the loaded rom byte data
 		 */
-		//bit8 rom_data;
+		 //bit8 rom_data;
 		bit8* rom_data = nullptr;
 
 
@@ -122,6 +143,67 @@ namespace TheBoy {
 		 * @brief Holds the current cartridge state
 		 */
 		std::shared_ptr<CartridgeState> cart_state;
+
+		/// For MBC1 Banking 
+
+		/// <summary>
+		/// A000-BFFF - RAM Bank 00-03, if any (Read/Write)
+		/// </summary>
+		bool enabledRam;
+
+
+		/// <summary>
+		/// This area normally contains the first 16 KiB (bank 00) of the cartridge ROM.
+		/// In 1 MiB and larger cartridges(that use the 2 - bit second banking register for extended ROM banking),
+		/// entering mode 1 (see below) will allow that second banking register to apply to reads 
+		/// from this region in addition to the regular 4000 - 7FFF banked region,
+		/// resulting in accessing banks $20 / $40 / $60 for regular large ROM carts,
+		///  or banks $10 / $20 / $30 for an MBC1M multi - cart(see note below).
+		/// </summary>
+		bool bankingRam;
+
+		/// <summary>
+		/// Pointer to the bank x value
+		/// </summary>
+		bit8* romBankX;
+
+		/// <summary>
+		/// Defined Banking Mode
+		/// </summary>
+		bit8 bankingMode;
+
+		/// <summary>
+		/// Rom Bank Value
+		/// </summary>
+		bit8 romBankVal;
+
+		/// <summary>
+		/// Ram Bank Value
+		/// </summary>
+		bit8 ramBankVal;
+
+		/// <summary>
+		/// In Use bank
+		/// </summary>
+		bit8* currRambank;
+
+		/// <summary>
+		/// Available banks
+		/// </summary>
+		bit8* ramBanks[16];
+
+
+		/// For Battery
+
+		/// <summary>
+		/// Mark if has a bettery
+		/// </summary>
+		bool hasBattery;
+
+		/// <summary>
+		/// Flags if needs saving
+		/// </summary>
+		bool needsSave;
 
 
 		/**
@@ -136,10 +218,27 @@ namespace TheBoy {
 		 */
 		bool cartridgeCheckSum();
 
+
+		/// <summary>
+		/// Get if the cart is a MBC1 
+		/// </summary>
+		bool isMBCOne();
+
+		/// <summary>
+		/// Get if the cart is a MBC3 type
+		/// </summary>
+		/// <returns>Is a mbc3 type</returns>
+		bool isMBCThree();
+
 		/**
 		 * @brief Assigned the loaded data to the correct struct values
 		 */
 		void assignCartData();
+
+		/// <summary>
+		/// Create cartridge banks
+		/// </summary>
+		void createBanks();
 	};
 } // namespace TheBoy
 #endif

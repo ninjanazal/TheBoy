@@ -32,6 +32,7 @@ namespace TheBoy {
 	 */
 	EmulView::~EmulView() {
 		delete[] viewPixels;
+		delete viewInput;
 	}
 
 
@@ -56,9 +57,9 @@ namespace TheBoy {
 					viewInput->a = evt->type == sf::Event::KeyPressed; break; }
 				case sf::Keyboard::Z: {
 					viewInput->b = evt->type == sf::Event::KeyPressed; break; }
-				case sf::Keyboard::Return: {
+				case sf::Keyboard::Enter: {
 					viewInput->start = evt->type == sf::Event::KeyPressed; break; }
-				case sf::Keyboard::BackSpace: {
+				case sf::Keyboard::Backspace: {
 					viewInput->select = evt->type == sf::Event::KeyPressed; break; }
 				case sf::Keyboard::Up: {
 					viewInput->up = evt->type == sf::Event::KeyPressed; break; }

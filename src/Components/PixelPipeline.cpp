@@ -199,10 +199,10 @@ namespace TheBoy {
 			for (int i = 0; i < 8; i++)
 			{
 				int bit = 7 - i;
-				bit8 lo = static_cast<bool>(ctrl->getPpu()->getFifo()->bg_fetched[1] & (1 << bit));
-				bit8 hi = static_cast<bool>(ctrl->getPpu()->getFifo()->bg_fetched[2] & (1 << bit)) << 1;
+				bit8 lo = !!(ctrl->getPpu()->getFifo()->bg_fetched[1] & (1 << bit));
+				bit8 hi = !!(ctrl->getPpu()->getFifo()->bg_fetched[2] & (1 << bit)) << 1;
 
-				bit32 col = ctrl->getLcd()->getColorByIndex((lo | hi));
+				bit32 col = ctrl->getLcd()->getColorByIndex(static_cast<bit8>(lo | hi));
 
 				// Background not enabled
 				if (!ctrl->getLcd()->getLCDCBgwEnable()) {

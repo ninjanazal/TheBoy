@@ -13,8 +13,8 @@ int main(int argc, char *argv[]) {
 	emulator = std::make_shared<EmulatorController>();
 
 	//! Remove this hammered path
-	emulator->Start("D:\\Projects\\TheBoy\\ROMS\\tests\\dmg-acid2.gb");
-	//emulator->Start("D:\\Projects\\TheBoy\\ROMS\\Tetris.gb");
+	//emulator->Start("D:\\Projects\\TheBoy\\ROMS\\tests\\dmg-acid2.gb");
+	emulator->Start("D:\\Projects\\TheBoy\\ROMS\\Super Mario Land.gb");
 
 	return 0;
 }
